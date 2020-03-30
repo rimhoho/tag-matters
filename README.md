@@ -1,6 +1,5 @@
-# Monthly Frequency of NYTimes Tag Dashboard 
-with Google Search Trends Across the Year
-- An example of creating a data pipline that can stream potentially GBs of data from an external REST API into a PostgreSQL database.
+## Monthly Frequency of NYTimes Tag in Dashboard with Google Search Trends Across the Year
+An example of creating a data pipline that can stream potentially GBs of data from an external REST API into a PostgreSQL database.
 
 ### Goal
 To understand how the large data gathered and stored into Postgres from Flask
