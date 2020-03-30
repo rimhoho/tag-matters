@@ -32,24 +32,71 @@ Youtube_YOUTUBE_API_SERVICE_NAME = config['Youtube']['YOUTUBE_API_SERVICE_NAME']
 Youtube_YOUTUBE_API_VERSION = config['Youtube']['YOUTUBE_API_VERSION']
 Youtube_DEVELOPER_KEY = config['Youtube']['DEVELOPER_KEY']
 
-#Popular API
-def get_most_popular_viewedArticle():
+#get initial data API
+def get_init_data(yy, mm):
     parameters = {'api-key': Times_key}           
-    archived_Url = 'https://api.nytimes.com/svc/mostpopular/v2/viewed/7.json'
+    archived_Url = 'https://api.nytimes.com/svc/archive/v1/'+ str(yy) +'/'+ str(mm) +'.json'
     archives = requests.get(archived_Url, params=parameters).json()
-#     pprint.pprint(archives['results'])
-    popular_article = []
-    for a in archives['results'][:4]:
+
+    each_metadata = []
+    for a in archives['response']['docs']:
         articles = {}
-        articles['title'] = a['title']
-        articles['pub_date'] = a['published_date']
-        articles['url'] = a['url']
-        if a['des_facet']:
-            articles['tags'] = a['des_facet']
-        if a['media']:
-            articles['thm_img'] = a['media'][0]['media-metadata'][2]['url']
-        popular_article.append(articles)
-    return popular_article
+        articles['title'] = a['headline']['main']
+        articles['pub_date'] = a['pub_date'][:10]
+        articles['url'] = a['web_url']
+        articles['description'] = a['lead_paragraph']
+        if len(a['multimedia']) !=0 and a['multimedia'][0]['url']:
+            articles['thm_img'] = 'https://static01.nyt.com/' + a['multimedia'][0]['url']
+        else:
+            articles['thm_img'] = 'no_image_found'
+        articles['tags'] = [''.join(tag['value']) for tag in a['keywords']]
+        each_metadata.append(articles)
+        
+    tag_arr = []
+    for m in each_metadata:
+        for t in m['tags']:
+            for string in t.split(', '):
+                tag_arr.append(', '.join(string.split(', ')))
+                    
+    count_tag = {}
+    for tag in tag_arr:
+        if tag in ['Trump', 'Donald J']:
+            tag = 'Donald Trump'
+        if tag in ['Joseph R Jr', 'Biden']:
+            tag = 'Joe Biden'
+        if tag in ['Brett M', 'Supreme Court (US)', 'Kavanaugh']:
+            tag = 'Brett Kavanaugh'
+        if tag in ['Putin', 'Vladimir V']:
+            tag = 'Putin'
+        if tag in ['New York City', 'NYC','NY)', 'NY']:
+            tag = 'New York City'
+        if tag in ['Fla', 'Parkland']:
+            tag = 'Parkland'                          
+        if tag in count_tag:
+            count_tag[tag] += 1
+        else:
+            count_tag[tag] = 1   
+            
+    tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:20]      
+
+    data = []
+    for top_tag in tags_with_frequency:
+        print(top_tag[0])
+        multi_articles = {}
+        for each in reversed(each_metadata) :
+            if top_tag[0] in multi_articles.values():
+                pass      
+            else:
+                if len(each['tags']) != 0 and top_tag[0] in each['tags']:
+                    multi_articles['tag'] = top_tag[0]    
+                    multi_articles['frequency'] = str(top_tag[1])
+                    multi_articles['title'] = each['title']
+                    multi_articles['pub_date'] = each['pub_date']
+                    multi_articles['url'] = each['url']
+                    multi_articles['description'] = each['description']
+                    multi_articles['thm_img'] = each['thm_img']
+                    data.append(multi_articles)
+    return data
 
 
 # Archive API
