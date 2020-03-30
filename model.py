@@ -6,13 +6,13 @@ class Metadata(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
-    Tag = db.Column(db.String(64))
-    Frequency = db.Column(db.String(64))
-    Title = db.Column(db.String(64))
-    Date = db.Column(db.String(64))
-    Url = db.Column(db.String(64))
-    Description = db.Column(db.String(64))
-    img_URL = db.Column(db.String(64))
+    Tag = db.Column(db.String(255))
+    Frequency = db.Column(db.String(255))
+    Title = db.Column(db.String(255))
+    Date = db.Column(db.String(25))
+    Url = db.Column(db.String(255))
+    Description = db.Column(db.String())
+    img_URL = db.Column(db.String(255))
 
     @property
     def serialize(self):
