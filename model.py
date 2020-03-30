@@ -1,21 +1,18 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Date, String, Integer, Numeric
-
-Base = declarative_base()
+from app import db
 
 
-class Metadata(Base): 
+class Metadata(db.Model): 
     __tablename__ = 'metadata'
     __table_args__ = {'extend_existing': True}
 
-    id = Column(Integer, primary_key=True)
-    Tag = Column(String)
-    Frequency = Column(String)
-    Title = Column(String)
-    Date = Column(String)
-    Url = Column(String)
-    Description = Column(String)
-    img_URL = Column(String)
+    id = db.Column(db.Integer, primary_key=True)
+    Tag = db.Column(db.String(64))
+    Frequency = db.Column(db.String(64))
+    Title = db.Column(db.String(64))
+    Date = db.Column(db.String(64))
+    Url = db.Column(db.String(64))
+    Description = db.Column(db.String(64))
+    img_URL = db.Column(db.String(64))
 
     @property
     def serialize(self):
