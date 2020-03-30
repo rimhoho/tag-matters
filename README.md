@@ -1,4 +1,4 @@
-# Monthly Frequency of NYTimes Tag with Google Search Trends
+# Monthly Frequency of NYTimes Tag with Search Trends
 An example of creating a data pipline that can stream potentially GBs of data from an external REST API into a PostgreSQL database.
 
 ### Goal
