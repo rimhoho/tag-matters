@@ -7,7 +7,7 @@ if (host.includes("heroku")) {
 }
 
 function init() {
-    endpoint = base_url + '/init';
+    endpoint = base_url + '/data/init';
     d3.csv(endpoint, function (error, data) {
         console.log('data: ', data);
         if (error) return console.warn(error);

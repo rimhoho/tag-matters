@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/hh/Documents/Pratt/Adv.ProjectsinVis/Tagging-the-USA-by-New-York-Times/env"
+VIRTUAL_ENV="/Users/hh/Documents/Pratt/Adv.ProjectsinVis/Monthly-Frequency-of-NYTimes-Tag/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
