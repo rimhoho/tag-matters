@@ -11,7 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///monthly_tag.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///monthly_tag"
 
 db = SQLAlchemy(app)
 
@@ -20,8 +20,7 @@ get_key = configparser.ConfigParser()
 get_key.read('key_pair.ini')
 Times_key = get_key['Times']['key']
 
-from model import Metadata
-import get_data
+from model import *
 
 
 ###################################################################
