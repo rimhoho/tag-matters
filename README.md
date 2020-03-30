@@ -1,4 +1,4 @@
-## Monthly Frequency of NYTimes Tag in Dashboard with Google Search Trends Across the Year
+## Monthly Frequency of NYTimes Tag with Google Search Trends
 An example of creating a data pipline that can stream potentially GBs of data from an external REST API into a PostgreSQL database.
 
 ### Goal
