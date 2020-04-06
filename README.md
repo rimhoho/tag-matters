@@ -10,7 +10,6 @@ To understand how the large data gathered and stored into Postgres from Flask
 - Youtube API: https://developers.google.com/youtube/v3/docs/search/list?hl=en_US
 
 ### References
-- Metadata and the Tagging Process at The New York Times : https://iptc.org/news/metadata-and-the-tagging-process-at-the-new-york-times/
-- Flask by Example : https://realpython.com/flask-by-example-part-3-text-processing-with-requests-beautifulsoup-nltk/
+- SQLAlchemy with ETL : https://www.freecodecamp.org/news/sqlalchemy-makes-etl-magically-easy-ab2bd0df928/
+- Flask by Example : https://github.com/bswiss/D3_Heroku_App
 - Explore what the world is searching : https://trends.google.com/trends/?geo=US
-- Getting Started with Victory: https://formidable.com/open-source/victory/docs/

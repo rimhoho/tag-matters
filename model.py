@@ -1,29 +1,50 @@
-from app import db
+from sqlalchemy import *
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import *
+
+engine = create_engine('sqlite:///monthly_times_tags.db')
+Base = declarative_base()
 
 
-class Metadata(db.Model): 
-    __tablename__ = 'metadata'
+class Times(Base): 
+    __tablename__ = 'times'
     __table_args__ = {'extend_existing': True}
 
-    id = db.Column(db.Integer, primary_key=True)
-    Tag = db.Column(db.String(255))
-    Frequency = db.Column(db.String(255))
-    Title = db.Column(db.String(255))
-    Date = db.Column(db.String(25))
-    Url = db.Column(db.String(255))
-    Description = db.Column(db.String())
-    img_URL = db.Column(db.String(255))
+    id = Column(Integer, primary_key=True)
+    Category = Column(String(25))
+    Tag = Column(String(255))
+    Frequency = Column(String(255))
+    Title = Column(String(255))
+    Date = Column(String(25))
+    Url = Column(String(255))
+    img_URL = Column(String(255))
 
-    @property
-    def serialize(self):
-        """Returns a python dictionary of Metadata
-        """
-        return {
-            'Tag': self.Tag,
-            'Frequency': self.Frequency,
-            'Title': self.Title,
-            'Date': self.Date,
-            'Url': self.Url,
-            'Description': self.Description,
-            'img_URL': self.img_URL
-        }
+class Google(Base): 
+    __tablename__ = 'google'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    Category = Column(String(25))
+    Tag = Column(String(255))
+    Interests_1 = Column(Integer)
+    Interests_2 = Column(Integer)
+    Interests_3 = Column(Integer)
+    Interests_4 = Column(Integer)
+    Interests_5 = Column(Integer)
+    Interests_6 = Column(Integer)
+    Interests_7 = Column(Integer)
+    Interests_8 = Column(Integer)
+    Interests_9 = Column(Integer)
+    Interests_10 = Column(Integer)
+    Interests_11 = Column(Integer)
+    Interests_12 = Column(Integer)
+    Interests_13 = Column(Integer)
+    Interests_14 = Column(Integer)
+    Interests_15 = Column(Integer)
+    Interests_16 = Column(Integer)
+    Interests_17 = Column(Integer)
+    Interests_18 = Column(Integer)
+    Interests_19 = Column(Integer)
+    Interests_20 = Column(Integer)
+
+Times.__table__.create(bind=engine, checkfirst=True)
