@@ -48,3 +48,4 @@ class Google(Base):
     Interests_20 = Column(Integer)
 
 Times.__table__.create(bind=engine, checkfirst=True)
+Google.__table__.create(bind=engine, checkfirst=True)
