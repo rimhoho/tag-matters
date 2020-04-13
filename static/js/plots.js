@@ -79,9 +79,20 @@ function dashboard() {
             var category = tag['Category'];
 
             if (category in tag_dict) {
-                // .
-                // .
-                // .
+                var each_rate = []
+                for (const t in tag){
+                    if (t == 'Tag') {
+                        var tag_keword = tag[t];
+                        // console.log('tag_keword', tag_keword);
+                        each_tag['Tag'] = tag_keword;
+                    }
+                    if (typeof tag[t] == 'number'){
+                        // console.log('Rates', tag[t]);
+                        each_rate.push(tag[t]);
+                    }
+                }
+                each_tag['Rate'] = each_rate;
+                tags_list.push(+each_tag);
 
             } else {
                 tag_dict[category] = []; //[tag['Tag'], tag['Busiest_date']];
