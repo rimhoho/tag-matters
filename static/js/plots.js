@@ -19,44 +19,44 @@ function dashboard() {
     .then(resp => Promise.all( resp.map(r => r.json()) ))
     .then(function ([times, google]) {
 
-        // var table = d3.select(".monthly_table")
-        //     , columns = ["Tag", "Frequency"]
-        //     , thead = table.append("thead")
-        //     , tbody = table.append("tbody");
+        var table = d3.select(".monthly_table")
+            , columns = ["Tag", "Frequency"]
+            , thead = table.append("thead")
+            , tbody = table.append("tbody");
 
-        // // append the header row
-        // thead.append("tr")
-        //     .selectAll("th")
-        //     .data(columns)
-        //     .enter()
-        //     .append("th")
-        //     .text(function (d) { return d; });
+        // append the header row
+        thead.append("tr")
+            .selectAll("th")
+            .data(columns)
+            .enter()
+            .append("th")
+            .text(function (d) { return d; });
         
-        // // create a row for each object in the data
-        // var rows = tbody.selectAll("tr")
-        //     .data(times)//.filter(tag_list => tag_list['Category'] == '2018-03'))
-        //     .enter()
-        //     .append("tr");
+        // create a row for each object in the data
+        var rows = tbody.selectAll("tr")
+            .data(times)//.filter(tag_list => tag_list['Category'] == '2018-03'))
+            .enter()
+            .append("tr");
 
-        // // create cells for each object in the data                  
-        // rows.selectAll("td")
-        //     // data = [{'Tag': '', 'Frequency': '', 'Title': '', 'Date': '', 'Url': '', 'Description': '', 'img_URL': ''},{...}]
-        //     .data(function (row) {
-        //         return columns.map(function(key) {
-        //             if (key == 'Tag' || key == 'Frequency'){
-        //                 return row[key];
-        //             }
-        //         }); 
-        //     })
-        //     .enter()
-        //     .append("td")
-        //     .attr("style", "font-family: 'Lato'")
-        //     .text(d => d);
+        // create cells for each object in the data                  
+        rows.selectAll("td")
+            // data = [{'Tag': '', 'Frequency': '', 'Title': '', 'Date': '', 'Url': '', 'Description': '', 'img_URL': ''},{...}]
+            .data(function (row) {
+                return columns.map(function(key) {
+                    if (key == 'Tag' || key == 'Frequency'){
+                        return row[key];
+                    }
+                }); 
+            })
+            .enter()
+            .append("td")
+            .attr("style", "font-family: 'Lato'")
+            .text(d => d);
         
-        // thead.append("tr")
-        //     .selectAll("th")
-        //     .append("th")
-        //     .text('Google Search Trends');
+        thead.append("tr")
+            .selectAll("th")
+            .append("th")
+            .text('Google Search Trends');
 
         // create a google json
         var new_google = []
@@ -108,34 +108,34 @@ function dashboard() {
             new_google.push(tag_dict);
         })
         // new_google = [{'2018-01': [{'Tag': 'New York City', 'Rate' : [5, 48]]}, {'Tag': 'United States Politics and Government', 'Rate' : [50, 100]]}]
-        console.log('new_google', new_google[0]);
+        console.log('new_google', new_google);
         
 
-        makeVis(new_google)
+        // makeVis(new_google)
 
 
-        var makeVis = new_google => {
-            // Define dimensions of vis
-            var margin = { top: 4, right: 6, bottom: 4, left: 6 },
-                width  = 400 - margin.left - margin.right,
-                height = 80 - margin.top  - margin.bottom;
+        // var makeVis = new_google => {
+        //     // Define dimensions of vis
+        //     var margin = { top: 4, right: 6, bottom: 4, left: 6 },
+        //         width  = 400 - margin.left - margin.right,
+        //         height = 80 - margin.top  - margin.bottom;
 
-            // Make x scale
-            var xScale = d3.scale.ordinal()
-                .domain(date_fields)
-                .rangeRoundBands([0, width], 0.1);
+        //     // Make x scale
+        //     var xScale = d3.scale.ordinal()
+        //         .domain(date_fields)
+        //         .rangeRoundBands([0, width], 0.1);
 
-            // Make y scale, the domain will be defined on bar update
-            var yScale = d3.scale.linear()
-                .range([height, 0]);
+        //     // Make y scale, the domain will be defined on bar update
+        //     var yScale = d3.scale.linear()
+        //         .range([height, 0]);
 
-            // Create canvas
-            var canvas = d3.select("#vis-container")
-              .append("svg")
-                .attr("width",  width  + margin.left + margin.right)
-                .attr("height", height + margin.top  + margin.bottom)
-              .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        //     // Create canvas
+        //     var canvas = d3.select("#vis-container")
+        //       .append("svg")
+        //         .attr("width",  width  + margin.left + margin.right)
+        //         .attr("height", height + margin.top  + margin.bottom)
+        //       .append("g")
+        //         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             // add the line for the searches each month
             // try to set the x values so that they are 
