@@ -58,18 +58,18 @@ function dashboard() {
         //     .append("th")
         //     .text('Google Search Trends');
 
-        // // create a google json
-        // var new_google = []
-        // var date_fields = []
+        // create a google json
+        var new_google = []
+        var date_fields = []
 
-        // for (t in google[0]){
-        //     if (t !== 'Tag' && t !== 'Category' && t !== 'Busiest_date') {
-        //         if (typeof google[0][t] === 'string'){
-        //                 date_fields.push(google[0][t])
-        //         }
-        //     }
-        // }
-        // console.log('date_fields', date_fields);
+        for (t in google[0]){
+            if (t !== 'Tag' && t !== 'Category' && t !== 'Busiest_date') {
+                if (typeof google[0][t] === 'string'){
+                        date_fields.push(google[0][t])
+                }
+            }
+        }
+        console.log('date_fields', date_fields);
         
 
         google.forEach(function(tag) {
