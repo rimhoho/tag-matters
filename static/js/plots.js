@@ -17,7 +17,7 @@ function dashboard() {
         fetch(base_url + '/google')
     ])
     .then(resp => Promise.all( resp.map(r => r.json()) ))
-    .then(function ([times, google]) {
+    .then(([times, google]) => {
 
         var table = d3.select(".monthly_table")
             , columns = ["Tag", "Frequency"]
@@ -165,91 +165,91 @@ function dashboard() {
             //     .attr("fill","none")
             //     .attr("stroke-width",1);
 
-            // Make x-axis and add to canvas
-            var xAxis = d3.svg.axis()
-                .scale(xScale)
-                .orient("bottom");
+        //     // Make x-axis and add to canvas
+        //     var xAxis = d3.svg.axis()
+        //         .scale(xScale)
+        //         .orient("bottom");
 
-            canvas.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
+        //     canvas.append("g")
+        //         .attr("class", "x axis")
+        //         .attr("transform", "translate(0," + height + ")")
+        //         .call(xAxis);
 
-            // Make y-axis and add to canvas
-            var yAxis = d3.svg.axis()
-                .scale(yScale)
-                .orient("left");
+        //     // Make y-axis and add to canvas
+        //     var yAxis = d3.svg.axis()
+        //         .scale(yScale)
+        //         .orient("left");
 
-            var yAxisHandleForUpdate = canvas.append("g")
-                .attr("class", "y axis")
-                .call(yAxis)
-                .orient("left");
+        //     var yAxisHandleForUpdate = canvas.append("g")
+        //         .attr("class", "y axis")
+        //         .call(yAxis)
+        //         .orient("left");
 
-            yAxisHandleForUpdate.append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .text("Value");
-
-
-
-            var updateBars = new_google => {
-                // First update the y-axis domain to match data
-                yScale.domain( d3.extent(new_google) );
-                yAxisHandleForUpdate.call(yAxis);
-
-                var bars = canvas.selectAll(".bar").data(data);
-
-                // Add bars for new data
-                bars.enter()
-                  .append("rect")
-                    .attr("class", "bar")
-                    .attr("x", function(d,i) { return xScale( date_fields[i] ); })
-                    .attr("width", xScale.rangeBand())
-                    .attr("y", function(d,i) { return yScale(d); })
-                    .attr("height", function(d,i) { return height - yScale(d); });
-
-                // Update old ones, already have x / width from before
-                bars
-                    .transition().duration(250)
-                    .attr("y", function(d,i) { return yScale(d); })
-                    .attr("height", function(d,i) { return height - yScale(d); });
-
-                // Remove old ones
-                bars.exit().remove();
-            };
-        };
+        //     yAxisHandleForUpdate.append("text")
+        //         .attr("transform", "rotate(-90)")
+        //         .attr("y", 6)
+        //         .attr("dy", ".71em")
+        //         .style("text-anchor", "end")
+        //         .text("Value");
 
 
-        // Handler for dropdown value change
-        var dropdownChange = () => {
-            var tag = d3.select(this).property('value'),
-                newData   = new_google[tag];
 
-            updateBars(newData);
-        };
+        //     var updateBars = new_google => {
+        //         // First update the y-axis domain to match data
+        //         yScale.domain( d3.extent(new_google) );
+        //         yAxisHandleForUpdate.call(yAxis);
+
+        //         var bars = canvas.selectAll(".bar").data(data);
+
+        //         // Add bars for new data
+        //         bars.enter()
+        //           .append("rect")
+        //             .attr("class", "bar")
+        //             .attr("x", function(d,i) { return xScale( date_fields[i] ); })
+        //             .attr("width", xScale.rangeBand())
+        //             .attr("y", function(d,i) { return yScale(d); })
+        //             .attr("height", function(d,i) { return height - yScale(d); });
+
+        //         // Update old ones, already have x / width from before
+        //         bars
+        //             .transition().duration(250)
+        //             .attr("y", function(d,i) { return yScale(d); })
+        //             .attr("height", function(d,i) { return height - yScale(d); });
+
+        //         // Remove old ones
+        //         bars.exit().remove();
+        //     };
+        // };
 
 
-        // Get names of cereals, for dropdown
-        var tags = Object.keys(new_google).sort();
+        // // Handler for dropdown value change
+        // var dropdownChange = () => {
+        //     var tag = d3.select(this).property('value'),
+        //         newData   = new_google[tag];
 
-        var dropdown = d3.select("#vis-container")
-            .insert("select", "svg")
-            .on("change", dropdownChange);
+        //     updateBars(newData);
+        // };
 
-        dropdown.selectAll("option")
-            .data(tags)
-            .enter().append("option")
-            .attr("value", function (d) { return d; })
-            .text(function (d) {
-                return d[0].toUpperCase() + d.slice(1,d.length); // capitalize 1st letter
-            });
 
-        var initialData = new_google[ tags[0] ];
+        // // Get names of cereals, for dropdown
+        // var tags = Object.keys(new_google).sort();
+
+        // var dropdown = d3.select("#vis-container")
+        //     .insert("select", "svg")
+        //     .on("change", dropdownChange);
+
+        // dropdown.selectAll("option")
+        //     .data(tags)
+        //     .enter().append("option")
+        //     .attr("value", function (d) { return d; })
+        //     .text(function (d) {
+        //         return d[0].toUpperCase() + d.slice(1,d.length); // capitalize 1st letter
+        //     });
+
+        // var initialData = new_google[ tags[0] ];
         
         
-        updateBars(initialData);
+        // updateBars(initialData);
 
         
         
