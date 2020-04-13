@@ -45,10 +45,7 @@ def get_times_metadata():
     monthly_popular_tags = {}
     for yy in range(2018, int(today[:4]) + 1):
         if str(yy) == today[:4]:
-            if '0' in today[5:7]:
-                ends = int(today[6:7]) + 1
-            else:
-                ends = int(today[5:7]) + 1
+            ends = int(today[5:7]) + 1
         else:
             ends = 13
         for mm in range(1,ends):
@@ -114,6 +111,8 @@ def get_times_metadata():
                     else:
                         if len(each['tags']) != 0 and top_tag[0] in each['tags']:
                             # store the data into variable 'monthly_archive'
+                            if len(str(mm)) == 1:
+                                mm = '0' + str(mm)
                             multi_articles['Category'] = str(yy) + '-' +  str(mm)
                             multi_articles['Tag'] = top_tag[0]    
                             multi_articles['Frequency'] = str(top_tag[1])
@@ -128,7 +127,6 @@ def get_times_metadata():
     return monthly_archive
 
 # Get a unique tag collection for the search query
-# Get a unique tag collection for the search query
 def get_trends_Tags(times_metadata):    
     result = {}
     for time_category in times_metadata:
@@ -141,7 +139,7 @@ def get_trends_Tags(times_metadata):
     monthly_interests = {}
     
     for i, Category in enumerate(result):
-        print(Category + ': ', len(result))
+        print(Category + ': ', len(result[Category]))
         print(result[Category])
         data = []
         for tag in result[Category]:
@@ -151,22 +149,29 @@ def get_trends_Tags(times_metadata):
                 tag = 'Appointments and Executive'
             tag_arr = []
             tag_arr.append(tag)
-
+            print(tag)
             interest_over_time = {}
+            
+            time.sleep(2)
             pytrends.build_payload(tag_arr, cat=0, timeframe='2018-01-01 ' + str(datetime.datetime.now())[:10], geo='', gprop='')
             time.sleep(2)
             df = pytrends.interest_over_time().reset_index()
             interest_over_time['Tag'] = tag
 
-            for i in range(1, 20):
+            for i in range(len(list(df[tag]))):
                 try:
-                    interest_over_time['Interests_' + str(i)] = list(df[tag])[i-1]
+                    interest_over_time['Category'] = Category
+                    interest_over_time['Date_' + str(i)] = list(df['date'].dt.strftime('%Y-%m-%d'))[i]
+                    interest_over_time['Rate_' + str(i)] = list(df[tag])[i]
                 except Exception as e:
-                    print('No-result: ', interest_over_time['Tag'])
-                    interest_over_time['Interests_' + str(i)] = 0
+                    print('No-result: ', tag)
+                    interest_over_time['Date_' + str(i)] = 'None'
+                    interest_over_time['Rate_' + str(i)] = 0
                     pass
+                if list(df[tag])[i] == 100:
+                    interest_over_time['Busiest_date'] = list(df['date'].dt.strftime('%Y-%m-%d'))[i]
             data.append(interest_over_time)     
-        monthly_interests['Category'] = data
+        monthly_interests[Category] = data
     return monthly_interests
 
 def store_metadata():
@@ -182,12 +187,11 @@ def store_metadata():
             session.add(metadata_row)
 
     for time_category in monthly_interests:
-        for each_interest in monthly_interests[time_category]:
-            interest_row = Times(**each_interest)
+        for monthly_tags in monthly_interests[time_category]:
+            interest_row = Google(**monthly_tags)
             session.add(interest_row)
 
     session.commit()
-
 
 store_metadata()
 

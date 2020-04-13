@@ -41,11 +41,13 @@
       </header>
       <div class="p-1 mt-1 bg-dark"></div>
 
-      <div class="container" onchange="getData(this.value)">
-        <h4 class="text-center py-3">Monthly Frequency of NYTimes Tag with Search Trends</h4> 
+      <div class="container">
+        <h4 class="text-center py-4">Monthly Frequency of NYTimes Tag with Search Trends</h4>
+        <select class="my-4 form-control form-control-lg" id="selectButton"></select>
         {% for error in errors %}
           <h6 class="text-center text-muted">{{ error }}</h6>
         {% endfor %}
+        <div id='vis-container'></div>
         <div class="d-flex flex-row col-md-12 blog-main border-bottom border-secondary">
           <table class="monthly_table table table-hover col-9"></table>
           <div class="recent_news col-3 ml-3 border rounded overflow-hidden flex-md-row p-3 shadow-sm position-relative">
