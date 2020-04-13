@@ -15,24 +15,6 @@ from sqlalchemy import create_engine, func, distinct
 from flask_sqlalchemy import SQLAlchemy
 
 
-#######################
-# Get password or key #
-#######################
-
-config = configparser.ConfigParser()
-config.read('key_pair.ini')
-
-Times_key = config['Times']['key']
-
-Reddit_client_id = config['Reddit']['client_id']
-Reddit_client_secret = config['Reddit']['client_secret']
-Reddit_username = config['Reddit']['username']
-Reddit_password = config['Reddit']['password']
-Reddit_user_agent = config['Reddit']['user_agent']
-
-Youtube_YOUTUBE_API_SERVICE_NAME = config['Youtube']['YOUTUBE_API_SERVICE_NAME']
-Youtube_YOUTUBE_API_VERSION = config['Youtube']['YOUTUBE_API_VERSION']
-Youtube_DEVELOPER_KEY = config['Youtube']['DEVELOPER_KEY']
 
 
 ###############

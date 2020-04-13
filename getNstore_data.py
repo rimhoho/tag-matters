@@ -22,7 +22,11 @@ from sqlalchemy.sql import *
 
 from model import *
 
-# Use CofigParser to safely store the password or key
+
+#######################
+# Get password or key #
+#######################
+
 config = configparser.ConfigParser()
 config.read('key_pair.ini')
 
@@ -37,6 +41,7 @@ Reddit_user_agent = config['Reddit']['user_agent']
 Youtube_YOUTUBE_API_SERVICE_NAME = config['Youtube']['YOUTUBE_API_SERVICE_NAME']
 Youtube_YOUTUBE_API_VERSION = config['Youtube']['YOUTUBE_API_VERSION']
 Youtube_DEVELOPER_KEY = config['Youtube']['DEVELOPER_KEY']
+
 
 # Archive API
 def get_times_metadata():
