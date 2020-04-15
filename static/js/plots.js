@@ -19,114 +19,83 @@ function dashboard() {
     .then(resp => Promise.all( resp.map(r => r.json()) ))
     .then(([times, google]) => {
 
-        // var table = d3.select(".monthly_table")
-        //     , columns = ["Tag", "Frequency"]
-        //     , thead = table.append("thead")
-        //     , tbody = table.append("tbody");
+        var table = d3.select(".monthly_table")
+            , columns = ["Tag", "Frequency"]
+            , thead = table.append("thead")
+            , tbody = table.append("tbody");
 
-        // // append the header row
-        // thead.append("tr")
-        //     .selectAll("th")
-        //     .data(columns)
-        //     .enter()
-        //     .append("th")
-        //     .text(function (d) { return d; });
+        // append the header row
+        thead.append("tr")
+            .selectAll("th")
+            .data(columns)
+            .enter()
+            .append("th")
+            .text(function (d) { return d; });
         
-        // // create a row for each object in the data
-        // var rows = tbody.selectAll("tr")
-        //     .data(times)//.filter(tag_list => tag_list['Category'] == '2018-03'))
-        //     .enter()
-        //     .append("tr");
+        // create a row for each object in the data
+        var rows = tbody.selectAll("tr")
+            .data(times)//.filter(tag_list => tag_list['Category'] == '2018-03'))
+            .enter()
+            .append("tr");
 
-        // // create cells for each object in the data                  
-        // rows.selectAll("td")
-        //     // data = [{'Tag': '', 'Frequency': '', 'Title': '', 'Date': '', 'Url': '', 'Description': '', 'img_URL': ''},{...}]
-        //     .data(function (row) {
-        //         return columns.map(function(key) {
-        //             if (key == 'Tag' || key == 'Frequency'){
-        //                 return row[key];
-        //             }
-        //         }); 
-        //     })
-        //     .enter()
-        //     .append("td")
-        //     .attr("style", "font-family: 'Lato'")
-        //     .text(d => d);
+        // create cells for each object in the data                  
+        rows.selectAll("td")
+            // data = [{'Tag': '', 'Frequency': '', 'Title': '', 'Date': '', 'Url': '', 'Description': '', 'img_URL': ''},{...}]
+            .data(function (row) {
+                return columns.map(function(key) {
+                    if (key == 'Tag' || key == 'Frequency'){
+                        return row[key];
+                    }
+                }); 
+            })
+            .enter()
+            .append("td")
+            .attr("style", "font-family: 'Lato'")
+            .text(d => d);
         
-        // thead.append("tr")
-        //     .selectAll("th")
-        //     .append("th")
-        //     .text('Google Search Trends');
+        thead.append("tr")
+            .selectAll("th")
+            .append("th")
+            .text('Google Search Trends');
 
+
+        
         // create a google json
-        var new_google = []
-        var date_fields = []
+        // var google_tag = []
+        // var date_fields = []
 
-        for (t in google[0]){
-            if (t !== 'Tag' && t !== 'Category' && t !== 'Busiest_date') {
-                if (typeof google[0][t] === 'string'){
-                        date_fields.push(google[0][t])
-                }
-            }
-        }
-        console.log('date_fields', date_fields);
+        // for (t in google[0]){
+        //     if (t !== 'Tag' && t !== 'Category' && t !== 'Busiest_date') {
+        //         if (typeof google[0][t] === 'string'){
+        //                 date_fields.push(google[0][t])
+        //         }
+        //     }
+        // }
         
-
-        google.forEach(function(tag) {
-            var tag_dict = {};
-            var tags_list = [];
-            
-            var category = tag['Category'];
-
-            if (category in tag_dict) {
-                var each_rate = []
-                for (const t in tag){
-                    if (t == 'Tag') {
-                        var tag_keword = tag[t];
-                        // console.log('tag_keword', tag_keword);
-                        each_tag['Tag'] = tag_keword;
-                    }
-                    if (typeof tag[t] == 'number'){
-                        // console.log('Rates', tag[t]);
-                        each_rate.push(tag[t]);
-                    }
-                }
-                each_tag['Rate'] = each_rate;
-                tags_list.push(+each_tag);
-
-            } else {
-                tag_dict[category] = []; //[tag['Tag'], tag['Busiest_date']];
-
-                var each_tag = {}
-                var each_rate = []
-                for (const t in tag){
-                    if (t == 'Tag') {
-                        var tag_keword = tag[t];
-                        // console.log('tag_keword', tag_keword);
-                        each_tag['Tag'] = tag_keword;
-                    }
-                    if (typeof tag[t] == 'number'){
-                        // console.log('Rates', tag[t]);
-                        each_rate.push(tag[t]);
-                    }
-                }
-                each_tag['Rate'] = each_rate;
-                tags_list.push(each_tag);
-            }
-            
-            tag_dict[category].push(tags_list)
-            // tag_dict[category].push(date_list, rate_list)
-            new_google.push(tag_dict);
-        })
-        // new_google = [{'2018-01': [{'Tag': 'New York City', 'Rate' : [5, 48]]}, {'Tag': 'United States Politics and Government', 'Rate' : [50, 100]]}]
-        console.log('new_google', new_google);
-        
+        // google.forEach(function(tag) {
+        //     var tags_list = {};
+        //     var each_rate = [];
+        //     for (const t in tag){
+        //         if (t == 'Category') {
+        //             tags_list['Category'] = tag[t];
+        //         }
+        //         if (t == 'Tag') {
+        //             tags_list['Tag'] = tag[t];
+        //         }
+        //         if (typeof tag[t] == 'number'){
+        //             each_rate.push(tag[t]);
+        //         }
+        //     }
+        //     tags_list['Rate'] = each_rate;
+        //     google_tag.push(tags_list);
+        // })
+        // google_tag = [{'Category': '2018-01', 'Tag': 'New York City', 'Rate' : [5, 48]}, {'Category': '2018-01', 'Tag': 'United States Politics and Government', 'Rate' : [50, 100]}];
 
 
-        // makeVis(new_google)
+        // makeVis(google_tag)
 
 
-        // var makeVis = new_google => {
+        // var makeVis = google_tag => {
         //     // Define dimensions of vis
         //     var margin = { top: 4, right: 6, bottom: 4, left: 6 },
         //         width  = 400 - margin.left - margin.right,
@@ -206,9 +175,9 @@ function dashboard() {
 
 
 
-        //     var updateBars = new_google => {
+        //     var updateBars = google_tag => {
         //         // First update the y-axis domain to match data
-        //         yScale.domain( d3.extent(new_google) );
+        //         yScale.domain( d3.extent(google_tag) );
         //         yAxisHandleForUpdate.call(yAxis);
 
         //         var bars = canvas.selectAll(".bar").data(data);
@@ -237,14 +206,14 @@ function dashboard() {
         // // Handler for dropdown value change
         // var dropdownChange = () => {
         //     var tag = d3.select(this).property('value'),
-        //         newData   = new_google[tag];
+        //         newData   = google_tag[tag];
 
         //     updateBars(newData);
         // };
 
 
         // // Get names of cereals, for dropdown
-        // var tags = Object.keys(new_google).sort();
+        // var tags = Object.keys(google_tag).sort();
 
         // var dropdown = d3.select("#vis-container")
         //     .insert("select", "svg")
@@ -258,7 +227,7 @@ function dashboard() {
         //         return d[0].toUpperCase() + d.slice(1,d.length); // capitalize 1st letter
         //     });
 
-        // var initialData = new_google[ tags[0] ];
+        // var initialData = google_tag[ tags[0] ];
         
         
         // updateBars(initialData);

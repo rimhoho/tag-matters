@@ -88,8 +88,6 @@ def get_times_metadata():
                     tag = 'Brett Kavanaugh'
                 if tag in ['Putin', 'Vladimir V']:
                     tag = 'Putin'
-                if tag in ['New York City', 'NYC','NY)', 'NY']:
-                    tag = 'New York City'
                 if tag in ['Fla', 'Parkland']:
                     tag = 'Parkland'
                 if tag in ['Coronavirus Aid', 'Relief', 'and Economic Security Act (2020)']:
@@ -100,10 +98,14 @@ def get_times_metadata():
                     tag = 'School Shootings'
                 if tag in ['Shutdowns (Institutional)']:
                     tag = 'Shutdowns'
-                if tag in count_tag:
-                    count_tag[tag] += 1
-                else:
-                    count_tag[tag] = 1   
+                if tag in ['New York City', 'NYC','NY)', 'NY', 'United States Politics and Government', 'Books and Literature', 'Politics and Government', 'Movies', 'Television', 'Fashion and Apparel', 'Art', 'Computers and the Internet', 'Theater', 'Real Estate and Housing (Residential)', 'Women and Girls', 'Weddings and Engagements', 'Immigration and Emigration', 'Blacks', 'Deaths (Obituaries)', 'Primaries and Caucuses']:
+                    tag = ''
+                    
+                if tag is not '':
+                    if tag in count_tag:
+                        count_tag[tag] += 1
+                    else:
+                        count_tag[tag] = 1   
 
             tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:20]      
                        
