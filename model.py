@@ -263,6 +263,8 @@ class Google(Base):
     Rate_116 = Column(Integer)
     Date_117 = Column(String(25))
     Rate_117 = Column(Integer)
+    Date_118 = Column(String(25))
+    Rate_118 = Column(Integer)
 
 Times.__table__.create(bind=engine, checkfirst=True)
 Google.__table__.create(bind=engine, checkfirst=True)

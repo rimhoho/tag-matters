@@ -98,16 +98,16 @@ def get_times_metadata():
                     tag = 'School Shootings'
                 if tag in ['Shutdowns (Institutional)']:
                     tag = 'Shutdowns'
-                if tag in ['New York City', 'NYC','NY)', 'NY', 'United States Politics and Government', 'Books and Literature', 'Politics and Government', 'Movies', 'Television', 'Fashion and Apparel', 'Art', 'Computers and the Internet', 'Theater', 'Real Estate and Housing (Residential)', 'Women and Girls', 'Weddings and Engagements', 'Immigration and Emigration', 'Blacks', 'Deaths (Obituaries)', 'Primaries and Caucuses']:
+                if tag in ['New York City', 'NYC','NY)', 'States (US)', 'New York State', 'United States Economy', 'New York Times', 'United States International Relations', 'Appointments and Executive Changes', 'United States', 'Food', 'United States Politics and Government', 'Democratic Party', 'Senate', 'Olympic Games', 'Actors and Actresses', 'Dancing', 'Crossword Puzzles', 'Deaths (Fatalities)', 'World Economic Forum', 'Republican Party', 'Republican Party', 'House of Representatives', 'Politics and Government', 'Research', 'Museums', 'Law and Legislation', 'Justice Department', 'Children and Childhood', 'Photography', 'Pop and Rock Music', 'Restaurants', 'Education (K-12)', 'Corruption (Institutional)', 'Travel and Vacations', 'NY', 'News and News Media', 'Labor and Jobs', 'Suits and Litigation (Civil)', 'Books and Literature', 'Black People', 'Social Media', 'Movies', 'Music', 'Television', 'Cooking and Cookbooks', 'Fashion and Apparel', 'Art', 'Computers and the Internet', 'Theater', 'International Trade and World Market', 'Real Estate and Housing (Residential)', 'New Jersey', 'Colleges and Universities', 'Women and Girls', 'Weddings and Engagements', 'Immigration and Emigration', 'Blacks', 'Deaths (Obituaries)', 'Primaries and Caucuses']:
                     tag = ''
-                    
+
                 if tag is not '':
                     if tag in count_tag:
                         count_tag[tag] += 1
                     else:
                         count_tag[tag] = 1   
 
-            tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:20]      
+            tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:40]
                        
             data = []
             for top_tag in tags_with_frequency:
@@ -160,25 +160,30 @@ def get_trends_Tags(times_metadata):
             interest_over_time = {}
             
             time.sleep(2)
-            pytrends.build_payload(tag_arr, cat=0, timeframe='2018-01-01 ' + str(datetime.datetime.now())[:10], geo='', gprop='')
-            time.sleep(2)
-            df = pytrends.interest_over_time().reset_index()
-            interest_over_time['Tag'] = tag
+            try:
+                pytrends.build_payload(tag_arr, cat=0, timeframe='2018-01-01 ' + str(datetime.datetime.now())[:10], geo='', gprop='')
+                time.sleep(2)
+                df = pytrends.interest_over_time().reset_index()
+                interest_over_time['Tag'] = tag
+            
 
-            for i in range(len(list(df[tag]))):
-                try:
-                    interest_over_time['Category'] = Category
-                    interest_over_time['Date_' + str(i)] = list(df['date'].dt.strftime('%Y-%m-%d'))[i]
-                    interest_over_time['Rate_' + str(i)] = list(df[tag])[i]
-                except Exception as e:
-                    print('No-result: ', tag)
-                    interest_over_time['Date_' + str(i)] = 'None'
-                    interest_over_time['Rate_' + str(i)] = 0
-                    pass
-                if list(df[tag])[i] == 100:
-                    interest_over_time['Busiest_date'] = list(df['date'].dt.strftime('%Y-%m-%d'))[i]
-            data.append(interest_over_time)     
-        monthly_interests[Category] = data
+                for i in range(len(list(df[tag]))):
+                    try:
+                        interest_over_time['Category'] = Category
+                        interest_over_time['Date_' + str(i)] = list(df['date'].dt.strftime('%Y-%m-%d'))[i]
+                        interest_over_time['Rate_' + str(i)] = list(df[tag])[i]
+                    except Exception as e:
+                        print('No-result: ', tag)
+                        interest_over_time['Date_' + str(i)] = 'None'
+                        interest_over_time['Rate_' + str(i)] = 0
+                        pass
+                    if list(df[tag])[i] == 100:
+                        interest_over_time['Busiest_date'] = list(df['date'].dt.strftime('%Y-%m-%d'))[i]
+                data.append(interest_over_time)
+            except Exception as e:
+                print('No-result: ', tag)
+                pass
+            monthly_interests[Category] = data
     return monthly_interests
 
 def store_metadata():
