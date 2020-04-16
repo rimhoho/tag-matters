@@ -293,6 +293,8 @@ class GoogleData(db.Model):
     Rate_116 = db.Column(db.Integer)
     Date_117 = db.Column(db.String(25))
     Rate_117 = db.Column(db.Integer)
+    Date_118 = db.Column(db.String(25))
+    Rate_118 = db.Column(db.Integer)
 
 ##############
 # HTML Pages #
