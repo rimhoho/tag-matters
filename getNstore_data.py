@@ -98,7 +98,7 @@ def get_times_metadata():
                     tag = 'School Shootings'
                 if tag in ['Shutdowns (Institutional)']:
                     tag = 'Shutdowns'
-                if tag in ['New York City', 'NYC','NY)', 'States (US)', 'New York State', 'United States Economy', 'New York Times', 'United States International Relations', 'Appointments and Executive Changes', 'United States', 'Food', 'United States Politics and Government', 'Democratic Party', 'Senate', 'Olympic Games', 'Actors and Actresses', 'Dancing', 'Crossword Puzzles', 'Deaths (Fatalities)', 'World Economic Forum', 'Republican Party', 'Republican Party', 'House of Representatives', 'Politics and Government', 'Research', 'Museums', 'Law and Legislation', 'Justice Department', 'Children and Childhood', 'Photography', 'Pop and Rock Music', 'Restaurants', 'Education (K-12)', 'Corruption (Institutional)', 'Travel and Vacations', 'NY', 'News and News Media', 'Labor and Jobs', 'Suits and Litigation (Civil)', 'Books and Literature', 'Black People', 'Social Media', 'Movies', 'Music', 'Television', 'Cooking and Cookbooks', 'Fashion and Apparel', 'Art', 'Computers and the Internet', 'Theater', 'International Trade and World Market', 'Real Estate and Housing (Residential)', 'New Jersey', 'Colleges and Universities', 'Women and Girls', 'Weddings and Engagements', 'Immigration and Emigration', 'Blacks', 'Deaths (Obituaries)', 'Primaries and Caucuses']:
+                if tag in ['New York City', 'NYC','NY)', 'States (US)', 'New York State', 'United States Economy', 'New York Times', 'United States International Relations', 'Appointments and Executive Changes', 'United States', 'Food', 'United States Politics and Government', 'your-feed-science', 'Democratic Party', 'Senate', 'Olympic Games', 'Actors and Actresses', 'Dancing', 'Crossword Puzzles', 'Deaths (Fatalities)', 'World Economic Forum', 'Republican Party', 'Republican Party', 'House of Representatives', 'Politics and Government', 'Research', 'Museums', 'Law and Legislation', 'Justice Department', 'Children and Childhood', 'Photography', 'Pop and Rock Music', 'Restaurants', 'Education (K-12)', 'Corruption (Institutional)', 'Travel and Vacations', 'NY', 'News and News Media', 'Labor and Jobs', 'Suits and Litigation (Civil)', 'Books and Literature', 'Black People', 'Social Media', 'Movies', 'Music', 'Television', 'Cooking and Cookbooks', 'Fashion and Apparel', 'Art', 'Computers and the Internet', 'Theater', 'International Trade and World Market', 'Real Estate and Housing (Residential)', 'New Jersey', 'Colleges and Universities', 'Women and Girls', 'Weddings and Engagements', 'Immigration and Emigration', 'Blacks', 'Deaths (Obituaries)', 'Primaries and Caucuses']:
                     tag = ''
 
                 if tag is not '':
@@ -154,6 +154,8 @@ def get_trends_Tags(times_metadata):
                 tag = 'Russian Ties to Trump'
             if tag in ['Appointments and Executive Changes']:
                 tag = 'Appointments and Executive'
+            if tag in ['Layoffs and Job Reductions']:
+                tag = 'Layoffs'
             tag_arr = []
             tag_arr.append(tag)
             print(tag)

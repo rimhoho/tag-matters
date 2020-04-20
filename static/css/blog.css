@@ -109,3 +109,19 @@ body {font-family: 'Playfair Display', serif;}
   th, td { padding: 0 1em 0.5ex 0;}
   th.center, td.center { text-align: center; }
   th.num, td.num { text-align: right; }
+
+  .custom-select {
+    display: inline-block;
+    width: 100%;
+    height: calc(2.25rem + 2px);
+    padding: .375rem 1.75rem .375rem .75rem;
+    line-height: 1.5;
+    color: #495057;
+    vertical-align: middle;
+    background-size: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
