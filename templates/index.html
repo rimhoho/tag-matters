@@ -20,53 +20,145 @@
     <!-- AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
-    <title>Hello, Tags</title>
+    <title>Tag Metters</title>
   </head>
   <body data-gr-c-s-loaded="true" cz-shortcut-listen="true">
     <div class="container">
 
-      <header class="blog-header pt-3 pb-4 border-dark">
+      <header class="blog-header bottom-line pt-3 pb-3">
         <div class="row flex-nowrap justify-content-between align-items-center">
           <div class="col-4"></div>
           <div class="col-4 text-center">
-            <a class="blog-header-logo text-dark" href="https://times-tags.herokuapp.com/">Tags from NYTimes.com</a>
+            <a class="blog-header-logo text-dark" href="https://times-tags.herokuapp.com/">Tag Metters</a>
           </div>
           <div class="col-4 d-flex justify-content-end align-items-center">
             <!-- <a class="text-muted" href="#" aria-label="Search">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24" focusable="false"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"></circle><path d="M21 21l-5.2-5.2"></path></svg>
             </a> -->
-            <a class="btn btn-sm text-muted" href="https://github.com/rimhoho/Monthly-Frequency-of-NYTimes-Tag">Want to view the code?</a>
+            <a class="btn btn-sm text-muted" href="https://github.com/rimhoho/Monthly-Frequency-of-NYTimes-Tag">View the code</a>
           </div>
         </div>
       </header>
-      <div class="p-1 mt-1 bg-dark"></div>
+      <!-- <div class="p-1 mt-1 bg-dark"></div> -->
 
-      <div class="container">
-        <div class="d-flex justify-content-center align-items-center my-2">
-          <h4 class="text-center py-4">Which tags are the most frequently used on </h4>
-          <select class="ml-3 bg-light form-control-sm" id="monthly_selection"></select>
-        </div>
-        <!-- <label>January, 2018 ~ April, 2020</label> -->
-        {% for error in errors %}
-          <h6 class="text-center text-muted">{{ error }}</h6>
-        {% endfor %}
-        <div class="d-flex flex-row col-md-12 blog-main border-bottom border-secondary">
-          <table class="monthly_table table table-hover col-9"></table>
-          <div class="recent_news col-3 ml-3 border rounded overflow-hidden flex-md-row p-3 shadow-sm position-relative">
-            <p class="card-text"><small class="text-muted">March 14, 2020</small></p>
-            <a class="text-dark" href="https://www.nytimes.com/2020/03/14/technology/coronavirus-purell-wipes-amazon-sellers.html" target="_blank">
-              <div class="my-2">
-                <img class="img-fluid" src="https://static01.nyt.com/images/2020/03/13/business/00gouge1/00gouge1-mediumThreeByTwo440-v2.jpg" alt="title">
-              </div>
-              <p class="">He Has 17,700 Bottles of Hand Sanitizer and Nowhere to Sell Them</p>
-            </a>
-            <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Coronavirus (2019-nCoV)</a>
-            <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Prices (Fares, Fees and Rates)</a>
-            <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Cleansers</a>
+      <div class="container bg-light">
+        <div>
+          <h5 class="mt-5 h5-light"><span class="h5">New York Times</span> publishes around 250 articles per day with only a fraction of those articles making it to the homepage.
+          <span class="h5">Judiciously, NYTimes uses lots of tags👏</span><span class="h5-light"> to help boost relevance on the site search and send a signal to external search engines, as well as inform content recommendations for readers.</span></h5>
+          <div class="py-2">
+            <h5>But what exactly tag's working?</h5>
           </div>
-        </div>     
+        </div>
+        <div class="d-flex flex-column px-md-4 pt-4 mt-4 bg-white border">
+          <div class="container pb-3 mt-2">
+            <h5 class="mb-3 text-center">Tags Tracking Analytics</h5>
+            <p class="py-2">To see how it relates with between from <strong>News Media</strong> to <strong>End User</strong>, the research has applyed search histories over time in Google Search Trends and the recent posts at Reddit tracking the top frequently used tags in NYTimes.</p>
+            <div class="row mt-4">
+              <div class="col-md-4">
+                <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="d-inline-block mb-1">New York Times</h6>
+                            <div class="d-flex flex-column align-items-center">
+                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" class="" viewBox="0 0 24 24" fill="currentColor" role="presentation"><path d="M12 20.1l5.82 3.682c1.066.675 2.37-.322 2.09-1.584l-1.543-6.926 5.146-4.667c.94-.85.435-2.465-.799-2.567l-6.773-.602L13.29.89a1.38 1.38 0 0 0-2.581 0l-2.65 6.53-6.774.602C.052 8.126-.453 9.74.486 10.59l5.147 4.666-1.542 6.926c-.28 1.262 1.023 2.26 2.09 1.585L12 20.099z"></path></svg>
+                                <small class="card-text">Main</small>
+                            </div>
+                        </div>
+                        <p><small class="text-muted">TIMEFRAME: </small>2019-05 ~ 2020-05<br/>
+                        <small class="text-muted"># OF TAGS: </small>20 per month</p>
+                        <a href="https://developer.nytimes.com/" class="btn btn-sm my-2 my-sm-0 mr-3 btn-dark" target="_blank"><strong>API Details</strong></a>
+                    </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column  bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="d-inline-block mb-0">Google Search trends</h6>
+                            <div class="d-flex flex-column align-items-center">
+                                <!-- <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" class="" viewBox="0 0 24 24" fill="currentColor" role="presentation"><path d="M12 20.1l5.82 3.682c1.066.675 2.37-.322 2.09-1.584l-1.543-6.926 5.146-4.667c.94-.85.435-2.465-.799-2.567l-6.773-.602L13.29.89a1.38 1.38 0 0 0-2.581 0l-2.65 6.53-6.774.602C.052 8.126-.453 9.74.486 10.59l5.147 4.666-1.542 6.926c-.28 1.262 1.023 2.26 2.09 1.585L12 20.099z"></path></svg>
+                                <small class="card-text">Major</small> -->
+                            </div>
+                        </div>
+                        <p><small class="text-muted">TIMEFRAME: </small>A Month before& after NYTimes tags created</p>
+                          <!-- <strong>Trend Index: </strong><small>The Trend Index</small> -->
+                        <a href="https://pypi.org/project/pytrends/" class="btn btn-sm my-2 my-sm-0 mr-3 btn-dark" target="_blank"><strong>API Details</strong></a>
+                    </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="d-inline-block mb-0">Reddit</h6>
+                            <div class="d-flex flex-column align-items-center">
+                                <!-- <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" class="" viewBox="0 0 24 24" fill="currentColor" role="presentation"><path d="M12 20.1l5.82 3.682c1.066.675 2.37-.322 2.09-1.584l-1.543-6.926 5.146-4.667c.94-.85.435-2.465-.799-2.567l-6.773-.602L13.29.89a1.38 1.38 0 0 0-2.581 0l-2.65 6.53-6.774.602C.052 8.126-.453 9.74.486 10.59l5.147 4.666-1.542 6.926c-.28 1.262 1.023 2.26 2.09 1.585L12 20.099z"></path></svg>
+                                <small class="card-text">Major</small> -->
+                            </div>
+                        </div>
+                        <p><small class="text-muted">TIMEFRAME: </small>This Month</br>
+                        <small class="text-muted">TARGET: </small>Search results sorting by the most relevant post to tags</p>
+                        <a href="https://praw.readthedocs.io/en/latest/index.html" class="btn btn-sm my-2 my-sm-0 mr-3 btn-dark" target="_blank"><strong>API Details</strong></a>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-3 pb-2">
+            <div class="d-flex align-items-center justify-content-between pb-1">
+              <strong>Selected Variables from APIs</strong>
+              <small class="text-muted">Youtube API offers a limited maxresult in search.list, so it has been decided not to apply.</small>
+            </div>
+            <img src="{{ url_for('static', filename='images/api_diagram.png') }}" alt="" class="pt-2 pb-4" width="100%" height="100%">
+            <!-- <strong>Database Design</strong>
+            <img src="{{ url_for('static', filename='images/db_realation_entity_diagram.png') }}" alt="" class="pt-2" width="80%" height="100%"> -->
+          </div>
+        </div>
+        
+        <div class="d-flex flex-column align-items-center px-md-4 pt-1 mt-4">
+          <div class="d-flex align-items-center align-items-center">
+            <h5 class="text-center py-4">#Tell the stories in</h5>
+            <select class="ml-3 bg-light form-control-sm" id="monthly_selection"></select>  
+          </div>
+          <!-- <label>January, 2018 ~ April, 2020</label> -->
+          {% for error in errors %}
+            <h6 class="text-center text-muted">{{ error }}</h6>
+          {% endfor %}
+          <div class="d-flex flex-row col-md-12 blog-main">
+            <table class="monthly_table table table-hover col-12"></table>
+            <!-- <div class="recent_news col-3 ml-3 rounded overflow-hidden flex-md-row p-3 shadow-sm position-relative">
+              <p class="card-text"><small class="text-muted">March 14, 2020</small></p>
+              <a class="text-dark" href="https://www.nytimes.com/2020/03/14/technology/coronavirus-purell-wipes-amazon-sellers.html" target="_blank">
+                <div class="my-2">
+                  <img class="img-fluid" src="https://static01.nyt.com/images/2020/03/13/business/00gouge1/00gouge1-mediumThreeByTwo440-v2.jpg" alt="title">
+                </div>
+                <p class="">He Has 17,700 Bottles of Hand Sanitizer and Nowhere to Sell Them</p>
+              </a>
+              <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Coronavirus (2019-nCoV)</a>
+              <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Prices (Fares, Fees and Rates)</a>
+              <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Cleansers</a>
+            </div> -->
+          </div>     
+        </div>
       </div>
-
+      <!-- <div>
+            <h5 class="pt-2 text-center">The most popular tags Analytics</h5>
+            <div>
+              <strong class="pl-4">Appear every single month: </strong>
+              <ol>
+                <li>Coronavirus (2019-nCoV) <strong>8361</strong></li>
+                <li>Presidential Election of 2020 <strong>5962</strong></li>
+                <li>Joe Biden <strong>3805</strong></li>
+                <li>United States International Relations<strong>2327</strong></li>
+                <li>Trump-Ukraine Whistle-blower Complaint and Impeachment Inquiry<strong>2111</strong></li>
+                <li>Quarantines <strong>1799</strong></li>
+                <li>Epidemics <strong>1375</strong></li>
+                <li>Impeachment <strong>1352</strong></li>
+                <li>Primaries and Caucuses <strong>1306</strong></li>
+                <li>China <strong>1253</strong></li>
+              </ol>
+            </div>
+          </div> -->
     </div>
 
     <!-- Optional JavaScript -->

@@ -1,27 +1,36 @@
 /* stylelint-disable selector-list-comma-newline-after */
-body {font-family: 'Playfair Display', serif;}
+body {
+  font-family:' Helvetica Neue','Helvetica','Arial',sans-serif; 
+  color: #444444;
+  background-color: #FAFAFA;
+}
 
-.blog-header {
-    line-height: 1;
-    border-bottom: 1px solid #e5e5e5;
+h5, .h5 { line-height: 25px; font-weight: 700;} 
+h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;} 
+.h5-light { line-height: 22px; font-weight: 200;} 
+p { line-height: 22px; font-size: 1.1rem; font-weight: 200; color: #495057;} 
+/* blockquote { line-height: 30px; } 
+pre { line-height: 18.5714px; } */
+.bottom-line {
+    /* line-height: 1; */
+    border-bottom: 1px solid #cacaca;
   }
 
   .blog-header-logo {
     font-family: 'UnifrakturCook', cursive, Georgia, "Times New Roman", serif;
-    font-size: 2.3rem;
+    font-size: 1.6rem;
   }
   
   .blog-header-logo:hover {
     text-decoration: none;
   }
   
-  h1, h2, h3, h4, h5, h6 {
-    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  }
-  
   .display-4 {
     font-size: 2.5rem;
   }
+
+  .timesStyle {font-family: "Playfair Display", Georgia, "Times New Roman", serif;}
+
   @media (min-width: 768px) {
     .display-4 {
       font-size: 3rem;
