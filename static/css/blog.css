@@ -6,11 +6,15 @@ body {
 }
 
 h5, .h5 { line-height: 25px; font-weight: 700;} 
+
 h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;} 
+
 .h5-light { line-height: 22px; font-weight: 200;} 
+
 p { line-height: 22px; font-size: 1.1rem; font-weight: 200; color: #495057;} 
-/* blockquote { line-height: 30px; } 
-pre { line-height: 18.5714px; } */
+
+.p-bold { line-height: 16px; font-size: 0.98rem; font-weight: 700;}
+
 .bottom-line {
     /* line-height: 1; */
     border-bottom: 1px solid #cacaca;
