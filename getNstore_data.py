@@ -80,6 +80,8 @@ def get_NYTimes_metadata():
                     articles['thm_img'] = 'no_image_found'
                 articles['tags'] = [''.join(tag['value']) for tag in a['keywords']]
                 monthly_article.append(articles)
+            if len(str(mm)) == 1:
+                mm = '0' + str(mm)
             monthly_archive[str(yy)+'-'+str(mm)] = monthly_article
 
             tag_arr = []
