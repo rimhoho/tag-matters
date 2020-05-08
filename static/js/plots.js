@@ -14,84 +14,54 @@ if (host.includes("heroku")) {
 function dashboard() {
     Promise.all([
         fetch(base_url + '/times'),
-        fetch(base_url + '/google')
+        fetch(base_url + '/google'),
+        fetch(base_url + '/reddit')
     ])
     .then(resp => Promise.all( resp.map(r => r.json()) ))
-    .then(([times, google]) => {
+    .then(([times, google, reddit]) => {
 
         // Create grouping data sorting by category and tag using d3.nest
         var d3_times = d3.nest()
-            .key(function(d) { return d.Category; })
-            .key(function(d) { return d.Tag; })
+            .key(function(d) { return d.periode; })
             .entries(times).reverse();
         var d3_google = d3.nest()
-            .key(function(d) { return d.Category; })
+            .key(function(d) { return d.periode; })
             .entries(google).reverse();
-
-        // Combind times and google
-        var combined_data = []
+        var d3_reddit = d3.nest()
+        .key(function(d) { return d.createdDate; })
+        .entries(reddit).reverse();
         
-        d3_times.forEach(monthly_dict => {
-            var monthly_time = monthly_dict.key,
-                monthly_values = monthly_dict.values,
-                new_dict = {},
-                tags_list = [];
+        // var combined_data = []
+        
+        // d3_times.forEach(monthly_dict => {
+        //     var monthly_time = monthly_dict.key,
+        //         monthly_values = monthly_dict.values,
+        //         new_dict = {},
+        //         tags_list = [];
 
-            new_dict['time'] = monthly_time
+        //     new_dict['time'] = monthly_time
             
-            monthly_values.forEach(monthly_news => {
-                var tag_dict = {}, tag_infos = [], single_tag = {}, frequency = {}, article = {};
-                single_tag['Tag'] = monthly_news.key;
-                frequency['Frequency'] = monthly_news.values[0].Frequency;
-                article['Date'] = monthly_news.values[0].Date;
-                article['Title'] = monthly_news.values[0].Title;
-                article['Url'] = monthly_news.values[0].Url;
-                article['img_URL'] = monthly_news.values[0].img_URL;
-                tag_infos.push(article, single_tag, frequency);
-                tag_dict[monthly_news.key] = tag_infos;
-                tags_list.push(tag_dict);
-                new_dict['Tag_list'] = tags_list;
-            });
-            combined_data.push(new_dict);
-        });
- 
-        d3_google.forEach(monthly_google => {
-            monthly_google['values'].forEach(google_dict => {
-                var interest_dict = {}
-                
-                combined_data.forEach(combined_tag => {
-                    combined_tag['Tag_list'].forEach(each_tag => {
-                        var times_tag = Object.keys(each_tag)[0];
+        //     monthly_values.forEach(monthly_news => {
+        //         var tag_dict = {}, tag_infos = [], single_tag = {}, frequency = {}, article = {};
+        //         single_tag['Tag'] = monthly_news.key;
+        //         frequency['Frequency'] = monthly_news.values[0].Frequency;
+        //         article['Date'] = monthly_news.values[0].Date;
+        //         article['Title'] = monthly_news.values[0].Title;
+        //         article['Url'] = monthly_news.values[0].Url;
+        //         article['img_URL'] = monthly_news.values[0].img_URL;
+        //         tag_infos.push(article, single_tag, frequency);
+        //         tag_dict[monthly_news.key] = tag_infos;
+        //         tags_list.push(tag_dict);
+        //         new_dict['Tag_list'] = tags_list;
+        //     });
+        //     combined_data.push(new_dict);
+        // });
 
-                        if (google_dict['Category'] == combined_tag['time'] && google_dict['Tag'] == times_tag) {
-                            var time_frame = [], Interest = [];
-                            for (const key in google_dict) {
-                                if (key != 'Category' && key != 'Tag' && key != 'Busiest_date') {
-                                    if (typeof google_dict[key] == 'string'){
-                                        time_frame.push(google_dict[key]);
-                                        interest_dict['Time_frame'] = time_frame;
-                                    }
-                                    if (typeof google_dict[key] == 'number'){
-                                        Interest.push(google_dict[key]);
-                                        interest_dict['Interest'] = Interest;
-                                    }
-                                }
-                            }
-                            each_tag[times_tag].push(interest_dict);
+        // return d3_times;
 
-                        }
-                    });
-                });
-            }); 
-        });
-        return combined_data;
-
-    }).then(combined_data => {   
-
-        console.log(combined_data);
         // Create initial table
         var table = d3.select(".monthly_table")
-            , columns = ["Tag", "Frequency", "Interest"]//, "Reddit Comment"]
+            , columns = ["tag", "frequency", "title", "date", "url", "img_URL"]//, "Interest on Google"]//, "Reddit Comment"]
             , thead = table.append("thead")
             , tbody = table.append("tbody");
             
@@ -103,86 +73,72 @@ function dashboard() {
             .append("th")
             .text(function (d) { return d; });
 
- 
         // Create a dropdown
         var select_menu = d3.select("#monthly_selection")
 
         select_menu
             .selectAll("option")
-            .data(combined_data)
+            .data(d3_times)
             .enter()
             .append("option")
             .attr("value", function(d){
-                return d['time'];
+                return d['key'];
             })
             .text(function(d){
-                return d['time'];
+                return d['key'];
             })
-            
+
         // Function to create the initial graph
         var initial_table = function(Time){
-
             // Filter the data to include only Time of interest
-            var selectTime = combined_data.filter(function(d){
-                    return d['time'] == Time;
+            var selectTime = d3_times.filter(function(d){
+                    return d['key'] == Time;
                 })
-            console.log('with values??', selectTime);
+            console.log('* 1 *', selectTime);
 
             // create a row for each object in the data
             var rows = tbody.selectAll("tr")
-                .data(selectTime)
+                .data(selectTime[0].values)
                 .enter()
                 .append("tr");
             
             // create cells for each object in the data                  
-            rows.selectAll("td").filter(":nth-child(1)")
-                // .data(function (d){
-                //     var result = [];
-                //     d['Tag_list'].foreach(function(each_dict){
-                //         var key = Object.keys(each_dict)[0];
-                //         total =  { 'Tag': key, 'Frequency': each_dict[key][0]['Frequency'], 'Article': each_dict[key][1], 'Interest': each_dict[key][2] };
-                //         result.push(total);
-                //         return result
-                //     })
-                // })
-                .data(function (row) {
-                    return row['Tag_list'].map(function(each_dict){
-                        return columns.map(function (column, i) {
-                            i = i + 1;
-                            try {
-                                return { 'value': each_dict[Object.keys(each_dict)[0]][i][column], 'name': column};
-                            }
-                            catch(err) {
-                                console.log('What is err?---', Object.keys(each_dict)[0], column, err);
-                                return { 'value': 'None', 'name': column};
-                            }
-                        });
-                    })
-                })
+            rows.selectAll("td")//.filter(":nth-child(1)")
+                .data(function (row){
+                    // row['values'].forEach(d => {
+                    //     // console.log('* 2 *', d);
+                    //     return columns.map( function ( column ) {
+                    //         console.log('* key *', column);
+                    //         console.log('* value *', d[column]);
+                    //         return { column: column, value: d[column]};
+                    //     } );
+                    // })
+                    return columns.map( function ( column ) {
+                        console.log('* key *', column);
+                        console.log('* value *',row[column]);
+                        return { column: column, value: row[column] };
+                    } );
+                } )
                 .enter()
                 .append('td')
-                .text(function (d, i) {
-                    console.log('$$$$', d[i].value)
-                    return d[i].value;
+                .html(function (d, i) {
+                    console.log('* ', i, ' *', d.value);
+                    if (d.column == 'url' ) {
+                        return '<a href="' + d.value + '">' + 'The most recent article containing the tag is here</a>';
+                    } else if (d.column == 'img_URL') {
+                        return '<img src="' + d.value + '" height="120px">';
+                    } else {
+                        return d.value;
+                    }
                 })
-                .attr("class", (d,i) => d[i].name);
+                .attr("class", (d,i) => d[i].tag);
                 
-
-            // rows.selectAll("td").filter(":nth-child(2)")
-            //     .data(function(d){
-            //         var d_arr = []
-            //         // console.log('td: ', d);
-            //         d_arr.push(d)
-            //         return d_arr;})
-            //     .enter()
-            //     .append("td")
-            //     .attr("style", "frequency")
-            //     .text(function(d){
-            //         // console.log('Frequency: ', d.Frequency);
-            //         return d.Frequency;})
+                return table;
         }
 
-        initial_table("2020-04");
+        initial_table("2020-05");
+
+
 
         // Update the data
         var updateTable = function(Time){
