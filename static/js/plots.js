@@ -41,7 +41,8 @@ Promise.all([
             , thead = table.append("thead")
             , tbody = table.append("tbody")
             , rows = tbody.selectAll("tr")
-            , columns = ["#", "tag", "frequency"];//, "title", "date", "url", "img_URL", "busiest", "startDate", "endDate", "trendDate", "trendIndex"];
+            , columns = ["#", "tag", "frequency"]//, "Interest on Google", "Reddit Comment"]
+            // columns = ["#", "tag", "frequency", "title", "date", "url", "img_URL", "busiest", "startDate", "endDate", "trendDate", "trendIndex"];
 
         // append the header row
         thead.append("tr")
@@ -80,7 +81,7 @@ Promise.all([
                         return columns.map( function ( column ) {
                             if (column == '#') {
                                 count = count + 1;
-                                return { column: column, value: count };
+                                return { column: column, value: 'Top ' + count };
                             } else {
                                 return { column: column, value: row[column] };
                             }
