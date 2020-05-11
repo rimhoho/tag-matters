@@ -293,11 +293,12 @@ def store_metadata(monthly_archive, frequent_tags_archive):
             else:
                 unique_top_tag_only[tag_with_F[0]] = tag_with_F[1]
 
-    unique_top_tag_only = sorted(unique_top_tag_only.items(),key=operator.itemgetter(1),reverse=True)[:10]
+    unique_top_tag_only = sorted(unique_top_tag_only.items(),key=operator.itemgetter(1),reverse=True)[:20]
 
-    # creating Youtube Resource Object 
-    youtube_object = discovery.build(Youtube_service_name, Youtube_API_version, developerKey = Youtube_developer_key)
-    max_results = 100
+    # # creating Youtube Resource Object 
+    # youtube_object = discovery.build(Youtube_service_name, Youtube_API_version, developerKey = Youtube_developer_key)
+    
+    max_results = 30
 
     for tag_frequency in unique_top_tag_only:
         
