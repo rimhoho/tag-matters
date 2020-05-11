@@ -70,7 +70,7 @@ def Times():
 def Google():
     
     # Create session and query all data
-    google_combined = db.session.query(GoogleTable.trendDate, GoogleTable.startDate, GoogleTable.endDate, GoogleTable.busiest, GoogleTable.trendIndex, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == GoogleTable.fk_times).group_by(GoogleTable.id).all()
+    google_combined = db.session.query(GoogleTable.trendDate, GoogleTable.busiest, GoogleTable.trendIndex, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == GoogleTable.fk_times).group_by(GoogleTable.id).all()
     db.session.close()
 
     google_archive = []
@@ -78,8 +78,6 @@ def Google():
         each_google = {'tag':google.tag,
                       'periode':google.periodeM,
                       'trendDate' : google.trendDate,
-                      'startDate' : google.startDate,
-                      'endDate' : google.endDate,
                       'busiest' : google.busiest,
                       'trendIndex' : google.trendIndex}
         google_archive.append(each_google)
@@ -92,17 +90,15 @@ def Reddit():
 
     # Create session and query all data
     # reddit_combined = db.session.query(RedditTable.postsCount, RedditTable.vote, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == RedditTable.fk_times).group_by(RedditTable.id).all()
-    reddit_combined = db.session.query(RedditTable).all()
-    db.session.close()
+    # reddit_combined = db.session.query(RedditTable).all()
+    # db.session.close()
 
-    reddit_archive = []
-    for reddit in reddit_combined:
-        each_reddit = {'tag':reddit.tag,
-                      'createdDate':reddit.createdDate,
-                      'postsCount' : reddit.postsCount,
-                      'vote' : reddit.vote}
-        reddit_archive.append(each_reddit)
-    return jsonify(reddit_archive)
+    # reddit_archive = []
+    # for reddit in reddit_combined:
+    #     each_reddit = {'tag':reddit.tag,
+    #                   'commentsCount':reddit.commentsCount}
+    #     reddit_archive.append(each_reddit)
+    # return jsonify(reddit_archive)
 
 if __name__ == "__main__":
     app.run(debug=True)
