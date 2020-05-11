@@ -32,9 +32,23 @@ Promise.all([
     var combined = d3.nest()
         .key(function(d) { return d.periode; })
         .entries(combined_pre_data);
-
-    console.log('* combined *', combined);
     
+    var new_reddit = d3.nest()
+    .key(function(d) { return d.tag; })
+    .entries(reddit);
+    
+    // var reddit_data = [];
+    // new_reddit.forEach(key => {
+    //     const t_item = new_reddit[key];
+    //     // console.log('-------------');
+    //     // console.log('* 1 *', t_item.tag, t_item.periode);
+    //     // console.log('* 2 *', g_item.tag, g_item.periode);
+    //     var combined_reddit =  Object.assign(t_item, g_item)
+    //     reddit_data.push(combined_reddit);
+    //   });
+
+
+    console.log('* new_reddit *', new_reddit);
 
     /////////////////////
     // Update dropdown //
