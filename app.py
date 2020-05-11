@@ -89,7 +89,7 @@ def Google():
 def Reddit():
 
     # Create session and query all data
-    reddit_combined = db.session.query(RedditTable.postsCount, RedditTable.vote, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == RedditTable.fk_times).group_by(RedditTable.id).all()
+    reddit_combined = db.session.query(RedditTable.commentsCount, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == RedditTable.fk_times).group_by(RedditTable.id).all()
     reddit_combined = db.session.query(RedditTable).all()
     db.session.close()
 
