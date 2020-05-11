@@ -26,8 +26,6 @@ class GoogleTable(Base):
 
     id = Column(Integer, primary_key=True)
     trendDate = Column(PickleType)
-    startDate = Column(String(25))
-    endDate = Column(String(25))
     busiest = Column(String(25))
     trendIndex = Column(PickleType)
     fk_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
@@ -40,13 +38,22 @@ class RedditTable(Base):
 
     id = Column(Integer, primary_key=True)
     tag = Column(String(255))
-    createdDate = Column(String(25))
-    postsCount = Column(Integer)
-    vote = Column(Integer)
+    commentsCount = Column(Integer)
+    
     # fk_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
     # redditNTag = relationship('TimesTable')
     
+# class YoutubeTable(Base): 
+#     __tablename__ = 'youtube'
+#     __table_args__ = {'extend_existing': True}
+
+#     id = Column(Integer, primary_key=True)
+#     tag = Column(String(255))
+#     viewCount = Column(Integer)
+#     commentsCount = Column(Integer)
+#     likeCount = Column(Integer)
 
 TimesTable.__table__.create(bind=engine, checkfirst=True)
 GoogleTable.__table__.create(bind=engine, checkfirst=True)
 RedditTable.__table__.create(bind=engine, checkfirst=True)
+# YoutubeTable.__table__.create(bind=engine, checkfirst=True)

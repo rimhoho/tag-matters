@@ -40,9 +40,9 @@ Reddit_username = config['Reddit']['username']
 Reddit_password = config['Reddit']['password']
 Reddit_user_agent = config['Reddit']['user_agent']
 
-Youtube_YOUTUBE_API_SERVICE_NAME = config['Youtube']['YOUTUBE_API_SERVICE_NAME']
-Youtube_YOUTUBE_API_VERSION = config['Youtube']['YOUTUBE_API_VERSION']
-Youtube_DEVELOPER_KEY = config['Youtube']['DEVELOPER_KEY']
+Youtube_service_name = config['Youtube']['YOUTUBE_API_SERVICE_NAME']
+Youtube_API_version = config['Youtube']['YOUTUBE_API_VERSION']
+Youtube_developer_key = config['Youtube']['DEVELOPER_KEY']
 
 
 def get_NYTimes_metadata():
@@ -153,6 +153,41 @@ monthly_archive = get_NYTimes_metadata()[0]
 frequent_tags_archive = get_NYTimes_metadata()[1]
 ################################################
 
+def get_youtube_numbers(frequent_tags_archive):
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+        # Store numbers of each Youtube's comments into DB
+        # viewCount = 0
+        # commentsCount = 0
+        # likeCount = 0
+        # search_tags = youtube_object.search().list(q = tag_frequency[0], part = "id, snippet", order = 'relevance', maxResults = max_results, publishedAfter = "2019-05-01T00:00:00Z").execute() 
+        # print('start: ', tag_frequency[0])
+        # for item in search_tags.get("items", []):
+        #     time.sleep(2)
+        #     stats = youtube_object.videos().list(part='statistics, snippet', id=item["id"]["videoId"]).execute()
+        #     new_viewCount = int(stats.get("items", [])[0]['statistics']['viewCount'])
+        #     new_commentsCount = int(stats.get("items", [])[0]['statistics']['commentsCount'])
+        #     new_likeCount =  int(stats.get("items", [])[0]['statistics']['likeCount'])
+        #     viewCount = viewCount + new_viewCount
+        #     commentsCount = commentsCount + new_commentsCount
+        #     likeCount = likeCount + new_likeCount
+        #     try:
+        #         insert_Youtube = YoutubeTable(
+        #             tag=tag_frequency[0],
+        #             viewCount=viewCount,
+        #             commentsCount=commentsCount,
+        #             likeCount=likeCount
+        #         )
+        #         session.add(insert_Youtube)
+
+        #     except Exception as e:
+        #         print(" = Unable insert_Youtube to DB : ", tag_frequency[0], " =")
+        #         pass
+    
+    session.commit()
+
+    return
 
 def store_metadata(monthly_archive, frequent_tags_archive):
     today = str(datetime.today())
@@ -194,15 +229,9 @@ def store_metadata(monthly_archive, frequent_tags_archive):
                                 session.add(insert_TimesTag)
                                 # session.commit() 
                             except Exception as e:
-                                print(e)#, " = Unable to insert_TimesTag to database.")
+                                print(" = Unable insert_TimesTag to DB : ", top_tag[0], periode, " =")
                                 pass
 
-    # Connect with PRAW(Reddit), to get numbers of the post and voteup
-    reddit = praw.Reddit(client_id = Reddit_client_id,
-                            client_secret = Reddit_client_secret,
-                            username = Reddit_username,
-                            password = Reddit_password,
-                            user_agent = Reddit_user_agent)
 
     frequent_tag_only = {}
     
@@ -220,24 +249,13 @@ def store_metadata(monthly_archive, frequent_tags_archive):
 
             tag_arr = []
             tag_arr.append(top_tag)
-            interest_over_time = {} 
-
-            # Get spicific timeframe for filltering the Google Search Trends results per each tag by period
-            datetyped_period = datetime.strptime(period, "%Y-%m")
-            one_month_ago = (datetyped_period + relativedelta(months=-1)).replace(day=datetime.today().day).strftime("%Y-%m-%d")
-            if period == today[:7]:
-                one_month_later = today[:10]
-            else:
-                one_month_later = (datetyped_period + relativedelta(months=+1)).replace(day=datetime.today().day).strftime("%Y-%m-%d")
+            interest_over_time = {}
             
-            time.sleep(2)
-
-            # Call pytrends by tag_arr and store them into dataframe
             try:
-                pytrends.build_payload(tag_arr, cat=0, timeframe = one_month_ago + ' ' + one_month_later, geo='', gprop='')
+                pytrends.build_payload(tag_arr, cat=0, timeframe = '2019-05-01 '+ today[:10], geo='', gprop='')
                 df = pytrends.interest_over_time().reset_index()
             except Exception as e:
-                print(e, " = Unable to search on Google Trends by ", tag_arr)
+                print(" = Unable search Google Trends : ", top_tag, periode, " =")
                 pass
             
             try:
@@ -249,8 +267,6 @@ def store_metadata(monthly_archive, frequent_tags_archive):
 
                 insert_Google = GoogleTable(
                         trendDate = [date.strftime("%Y-%m-%d") for date in df['date']],
-                        startDate = one_month_ago,
-                        endDate = one_month_later,
                         busiest = busiest_date,
                         trendIndex = [rate for rate in df[top_tag]],
                         fk_times = fk_id)
@@ -258,88 +274,70 @@ def store_metadata(monthly_archive, frequent_tags_archive):
                 session.add(insert_Google)
 
             except Exception as e:
-                print(e, " = Unable to insert_Google to database.")
+                print(" = Unable insert_Google to DB : ", top_tag, periode, " =")
                 pass
-            
+    
+    
+    reddit = praw.Reddit(client_id = Reddit_client_id,
+                         client_secret = Reddit_client_secret,
+                         username = Reddit_username,
+                         password = Reddit_password,
+                         user_agent = Reddit_user_agent)
 
-            # Cleaning tags is mandatory to get accurate results on the Reddit's Post
-            if top_tag in ['Biden, Joseph R Jr']:
-                top_tag = 'Joe Biden'
-            if top_tag in ['Sanders, Bernard']:
-                top_tag = 'Bernie Sanders'
-            if top_tag in ['Coronavirus (2019-nCoV)']:
-                top_tag = 'Coronavirus'
-            reddit_comments = []
+    # Get top prequently used tag among whole timeframe
+    unique_top_tag_only={}
+    for periode in frequent_tags_archive:
+        for tag_with_F in frequent_tags_archive[periode]:
+            if tag_with_F[0] in unique_top_tag_only:
+                unique_top_tag_only[tag_with_F[0]] = tag_with_F[1] + unique_top_tag_only[tag_with_F[0]]
+            else:
+                unique_top_tag_only[tag_with_F[0]] = tag_with_F[1]
+
+    unique_top_tag_only = sorted(unique_top_tag_only.items(),key=operator.itemgetter(1),reverse=True)[:10]
+
+    # creating Youtube Resource Object 
+    youtube_object = discovery.build(Youtube_service_name, Youtube_API_version, developerKey = Youtube_developer_key)
+    max_results = 100
+
+    for tag_frequency in unique_top_tag_only:
+        
+        # Store numbers of each Reddit's comments into DB
+        try:
+            print('Check tag existing: ', tag_frequency[0])
             subreddit = reddit.subreddit('all')
             time.sleep(2)
-
-            for post in subreddit.search(top_tag, sort='relevance', syntax='lucene', time_filter='month', limit=100):
+            for post in subreddit.search(tag_frequency[0], sort='relevance', syntax='lucene', limit=max_results):
+                count = 0;
                 if not post.stickied:
-                    # if today[]
-                    # CreatedAt = datetime.fromtimestamp(post.created_utc).isoformat()[:10]
-                    each_tag = {}
-                    each_tag['Tag'] = top_tag
-                    each_tag['Title'] = post.title
-                    each_tag['CreatedAt'] = datetime.fromtimestamp(post.created_utc).isoformat()[:10]
-                    each_tag['DiscussionAbout'] = post.url
-                    each_tag['Ups'] = post.ups
-                    add_post_arr.append(each_tag)
+                    each_tag_comments = post.comments.list()
+                    comments_arr = []
+                    for comment in each_tag_comments:
+                        if isinstance(comment, MoreComments):
+                            continue
+                        comments_arr.append(comment.body)
+                        count = count + len(comments_arr)
 
-            reddit_posts[period] = add_post_arr
-        reddit_metadata.append(reddit_posts)
+                    try:
+                        # fk_id = session.query(TimesTable).filter_by(tag=tag, createdDate=createdAt).first().id
+                        insert_Reddit = RedditTable(
+                            tag=tag_frequency[0],
+                            commentsCount=count
+                        )
+                        session.add(insert_Reddit)
 
-    # To get numbers of each Reddit's posts/voteUp/voteDown per month
-    add_tag = {}
-    for item in reddit_metadata:    
-        for period in item: 
-            monthly_posts = []
-           
-            for each_post in item[period]:
-                each_post['CreatedAt'] = each_post['CreatedAt'][:7]
+                    except Exception as e:
+                        print(" = Unable insert_Reddit to DB : ", tag_frequency[0], " =")
+                        pass
+        except Exception as e:
+            print(" = Unable search Reddit : ", tag_frequency[0], " =")
+            pass
+        
 
-                if each_post['Tag'] not in add_tag:
-                    byTime = {}
-                    add_tag[each_post['Tag']] = byTime
-                    if each_post['CreatedAt'] in byTime:
-                        byTime[each_post['CreatedAt']][0] += 1
-                        byTime[each_post['CreatedAt']][1] += each_post['Ups']
-                    else:
-                        add_freq_votes = []
-                        byTime[each_post['CreatedAt']] = add_freq_votes
-                        add_freq_votes.append(1)
-                        add_freq_votes.append(each_post['Ups'])
-                else:
-                    if each_post['CreatedAt'] in byTime:
-                        byTime[each_post['CreatedAt']][0] += 1
-                        byTime[each_post['CreatedAt']][1] += each_post['Ups']
-                    else:
-                        add_freq_votes = []
-                        byTime[each_post['CreatedAt']] = add_freq_votes
-                        add_freq_votes.append(1)
-                        add_freq_votes.append(each_post['Ups'])
-                        
-            monthly_posts.append(add_tag)
-    
-    # Store numbers of each Reddit's posts/voteUp into DB
-    for each_tag_with_prd in monthly_posts:
-        for tag in each_tag_with_prd:
-            for createdAt in each_tag_with_prd[tag]:
-                try:
-                    # fk_id = session.query(TimesTable).filter_by(tag=tag, createdDate=createdAt).first().id
+    session.commit() 
 
-                    insert_Reddit = RedditTable(
-                        tag=tag,
-                        createdDate=createdAt,
-                        postsCount=each_tag_with_prd[tag][createdAt][0],
-                        vote=each_tag_with_prd[tag][createdAt][1])
 
-                    session.add(insert_Reddit)
-
-                except Exception as e:
-                    print(e, " = Unable to insert_Reddit to database.")
-                    pass
-                        
-    session.commit()                  
+    return        
+                     
 
 
 store_metadata(monthly_archive, frequent_tags_archive)
