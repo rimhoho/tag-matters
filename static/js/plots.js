@@ -36,157 +36,180 @@ Promise.all([
     console.log('* combined *', combined);
     
 
+    /////////////////////
+    // Update dropdown //
+    /////////////////////
+    
+    // Handler for dropdown value change
+    var dropdownChange = function() {
+        var filteredTime = d3.select(this).property('value');
+        updateTimes(filteredTime);
+    };
+
+    /////////////////////////
+    // Initialize dropdown //
+    /////////////////////////
+
+    var select_menu = d3.select("#monthly_selection").on('change', dropdownChange);
+
+    select_menu
+    .selectAll("option")
+    .data(combined)
+    .enter()
+    .append("option")
+    .attr("value", function(d){
+        return d['key'];
+    })
+    .text(function(d){
+        return d['key'];
+    });
+    
+    var table = d3.select(".times_table");
+
     //////////////////////////////////////
     //  Make TimesTag | Google tables!  //
     //////////////////////////////////////
 
-    var makeTables = function(combined) {
+    var makeTables = function(filteredTime) {
+
+        console.log(filteredTime);
+        selectTime = combined.filter(function(d){
+            return d['key'] == filteredTime;
+        });
 
         //////////////////////
         // Initialize Table //
         //////////////////////
 
-        var table = d3.select(".times_table")
-            , thead = table.append("thead")
-            , tbody = table.append("tbody")
-            , rows = tbody.selectAll("tr")
-            , columnNames = ["Tag", "Frequency", "Most Peack Date", "Overall Trends"]//, "Reddit Comment"]
-            , columns = ["tag", "frequency", "busiest", "trendIndex"]
+        var tbody = table.append("tbody").attr("class", '_' + filteredTime)
+            , thead = table.append("thead").attr("class", '_' + filteredTime).append("tr")
+            , columnNames = ["Tag", "Frequency", "Most Peack Date"]//, "Reddit Comment"]
+            , columns = ["tag", "frequency", "busiest"]
+            , graph_data = ['trendIndex']
 
         // append the header row
-        thead.append("tr")
-            .selectAll("th")
-            .data(columnNames)
-            .enter()
-            .append("th")
-            .text(function (d) { return d; });
-
-        ///////////////////////
-        // Initialize SVG //
-        ///////////////////////
-
-
-        //////////////////
-        // Update Times //
-        //////////////////
-
-        var updateTimes = function(filteredTime) {
-            selectTime = combined.filter(function(d){
-                return d['key'] == filteredTime;
-            });
+        thead.selectAll("th")
+        .data(columnNames)
+        .enter()
+        .append("th")
+        .text(function (d) { return d; });
             
-        
         // Add rows for new data
-        rows.data(selectTime[0].values)
-            .enter()
-            .append("tr")
-            .attr("class", '_' + filteredTime)
-            .selectAll("td")
-            .data(function (row){
-                return columns.map( function (column) {
-                    return { column: column, value: row[column] };
-                });
-            })
-            .enter()
-            .append('td')
-            .html(function (d) {
-                // console.log('* column *', d);
-                return d.value;
-            });
-        
-        d3.select("tbody").selectAll("tr").each(function(d,i) {
-            // Get all classlist
-            // console.log("Rows of " + i + " is " + d3.select(this).attr("class"))
+        var rows = tbody.selectAll("tr")
+        .data(selectTime[0].values)
+        .enter()
+        .append("tr");
 
-            // delete old rows 
+        var cells = rows.selectAll("td")
+        .data(function (row){
+            return columns.map( function (column) {
+                return { column: column, value: row[column] };
+            });
+        })
+        .enter()
+        .append('td')
+        .text(function (d) {
+            return d.value;
+        });
+
+        //////////////////
+        // Update Graph //
+        //////////////////
+
+        // update Thead(add a column with graphs)
+        thead.append("th").text('Overall Trends on Google Search');
+
+        //use a class so you don't re-select the existing <td> elements
+        rows.selectAll("td.graph")
+        .data(function (row){
+            var arr = [];
+            return graph_data.map( function (column) {
+                arr.push(row[column]);
+                return arr;
+            });
+        })
+        .enter()
+        .append('td')
+        .attr("class", "graph")
+        .each(lines);
+        
+        function lines(graph_data) {
+            var margin = {top: 6, right: 0, bottom: 6, left: 20},
+                width = 400 - margin.left - margin.right,
+                height = 80 - margin.top - margin.bottom;
+            // console.log('# # #', d[0]);
+            // date = d[0]
+            // index = d[1]
+            var data = []
+                for (i = 0; i < graph_data[0].length; i++) {
+                    data[i] = {
+                        'x': i,
+                        'y': graph_data[0][i]
+                    }
+                };
+            console.log('* * *', data);
+            
+            var x = d3.scale.linear()
+                .domain(d3.extent(data, function(d) { return d.x; }))
+                .range([ 0, width ]);
+            
+                // svg.append("g")
+                // .attr("transform", "translate(0," + height + ")")
+                // .call(d3.axisBottom(x).ticks(3));
+
+            //Add Y axis
+            var y = d3.scale.linear()
+                .domain([0, d3.max(data, function(d) { return d.y; })])
+                .range([ height, 0 ]);
+            
+                // svg.append("g")
+                // .call(d3.axisLeft(y).ticks(5));
+
+            
+            var line = d3.svg.line()
+                        .x(function(d) {return x(d.x)})
+                        .y(function(d) {return y(d.y)}); 
+
+            d3.select(this).append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                    .attr("transform", "translate(0," + margin.right + ")")
+                .append('path')
+                    .attr('class','line')
+                    .datum(data)
+                    .attr('d', line);
+        };
+
+        /////////////////////
+        // Delete old rows //
+        /////////////////////
+        
+        d3.selectAll("tbody").each(function() {
+
             if (d3.select(this).attr("class") != '_' + filteredTime){
                 d3.select(this).remove();
             }
-            });
+        });
+        
+        d3.selectAll("thead").each(function() {
 
-            var updateTimes = function(filteredTime) {
-                selectTime = combined.filter(function(d){
-                    return d['key'] == filteredTime;
-                });
-                
-            console.log('* rows *', selectTime[0].values);
-            // var tag_num = selectTime[0].values.length;
-            // var count = 0
-            
-            // Add rows for new data
-            rows.data(selectTime[0].values)
-                .enter()
-                .append("tr")
-                .attr("class", '_' + filteredTime)
-                .selectAll("td")
-                .data(function (row){
-                    return columns.map( function (column) {
-                        return { column: column, value: row[column] };
-                    });
-                })
-                .enter()
-                .append('td')
-                .html(function (d) {
-                    if (d.value) {
-
-                    }
-                    // console.log('* column *', d.column);
-                    // console.log('* value *', d.value);
-                    return d.value
-                });
-            
-            d3.select("tbody").selectAll("tr").each(function(d,i) {
-                // Get all classlist
-                // console.log("Rows of " + i + " is " + d3.select(this).attr("class"))
-    
-                // delete old rows 
-                if (d3.select(this).attr("class") != '_' + filteredTime){
-                    d3.select(this).remove();
-                }
-                });
-                
+            if (d3.select(this).attr("class") != '_' + filteredTime){
+                d3.select(this).remove();
             }
-        }
-
-        /////////////////////
-        // Update dropdown //
-        /////////////////////
-        
-        
-        // Handler for dropdown value change
-        var dropdownChange = function() {
-            var filteredTime = d3.select(this).property('value');
-            updateTimes(filteredTime);
-        };
-
-        /////////////////////////
-        // Initialize dropdown //
-        /////////////////////////
-
-        var select_menu = d3.select("#monthly_selection").on('change', dropdownChange);
-        select_menu
-            .selectAll("option")
-            .data(combined)
-            .enter()
-            .append("option")
-            .attr("value", function(d){
-                return d['key'];
-            })
-            .text(function(d){
-                return d['key'];
-            });
-        
-        //////////////////////////////////////////
-        // Initialize Times data - recent month //
-        //////////////////////////////////////////
-
-        var initialData = combined[0]['key'];
-        updateTimes(initialData);
+        });
 
     };
 
-    makeTables(combined);
+    var updateTimes = function(filteredTime) {
+        selectTime = combined.filter(function(d){
+            return d['key'] == filteredTime;
+        });
+        makeTables(selectTime[0]['key']);
+    };
 
+    var initialData = combined[0]['key'];
+    makeTables(initialData);
 
 }).catch(function(err) {
     if (err) return console.warn(err);
