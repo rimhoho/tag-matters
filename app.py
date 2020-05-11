@@ -85,20 +85,20 @@ def Google():
 
 
 # Get Reddit data 
-# @app.route("/reddit")
-# def Reddit():
+@app.route("/reddit")
+def Reddit():
 
     # Create session and query all data
-    # reddit_combined = db.session.query(RedditTable.postsCount, RedditTable.vote, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == RedditTable.fk_times).group_by(RedditTable.id).all()
-    # reddit_combined = db.session.query(RedditTable).all()
-    # db.session.close()
+    reddit_combined = db.session.query(RedditTable.postsCount, RedditTable.vote, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == RedditTable.fk_times).group_by(RedditTable.id).all()
+    reddit_combined = db.session.query(RedditTable).all()
+    db.session.close()
 
-    # reddit_archive = []
-    # for reddit in reddit_combined:
-    #     each_reddit = {'tag':reddit.tag,
-    #                   'commentsCount':reddit.commentsCount}
-    #     reddit_archive.append(each_reddit)
-    # return jsonify(reddit_archive)
+    reddit_archive = []
+    for reddit in reddit_combined:
+        each_reddit = {'tag':reddit.tag,
+                      'commentsCount':reddit.commentsCount}
+        reddit_archive.append(each_reddit)
+    return jsonify(reddit_archive)
 
 if __name__ == "__main__":
     app.run(debug=True)
