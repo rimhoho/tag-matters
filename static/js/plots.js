@@ -135,8 +135,8 @@ Promise.all([
         
         function lines(graph_data) {
             var margin = {top: 6, right: 0, bottom: 6, left: 20},
-                width = 400 - margin.left - margin.right,
-                height = 80 - margin.top - margin.bottom;
+                width = 500 - margin.left - margin.right,
+                height = 30 - margin.top - margin.bottom;
             // console.log('# # #', d[0]);
             // date = d[0]
             // index = d[1]
