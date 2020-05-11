@@ -129,10 +129,10 @@
         
         <div class="d-flex flex-column align-items-center px-md-4 pt-1 mt-4">
           <div class="d-flex align-items-center align-items-center">
-            <h5 class="text-center py-4">#Tell the stories in</h5>
+            <h3 class="text-center py-4">#Tell the stories on</h3>
             <select class="ml-3 bg-light form-control-sm" id="monthly_selection"></select>  
           </div>
-          <label class="text-muted pb-3">Overall Trends Timeframe: May, 2019 ~ May, 2020</label>
+          <label class="text-muted pb-3">Overall Trends: May, 2019 ~ May, 2020</label>
           {% for error in errors %}
             <h6 class="text-center text-muted">{{ error }}</h6>
           {% endfor %}
@@ -156,7 +156,7 @@
       </div>
       <div class="d-flex flex-column px-md-4 pt-4 mt-4 bg-white border">
         <div class="container pb-3 mt-2">
-          <h5 class="mb-3 text-center pb-2">The most popular tags Analytics</h5>
+          <h5 class="mb-3 text-center pb-2">Overall Times Trends</h5>
           <div class="row mt-4">
             <div class="col-md-6 pb-2">
               <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
@@ -187,7 +187,7 @@
                       </div>
                       <ol>
                         <li>Donald Trump</li>
-                        <li>New York State </li>
+                        <li>New York State </li> 
                         <li>United States Politics and Government</li>
                         <li>Books and Literatur</li>
                         <li>Television</li>
@@ -203,6 +203,51 @@
           </div>
         </div>
     </div>
+    <div class="d-flex flex-column px-md-4 pt-4 mt-4 bg-white border">
+      <div class="container pb-3 mt-2">
+        <h5 class="mb-3 text-center pb-2">Overall Google Search Trends</h5>
+        <div class="row mt-4">
+          <div class="col-md-6 pb-2">
+            <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
+                <div class="col p-4 d-flex flex-column position-static bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="d-inline-block mb-1 text-center">A Tag that curves the most rises rapidly</h6>
+                    </div>
+                    <ul>
+                      <li>Coronavirus (2019-nCoV)</li>
+                    </ul>
+                </div>
+            </div>
+          </div>
+          <div class="col-md-6 pb-2">
+            <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-400 position-relative">
+                <div class="col p-4 d-flex flex-column position-static bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="d-inline-block mb-1 text-center">A Tag that curves the most rises moderately</h6>
+                    </div>
+                    <ul>
+                      <li>United States International Relations</li>
+                    </ul>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6 pb-2">
+            <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
+                <div class="col p-4 d-flex flex-column position-static bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="d-inline-block mb-1 text-center">A Tag that peaks a certain amount of time regularly </h6>
+                    </div>
+                    <ul>
+                      <li>United States Defense and Military Forces</li>
+                    </ul>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>    
     <footer class="py-5 px-5">© 2020</footer>
 
     <!-- Optional JavaScript -->

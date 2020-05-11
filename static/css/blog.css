@@ -11,6 +11,7 @@ body {
   stroke-width: 1.0px;
 }
 
+h3 { line-height: 25px; font-weight: 700;} 
 h5, .h5 { line-height: 25px; font-weight: 700;} 
 
 h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;} 
