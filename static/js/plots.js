@@ -18,14 +18,23 @@ Promise.all([
 .then(resp => Promise.all( resp.map(r => r.json()) ))
 .then(([times, google, reddit]) => {
 
+    var combined_pre_data = [];
+    google.forEach((g_item, index) => {
+        const t_item = times[index];
+        // console.log('-------------');
+        // console.log('* 1 *', t_item.tag, t_item.periode);
+        // console.log('* 2 *', g_item.tag, g_item.periode);
+        var google_times =  Object.assign(t_item, g_item)
+        combined_pre_data.push(google_times);
+      });
+   
     // Create grouping data sorting by category and tag using d3.nest
     var combined = d3.nest()
         .key(function(d) { return d.periode; })
-        // .key(function(d) { return d.tag; })
-        .entries(times);
+        .entries(combined_pre_data);
 
-    console.log('* 1 *', combined);
-
+    console.log('* combined *', combined);
+    
 
     //////////////////////////////////////
     //  Make TimesTag | Google tables!  //
@@ -34,26 +43,26 @@ Promise.all([
     var makeTables = function(combined) {
 
         //////////////////////
-        // Initialize Times //
+        // Initialize Table //
         //////////////////////
 
         var table = d3.select(".times_table")
             , thead = table.append("thead")
             , tbody = table.append("tbody")
             , rows = tbody.selectAll("tr")
-            , columns = ["#", "tag", "frequency"]//, "Interest on Google", "Reddit Comment"]
-            // columns = ["#", "tag", "frequency", "title", "date", "url", "img_URL", "busiest", "startDate", "endDate", "trendDate", "trendIndex"];
+            , columnNames = ["Tag", "Frequency", "Most Peack Date", "Overall Trends"]//, "Reddit Comment"]
+            , columns = ["tag", "frequency", "busiest", "trendIndex"]
 
         // append the header row
         thead.append("tr")
             .selectAll("th")
-            .data(columns)
+            .data(columnNames)
             .enter()
             .append("th")
             .text(function (d) { return d; });
 
         ///////////////////////
-        // Initialize Google //
+        // Initialize SVG //
         ///////////////////////
 
 
@@ -66,10 +75,44 @@ Promise.all([
                 return d['key'] == filteredTime;
             });
             
-            console.log('* periode *', filteredTime);
-            var tag_num = selectTime[0].values.length;
-            var count = 0
+        
+        // Add rows for new data
+        rows.data(selectTime[0].values)
+            .enter()
+            .append("tr")
+            .attr("class", '_' + filteredTime)
+            .selectAll("td")
+            .data(function (row){
+                return columns.map( function (column) {
+                    return { column: column, value: row[column] };
+                });
+            })
+            .enter()
+            .append('td')
+            .html(function (d) {
+                // console.log('* column *', d);
+                return d.value;
+            });
+        
+        d3.select("tbody").selectAll("tr").each(function(d,i) {
+            // Get all classlist
+            // console.log("Rows of " + i + " is " + d3.select(this).attr("class"))
 
+            // delete old rows 
+            if (d3.select(this).attr("class") != '_' + filteredTime){
+                d3.select(this).remove();
+            }
+            });
+
+            var updateTimes = function(filteredTime) {
+                selectTime = combined.filter(function(d){
+                    return d['key'] == filteredTime;
+                });
+                
+            console.log('* rows *', selectTime[0].values);
+            // var tag_num = selectTime[0].values.length;
+            // var count = 0
+            
             // Add rows for new data
             rows.data(selectTime[0].values)
                 .enter()
@@ -77,38 +120,37 @@ Promise.all([
                 .attr("class", '_' + filteredTime)
                 .selectAll("td")
                 .data(function (row){
-                    while (count < tag_num) {
-                        return columns.map( function ( column ) {
-                            if (column == '#') {
-                                count = count + 1;
-                                return { column: column, value: 'Top ' + count };
-                            } else {
-                                return { column: column, value: row[column] };
-                            }
-                        });
-                    }  
+                    return columns.map( function (column) {
+                        return { column: column, value: row[column] };
+                    });
                 })
                 .enter()
                 .append('td')
                 .html(function (d) {
-                    return d.value;
+                    if (d.value) {
+
+                    }
+                    // console.log('* column *', d.column);
+                    // console.log('* value *', d.value);
+                    return d.value
                 });
             
             d3.select("tbody").selectAll("tr").each(function(d,i) {
                 // Get all classlist
                 // console.log("Rows of " + i + " is " + d3.select(this).attr("class"))
-
+    
                 // delete old rows 
                 if (d3.select(this).attr("class") != '_' + filteredTime){
                     d3.select(this).remove();
                 }
-              });
-            
+                });
+                
+            }
         }
 
-        ///////////////////
-        // Update Google //
-        ///////////////////
+        /////////////////////
+        // Update dropdown //
+        /////////////////////
         
         
         // Handler for dropdown value change

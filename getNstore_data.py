@@ -102,19 +102,37 @@ def get_NYTimes_metadata():
                     tag = 'Putin'
                 if tag in ['Fla', 'Parkland']:
                     tag = 'Parkland'
-                if tag in ['Coronavirus Aid', 'Relief', 'and Economic Security Act (2020)']:
-                    tag = 'Coronavirus Aid, Relief, and Economic Security Act (2020)'
                 if tag in ['School Shootings and Armed Attacks']:
                     tag = 'School Shootings'
                 if tag in ['Shutdowns (Institutional)']:
                     tag = 'Shutdowns'
                 if tag in ['New York City', 'NYC','NY)','New York State' ]:
                     tag = 'New York State'
-                if 'Quarantine' in tag:
-                    tag = 'Quarantine'
                 if tag in ['States (US)', 'United States']:
-                     tag = 'United States'   
-                if tag in ['Donald Trump', 'New York State','United States Politics and Government', 'Politics and Government', 'Books and Literature', 'Television', 'Movies', 'Real Estate and Housing (Residential)', 'United States', 'United States International Relations' 'Primaries and Caucuses', 'United States Economy', 'Elections']:
+                    tag = 'United States'
+                if 'Russian Interference in 2016' in tag:
+                    tag = 'Russian interference in the 2016 United States elections'
+                if tag in ['Homosexuality and Bisexuality']:
+                    tag = 'Homosexuality'
+                if tag in ['Biden, Joseph R Jr', 'Biden']:
+                    tag = 'Joe Biden'
+                if tag in ['Sanders, Bernard', 'Sanders', 'Bernard', 'Bernie Sanders']:
+                    tag = 'Bernie Sanders'
+                if tag in ['Pete Buttigieg', 'Buttigieg, Pete (1982- )', 'Buttigieg', 'Pete Buttigieg', 'Pete (1982- )']:
+                    tag = 'Pete Buttigieg'
+                if tag in ['Blacks', 'Black People']:
+                    tag = 'Blacks'
+                if 'Coronavirus Aid' in tag:
+                    tag = 'Coronavirus Aid Relief and Economic Security Act'
+                if 'Quarantine' in tag:
+                    tag = 'Quarantines'
+                if 'Deaths' in tag:
+                    tag = 'Deaths'
+                if 'Child' in tag:
+                    tag = 'Parenting'
+                if 'Trump-Ukraine' in tag:
+                    tag = 'Trump-Ukraine'
+                if tag in ['Donald Trump', 'Weddings and Engagements', 'Women and Girls', 'New York State', 'Primaries and Caucuses', 'United States Politics and Government', 'Politics and Government', 'Books and Literature', 'Television', 'Movies', 'Real Estate and Housing (Residential)', 'United States', 'United States International Relations' 'Primaries and Caucuses', 'United States Economy', 'Elections']:
                     tag = ''
 
                 if tag is not '':
@@ -124,7 +142,7 @@ def get_NYTimes_metadata():
                         count_tag[tag] = 1   
 
             # This variable is what we want to get in NYTimes
-            tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:21]
+            tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:15]
             frequent_tags_archive[str(yy)+'-'+str(mm)] = tags_with_frequency
 
     return monthly_archive, frequent_tags_archive
@@ -199,20 +217,6 @@ def store_metadata(monthly_archive, frequent_tags_archive):
         add_post_arr = []
 
         for top_tag in frequent_tag_only[period]:
-
-            # Cleaning tags is mandatory to get accurate results on Google Search Trends
-            if top_tag in ['Russian Interference in 2016 US Elections and Ties to Trump Associates']:
-                top_tag = 'Russian interference in the 2016 United States elections'
-            if top_tag in ['Homosexuality and Bisexuality']:
-                top_tag = 'Homosexuality'
-            if top_tag in ['Trump-Ukraine Whistle-blower Complaint and Impeachment Inquiry']:
-                top_tag = 'Trump-Ukraine'
-            if top_tag in ['Biden, Joseph R Jr']:
-                top_tag = 'Joe Biden'
-            if top_tag in ['Sanders, Bernard']:
-                top_tag = 'Bernie Sanders'
-            if top_tag in ['Buttigieg, Pete (1982- )']:
-                top_tag = 'Pete Buttigieg'
 
             tag_arr = []
             tag_arr.append(top_tag)
