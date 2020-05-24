@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session, load_only
 from sqlalchemy import create_engine, func, distinct
 from flask_sqlalchemy import SQLAlchemy
 
-from model import TimesTable, GoogleTable, RedditTable
+from model import TimesTable, GoogleTable, YoutubeTable, MonthlyTagTable, TagByPeriodeTable, UniqueTagNFrequencyTable
 
 ###############
 # Flask Setup #
@@ -83,21 +83,78 @@ def Google():
         google_archive.append(each_google)
     return jsonify(google_archive)
 
+# # Get Reddit data 
+# @app.route("/reddit")
+# def Reddit():
 
-# Get Reddit data 
-@app.route("/reddit")
-def Reddit():
+#     # Create session and query all data
+#     reddit_combined = db.session.query(RedditTable).all()
+#     db.session.close()
+
+#     reddit_archive = []
+#     for reddit in reddit_combined:
+#         each_reddit = {'tag':reddit.tag,
+#                       'commentCount':reddit.commentCount}
+#         reddit_archive.append(each_reddit)
+#     return jsonify(reddit_archive)
+
+
+# Get Youtube data 
+@app.route("/youtube")
+def Youtube():
 
     # Create session and query all data
-    reddit_combined = db.session.query(RedditTable).all()
+    youtube_combined = db.session.query(YoutubeTable).all()
     db.session.close()
 
-    reddit_archive = []
-    for reddit in reddit_combined:
-        each_reddit = {'tag':reddit.tag,
-                      'commentsCount':reddit.commentsCount}
-        reddit_archive.append(each_reddit)
-    return jsonify(reddit_archive)
+    youtube_archive = []
+    for youtube in youtube_combined:
+        each_youtube = {'tag':youtube.tag,
+                        'viewCount': youtube.viewCount,
+                        'commentCount':youtube.commentCount,
+                        'likeCount': youtube.likeCount}
+        youtube_archive.append(each_youtube)
+    return jsonify(youtube_archive)
+
+# Get rest of data 
+@app.route("/tagbyperiode")
+def rest():
+    rest_data_combined = db.session.query(TagByPeriodeTable).all()
+    db.session.close()
+
+    rest_data_archive = []
+    for rest_data in rest_data_combined:
+        each_rest_data = {'periode': rest_data.periodeM,
+                          'tags_only': rest_data.tagArr_per_month,
+                        #   'article_archives': rest_data.article_archives
+                          }
+        rest_data_archive.append(each_rest_data)
+    return jsonify(rest_data_archive)
+
+@app.route("/frequency")
+def frequency():
+    unique_tag_frequency_combined = db.session.query(UniqueTagNFrequencyTable).all()
+    
+    db.session.close()
+
+    unique_tag_frequency_archive = []
+    for unique_tag_frequency in unique_tag_frequency_combined:
+        each_unique_tag_frequency = {'tag_only': unique_tag_frequency.tag,
+                          'frequency': unique_tag_frequency.frequency}
+        unique_tag_frequency_archive.append(each_unique_tag_frequency)
+    return jsonify(unique_tag_frequency_archive)
+
+@app.route("/month")
+def month():
+    month_combined = db.session.query(MonthlyTagTable).all()
+    db.session.close()
+
+    month_archive = []
+    for month in month_combined:
+        each_month = {'periode': month.periodeM,
+                          'article_archives': month.article_archives}
+        month_archive.append(each_month)
+    return jsonify(month_archive)
 
 if __name__ == "__main__":
     app.run(debug=True)
