@@ -19,14 +19,11 @@ Promise.all([
     fetch(base_url + '/month')
 ])
 .then(resp => Promise.all( resp.map(r => r.json()) ))
-.then(([times, google]) => {
+.then(([times, google, youtube]) => {
 
     var combined_pre_data = [];
     google.forEach((g_item, index) => {
         const t_item = times[index];
-        // console.log('-------------');
-        // console.log('* 1 *', t_item.tag, t_item.periode);
-        // console.log('* 2 *', g_item.tag, g_item.periode);
         var google_times =  Object.assign(t_item, g_item)
         combined_pre_data.push(google_times);
       });
@@ -35,10 +32,6 @@ Promise.all([
     var combined = d3.nest()
         .key(function(d) { return d.periode; })
         .entries(combined_pre_data);
-    
-    // var new_youtube = d3.nest()
-    // .key(function(d) { return d.tag; })
-    // .entries(youtube);
 
     console.log('* combined *', combined);
 
@@ -76,7 +69,7 @@ Promise.all([
     //  Make TimesTag | Google tables!  //
     //////////////////////////////////////
 
-    var makeTables = function(filteredTime) {
+    var makeTables = function(filteredTime, youtube) {
 
         console.log(filteredTime);
         selectTime = combined.filter(function(d){
@@ -89,20 +82,50 @@ Promise.all([
 
         var tbody = table.append("tbody").attr("class", '_' + filteredTime)
             , thead = table.append("thead").attr("class", '_' + filteredTime).append("tr")
-            , columnNames = ["Tag", "Frequency", "Most Peack Date"]//, "youtube Comment"]
-            , columns = ["tag", "frequency", "busiest"]
-            , graph_data = ['trendIndex']
+            , columnNames = ["Tag", "Frequency", "News", "Youtube"]
+            , times_colspan = 4
+            , youtube_colspan = 3
+            , columns = ["tag", "frequency", "title", "date", "img_URL", "url", "commentCount", "likeCount", "viewCount"]
+            , graph_data = ['trendIndex', 'trendDate', 'busiest']
 
         // append the header row
         thead.selectAll("th")
         .data(columnNames)
         .enter()
         .append("th")
-        .text(function (d) { return d; });
-            
+        .each(function (d) {
+            var col = d3.select(this);
+            if (d == 'News') {
+                col.attr('colspan', times_colspan).text(d);
+            } else if (d == 'Youtube') {
+                col.attr('colspan', youtube_colspan).text(d);
+            } else {
+                col.text(d);
+            }
+        });
+
+        var times_google_youtube = [];
+        var selectTime_Youtube = selectTime[0].values.concat(youtube)
+
+        selectTime_Youtube.forEach((item, index) => {
+            if (index < 10){
+                times_google_youtube.push(item)
+            } else {
+                times_google_youtube.forEach((times)=>{
+                    if (item.tag == times.tag) {
+                        times['youtube'] = [item.commentCount, item.viewCount, item.likeCount];
+                    } else {
+                        if (!item.commentCount) {
+                            times['youtube'] = [0, 0, 0];
+                        }
+                    }
+                })
+            };
+          });
+        
         // Add rows for new data
         var rows = tbody.selectAll("tr")
-        .data(selectTime[0].values)
+        .data(times_google_youtube)
         .enter()
         .append("tr");
 
@@ -114,8 +137,31 @@ Promise.all([
         })
         .enter()
         .append('td')
-        .text(function (d) {
-            return d.value;
+        .each(function (d) {
+            console.log('* * What is it: ', d);
+            var cell = d3.select(this);
+            console.log(cell)
+            if (d.column == 'title' || d.column == 'url' || d.column == 'date' || d.column == 'img_URL') {
+                // var cell = d3.select(this);
+
+                if (d.column == 'title'){
+                    const Ttitle = d.value;
+                    console.log('* times title : ', Ttitle);
+                } else if (d.column == 'url'){
+                    const Thref = d.value;
+                    console.log('* times href : ', Thref);
+                } else if (d.column == 'date'){
+                    const Tdate = d.value;
+                    console.log('* times date : ', Tdate);
+                } else if (d.column == 'img_URL'){
+                    const Timg_URL = d.value;
+                    console.log('* times img_URL : ', Timg_URL);
+                }
+                
+                cell.selectAll('td').attr('colspan', times_colspan).html('<div><p>' + Tdate + '</p><img src=' + Timg_URL + ' width="100%" height="60"><a href="' + Thref + '">' + Ttitle + '/a> </div>')
+            } else {
+               return d.value;
+            }
         });
 
         //////////////////
@@ -123,7 +169,7 @@ Promise.all([
         //////////////////
 
         // update Thead(add a column with graphs)
-        thead.append("th").text('Overall Trends on Google Search');
+        thead.append("th").attr('colspan', 3).text('Google Search Trends');
 
         //use a class so you don't re-select the existing <td> elements
         rows.selectAll("td.graph")
@@ -140,6 +186,7 @@ Promise.all([
         .each(googleTrend_lines);
         
         function googleTrend_lines(graph_data) {
+            // dates = graph_data[1], busiest_Day = graph_data[2]
             var margin = {top: 6, right: 0, bottom: 6, left: 20},
                 height = 110,
                 width = 500;
@@ -150,7 +197,7 @@ Promise.all([
                         'y': graph_data[0][i]
                     }
                 };
-            console.log('* * *', data);
+            // console.log('* * *', data);
             
             var x = d3.scale.linear()
                 .domain(d3.extent(data, function(d) { return d.x; }))
@@ -201,11 +248,11 @@ Promise.all([
         selectTime = combined.filter(function(d){
             return d['key'] == filteredTime;
         });
-        makeTables(selectTime[0]['key']);
+        makeTables(selectTime[0]['key'], youtube);
     };
 
     var initialData = combined[0]['key'];
-    makeTables(initialData);
+    makeTables(initialData, youtube);
 
 }).catch(function(err) {
     if (err) return console.warn(err);

@@ -190,7 +190,7 @@ def call_overall_Unique_tag_with_frequency(frequent_tags_archive):
             else:
                 overall_Unique_tag_with_frequency[tag_with_F[0]] = tag_with_F[1]
 
-    overall_Unique_tag_with_frequency = sorted(overall_Unique_tag_with_frequency.items(),key=operator.itemgetter(1),reverse=True)[:30]
+    overall_Unique_tag_with_frequency = sorted(overall_Unique_tag_with_frequency.items(),key=operator.itemgetter(1),reverse=True)
     return overall_Unique_tag_with_frequency
 
 
@@ -277,10 +277,10 @@ class Fetcher(object):
         # creating Youtube Resource Object 
         youtube_object = discovery.build(Youtube_service_name, Youtube_API_version, developerKey = Youtube_developer_key)
         
-        max_results = 12
+        max_results = 10
         youtube_metadata = []
         
-        for tag_frequency in unique_tag_only_with_frequency[:20]:
+        for tag_frequency in unique_tag_only_with_frequency:
             viewCount = 0
             commentCount = 0
             likeCount = 0

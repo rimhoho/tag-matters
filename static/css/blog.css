@@ -4,10 +4,17 @@ body {
   color: #444444;
   background-color: #FAFAFA;
 }
+th {font-size: 0.94rem; line-height: 0.94rem; text-align: center;}
+td {padding: 1rem;}
 
 .line {
   fill: none;
   stroke: grey;
+  stroke-width: 5px;
+}
+.busiest {
+  fill: none;
+  stroke: tomato;
   stroke-width: 5px;
 }
 
