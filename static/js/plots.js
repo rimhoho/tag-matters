@@ -19,7 +19,7 @@ Promise.all([
     fetch(base_url + '/month')
 ])
 .then(resp => Promise.all( resp.map(r => r.json()) ))
-.then(([times, google, reddit]) => {
+.then(([times, google]) => {
 
     var combined_pre_data = [];
     google.forEach((g_item, index) => {
@@ -36,11 +36,11 @@ Promise.all([
         .key(function(d) { return d.periode; })
         .entries(combined_pre_data);
     
-    var new_reddit = d3.nest()
-    .key(function(d) { return d.tag; })
-    .entries(reddit);
+    // var new_youtube = d3.nest()
+    // .key(function(d) { return d.tag; })
+    // .entries(youtube);
 
-    console.log('* new_reddit *', new_reddit);
+    console.log('* combined *', combined);
 
     /////////////////////
     // Update dropdown //
@@ -89,7 +89,7 @@ Promise.all([
 
         var tbody = table.append("tbody").attr("class", '_' + filteredTime)
             , thead = table.append("thead").attr("class", '_' + filteredTime).append("tr")
-            , columnNames = ["Tag", "Frequency", "Most Peack Date"]//, "Reddit Comment"]
+            , columnNames = ["Tag", "Frequency", "Most Peack Date"]//, "youtube Comment"]
             , columns = ["tag", "frequency", "busiest"]
             , graph_data = ['trendIndex']
 
@@ -137,9 +137,9 @@ Promise.all([
         .enter()
         .append('td')
         .attr("class", "graph")
-        .each(lines);
+        .each(googleTrend_lines);
         
-        function lines(graph_data) {
+        function googleTrend_lines(graph_data) {
             var margin = {top: 6, right: 0, bottom: 6, left: 20},
                 height = 110,
                 width = 500;
@@ -173,25 +173,27 @@ Promise.all([
                     .attr('class','line')
                     .datum(data)
                     .attr('d', line);
+
+            /////////////////////
+            // Delete old rows //
+            /////////////////////
+            
+            d3.selectAll("tbody").each(function() {
+
+                if (d3.select(this).attr("class") != '_' + filteredTime){
+                    d3.select(this).remove();
+                }
+            });
+            
+            d3.selectAll("thead").each(function() {
+
+                if (d3.select(this).attr("class") != '_' + filteredTime){
+                    d3.select(this).remove();
+                }
+            });
         };
 
-        /////////////////////
-        // Delete old rows //
-        /////////////////////
         
-        d3.selectAll("tbody").each(function() {
-
-            if (d3.select(this).attr("class") != '_' + filteredTime){
-                d3.select(this).remove();
-            }
-        });
-        
-        d3.selectAll("thead").each(function() {
-
-            if (d3.select(this).attr("class") != '_' + filteredTime){
-                d3.select(this).remove();
-            }
-        });
 
     };
 

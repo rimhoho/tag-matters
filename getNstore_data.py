@@ -394,13 +394,13 @@ def run_all_fetch():
         f1 = Fetcher()
         f1.store_times(monthly_archive, frequent_tags_archive, session)
         f1.store_google(combined_monthly_tag_by_periode, session)
-        # youtube_metadata = f1.call_Youtube(overall_Unique_tag_with_frequency)
-        # print('* * * ', youtube_metadata)
-        # f1.store_youtube(youtube_metadata, session)
-        # f1.store_rest_data(monthly_archive, combined_monthly_tag_by_periode, overall_Unique_tag_with_frequency, session)    
+
+        youtube_metadata = f1.call_Youtube(overall_Unique_tag_with_frequency)
+        f1.store_youtube(youtube_metadata, session)
+        f1.store_rest_data(monthly_archive, combined_monthly_tag_by_periode, overall_Unique_tag_with_frequency, session)    
         session.commit()
     except Exception as e:
-        print('= why? =', e)
+        print('= Cannot store into DB, why? =', e)
     finally:
         session.close()
 
