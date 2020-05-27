@@ -7,8 +7,8 @@ body {
 
 .line {
   fill: none;
-  stroke: rgb(102, 102, 102);
-  stroke-width: 1.6px;
+  stroke: grey;
+  stroke-width: 5px;
 }
 
 h3 { line-height: 25px; font-weight: 700;} 

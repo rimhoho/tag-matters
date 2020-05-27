@@ -13,7 +13,10 @@ if (host.includes("heroku")) {
 Promise.all([
     fetch(base_url + '/times'),
     fetch(base_url + '/google'),
-    fetch(base_url + '/reddit')
+    fetch(base_url + '/youtube'),
+    fetch(base_url + '/tagbyperiode'),
+    fetch(base_url + '/frequency'),
+    fetch(base_url + '/month')
 ])
 .then(resp => Promise.all( resp.map(r => r.json()) ))
 .then(([times, google, reddit]) => {
@@ -36,17 +39,6 @@ Promise.all([
     var new_reddit = d3.nest()
     .key(function(d) { return d.tag; })
     .entries(reddit);
-    
-    // var reddit_data = [];
-    // new_reddit.forEach(key => {
-    //     const t_item = new_reddit[key];
-    //     // console.log('-------------');
-    //     // console.log('* 1 *', t_item.tag, t_item.periode);
-    //     // console.log('* 2 *', g_item.tag, g_item.periode);
-    //     var combined_reddit =  Object.assign(t_item, g_item)
-    //     reddit_data.push(combined_reddit);
-    //   });
-
 
     console.log('* new_reddit *', new_reddit);
 
@@ -149,11 +141,8 @@ Promise.all([
         
         function lines(graph_data) {
             var margin = {top: 6, right: 0, bottom: 6, left: 20},
-                width = 500 - margin.left - margin.right,
-                height = 30 - margin.top - margin.bottom;
-            // console.log('# # #', d[0]);
-            // date = d[0]
-            // index = d[1]
+                height = 110,
+                width = 500;
             var data = []
                 for (i = 0; i < graph_data[0].length; i++) {
                     data[i] = {
@@ -166,27 +155,18 @@ Promise.all([
             var x = d3.scale.linear()
                 .domain(d3.extent(data, function(d) { return d.x; }))
                 .range([ 0, width ]);
-            
-                // svg.append("g")
-                // .attr("transform", "translate(0," + height + ")")
-                // .call(d3.axisBottom(x).ticks(3));
 
             //Add Y axis
             var y = d3.scale.linear()
                 .domain([0, d3.max(data, function(d) { return d.y; })])
                 .range([ height, 0 ]);
             
-                // svg.append("g")
-                // .call(d3.axisLeft(y).ticks(5));
-
-            
             var line = d3.svg.line()
                         .x(function(d) {return x(d.x)})
                         .y(function(d) {return y(d.y)}); 
 
             d3.select(this).append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
+                .attr("viewBox", `0 0 ${width} ${height}`)
                 .append("g")
                     .attr("transform", "translate(0," + margin.right + ")")
                 .append('path')

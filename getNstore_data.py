@@ -54,24 +54,30 @@ def cleaning_tag(tag):
         tag = 'Donald Trump'
     if tag in ['Joseph R Jr', 'Biden']:
         tag = 'Joe Biden'
+    if tag in ['Barr, William P', 'Barr', 'William P']:
+        tag = 'Barr William P'
+    if tag in ['Mueller, Robert S III', 'Mueller', 'Robert S III']:
+        tag = 'Mueller Robert S III'
+    if tag in ['Sanders, Bernard', 'Sanders', 'Bernard', 'Bernie Sanders']:
+        tag = 'Bernie Sanders'
+    if tag in ['Pete Buttigieg', 'Buttigieg, Pete (1982- )', 'Buttigieg', 'Pete Buttigieg', 'Pete (1982- )']:
+        tag = 'Pete Buttigieg'
+    if tag in ['Bloomberg, Michael R', 'Michael R', 'Bloomberg']:
+        tag = 'Michael Bloomberg'
+    if tag in ['Suleimani, Qassim', 'Suleimani', 'Qassim']:
+        tag = 'Soleimani Qassem'
+    if tag in ['Warren, Elizabeth', 'Warren', 'Elizabeth']:
+        tag = 'Elizabeth Warren'
     if tag in ['Brett M', 'Supreme Court (US)', 'Kavanaugh']:
         tag = 'Brett Kavanaugh'
     if tag in ['Putin', 'Vladimir V']:
         tag = 'Putin'
-    if tag in ['Barr', 'William P']:
-        tag = 'Barr, William P'
-    if tag in ['Mueller', 'Robert S III']:
-        tag = 'Mueller, Robert S III'
-    if tag in ['Suleimani', 'Qassim']:
-        tag = 'Suleimani, Qassim'
     if tag in ['Coronavirus Aid', 'Relief', 'and Economic Security Act (2020)']:
         tag = 'Coronavirus Aid, Relief, and Economic Security Act (2020)'
     if tag in ['School Shootings and Armed Attacks']:
         tag = 'School Shootings'
-    if tag in ['New York City', 'NYC','NY)','New York State' ]:
-        tag = 'New York State'
-    if tag in ['States (US)', 'United States']:
-         tag = 'United States'
+    if tag in ['Midland-Odessa, Tex, Shooting (2019)', 'Dayton, Ohio, Shooting (2019)', 'El Paso, Tex, Shooting (2019)', 'El Paso', 'Dayton', 'Shooting (2019)', 'Tex']:
+        tag = 'Shootings'
     if 'Russian Interference in 2016' in tag:
         tag = 'Russian interference in the 2016 United States elections'
     if tag in ['Homosexuality and Bisexuality']:
@@ -84,6 +90,8 @@ def cleaning_tag(tag):
         tag = 'Bernie Sanders'
     if tag in ['Pete Buttigieg', 'Buttigieg, Pete (1982- )', 'Buttigieg', 'Pete Buttigieg', 'Pete (1982- )']:
         tag = 'Pete Buttigieg'
+    if tag in ['Blacks', 'Black People']:
+        tag = 'Blacks'
     if 'Shutdowns' in tag:
         tag = 'Shutdowns'
     if 'Quarantine' in tag:
@@ -92,9 +100,9 @@ def cleaning_tag(tag):
         tag = 'Deaths'
     if 'Child' in tag:
         tag = 'Parenting'
-    if tag in ['Blacks', 'Black People']:
-        tag = 'Blacks'
-    if tag in ['Donald Trump', 'Weddings and Engagements', 'Impeachment', 'Senate', 'Republican Party', 'Discrimination', 'House of Representatives', 'Art', 'Debates (Political)', 'Demonstrations' , 'Protests and Riots', 'Women and Girls', 'New York State', 'Democratic Party', 'Primaries and Caucuses', 'United States Politics and Government', 'Politics and Government', 'Books and Literature', 'Television', 'Movies', 'Real Estate and Housing (Residential)', 'United States', 'United States International Relations' 'Primaries and Caucuses', 'United States Economy', 'Elections']:
+    if 'Syria' in tag:
+        tag = 'Syria'
+    if tag in ['Donald Trump', 'Weddings and Engagements', 'Impeachment', 'Senate', 'Discrimination', 'Art', 'Debates (Political)', 'Demonstrations' , 'Protests and Riots', 'Women and Girls','States (US)', 'United States', 'New York State', 'New York City', 'NYC', 'NY)', 'Primaries and Caucuses', 'United States Politics and Government', 'Politics and Government', 'Books and Literature', 'Television', 'Movies', 'Real Estate and Housing (Residential)', 'United States', 'United States International Relations', 'Primaries and Caucuses', 'United States Economy', 'Elections']:
         tag = ''
     return tag
 
@@ -115,8 +123,8 @@ def get_NYTimes_metadata():
                 start = int(today[6:7])
             else:
                 start = int(today[5:7])
-        for mm in reversed(range(start,ends)):
-            print('--1--',yy,mm)
+        for mm in reversed(range(start, ends)):
+            print('* * ', yy, mm)
             parameters = {'api-key': Times_key}           
             archived_Url = 'https://api.nytimes.com/svc/archive/v1/'+ str(yy) +'/'+ str(mm) +'.json'
             archives = requests.get(archived_Url, params=parameters).json()
@@ -159,7 +167,7 @@ def get_NYTimes_metadata():
                         count_tag[tag] = 1   
 
             # This variable is what we want to get in NYTimes
-            tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:20]
+            tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:10]
             frequent_tags_archive[str(yy)+'-'+str(mm)] = tags_with_frequency
 
     return monthly_archive, frequent_tags_archive
@@ -196,7 +204,7 @@ class Fetcher(object):
     def store_times(self, monthly_archive, frequent_tags_archive, session):
         multi_articles = {}
         for periode in frequent_tags_archive:
-            print('Should be 20 : ', len(frequent_tags_archive[periode]))     
+            print('Should be 10 : ', len(frequent_tags_archive[periode]))     
             for top_tag in frequent_tags_archive[periode]:
                 # Get specific NYTimes article information per each tags
                 for whole_month in list(monthly_archive.values()):
@@ -206,7 +214,6 @@ class Fetcher(object):
                         else:
                             # print(top_tag[0] in each['tags'])
                             if len(each['tags']) != 0 and top_tag[0] in each['tags']:
-                                # print('If True, ', top_tag[0])
                                 try:
                                     insert_TimesTag = TimesTable(
                                         tag=top_tag[0],
@@ -222,7 +229,7 @@ class Fetcher(object):
                                     session.add(insert_TimesTag)
                                     session.flush()
                                 except Exception as e:
-                                    print(" = Unable insert_TimesTag to DB : ", top_tag[0], periode, " =")
+                                    print(" = Unable insert_TimesTag to DB : ", top_tag[0], periode, " =", e)
                                     pass   
                      
     def store_google(self, combined_monthly_tag, session):
@@ -239,10 +246,12 @@ class Fetcher(object):
                 interest_over_time = {}
                 
                 try:
+                    time.sleep(3)
                     pytrends.build_payload(tag_arr, cat=0, timeframe = '2019-05-01 '+ today[:10], geo='', gprop='')
+                    time.sleep(3)
                     df = pytrends.interest_over_time().reset_index()
                 except Exception as e:
-                    print(" = Unable search Google Trends : ", top_tag, periode, " =")
+                    print(" = Unable search Google Trends : ", top_tag, periode, " =", e)
                     pass
                 
                 try:
@@ -261,14 +270,14 @@ class Fetcher(object):
                     session.add(insert_Google)
                     session.flush()
                 except Exception as e:
-                    print(" = Unable insert_Google to DB : ", e, " =")
+                    print(" = Unable insert_Google to DB : ", top_tag, e, " =")
                     pass
 
     def call_Youtube(self, unique_tag_only_with_frequency):
         # creating Youtube Resource Object 
         youtube_object = discovery.build(Youtube_service_name, Youtube_API_version, developerKey = Youtube_developer_key)
         
-        max_results = 10
+        max_results = 12
         youtube_metadata = []
         
         for tag_frequency in unique_tag_only_with_frequency[:20]:
@@ -280,15 +289,15 @@ class Fetcher(object):
             video = {}
             contain_stats = {}
             
-            time.sleep(2)
+            time.sleep(3)
             search_tags = youtube_object.search().list(q = tag_frequency[0], part = "id, snippet", order = 'relevance', maxResults = max_results, publishedAfter = "2020-01-01T00:00:00Z").execute() 
-            time.sleep(2)
+            time.sleep(3)
             
             for item in search_tags.get("items", []):
                 try:
-                    time.sleep(2)
+                    time.sleep(3)
                     stats = youtube_object.videos().list(part='statistics, snippet', id=item["id"]["videoId"]).execute()
-                    time.sleep(2)
+                    time.sleep(3)
                     viewCount = int(stats.get("items", [])[0]['statistics']['viewCount'])
                     likeCount =  int(stats.get("items", [])[0]['statistics']['likeCount'])
                     commentCount = int(stats.get("items", [])[0]['statistics']['commentCount'])
@@ -385,10 +394,10 @@ def run_all_fetch():
         f1 = Fetcher()
         f1.store_times(monthly_archive, frequent_tags_archive, session)
         f1.store_google(combined_monthly_tag_by_periode, session)
-        youtube_metadata = f1.call_Youtube(overall_Unique_tag_with_frequency)
-        print('* * * ', youtube_metadata)
-        f1.store_youtube(youtube_metadata, session)
-        f1.store_rest_data(monthly_archive, combined_monthly_tag_by_periode, overall_Unique_tag_with_frequency, session)    
+        # youtube_metadata = f1.call_Youtube(overall_Unique_tag_with_frequency)
+        # print('* * * ', youtube_metadata)
+        # f1.store_youtube(youtube_metadata, session)
+        # f1.store_rest_data(monthly_archive, combined_monthly_tag_by_periode, overall_Unique_tag_with_frequency, session)    
         session.commit()
     except Exception as e:
         print('= why? =', e)
