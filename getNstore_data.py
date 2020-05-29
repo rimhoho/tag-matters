@@ -204,33 +204,34 @@ class Fetcher(object):
     def store_times(self, monthly_archive, frequent_tags_archive, session):
         multi_articles = {}
         for periode in frequent_tags_archive:
-            print('Should be 10 : ', len(frequent_tags_archive[periode]))     
+            print('periode : ', periode)     
             for top_tag in frequent_tags_archive[periode]:
                 # Get specific NYTimes article information per each tags
-                for whole_month in list(monthly_archive.values()):
-                    for each in reversed(whole_month):
-                        if top_tag[0] in multi_articles and periode in multi_articles[top_tag[0]]:
-                            pass                             
-                        else:
-                            # print(top_tag[0] in each['tags'])
-                            if len(each['tags']) != 0 and top_tag[0] in each['tags']:
-                                try:
-                                    insert_TimesTag = TimesTable(
-                                        tag=top_tag[0],
-                                        periodeM=periode,
-                                        frequency=top_tag[1],
-                                        title=each['title'],
-                                        date=each['pub_date'],
-                                        url=each['url'],
-                                        img_URL=each['thm_img'])
+                # print('* * : ', monthly_archive[periode])
+                for each in monthly_archive[periode]:
+                    if top_tag[0] in multi_articles and periode in multi_articles[top_tag[0]]:
+                        pass                             
+                    else:
+                        # print(top_tag[0] in each['tags'])
+                        if len(each['tags']) != 0 and top_tag[0] in each['tags']:
+                            try:
+                                print('date : ', each['pub_date']) 
+                                insert_TimesTag = TimesTable(
+                                    tag=top_tag[0],
+                                    periodeM=periode,
+                                    frequency=top_tag[1],
+                                    title=each['title'],
+                                    date=each['pub_date'],
+                                    url=each['url'],
+                                    img_URL=each['thm_img'])
 
-                                    multi_articles[top_tag[0]] = periode
+                                multi_articles[top_tag[0]] = periode
 
-                                    session.add(insert_TimesTag)
-                                    session.flush()
-                                except Exception as e:
-                                    print(" = Unable insert_TimesTag to DB : ", top_tag[0], periode, " =", e)
-                                    pass   
+                                session.add(insert_TimesTag)
+                                session.flush()
+                            except Exception as e:
+                                print(" = Unable insert_TimesTag to DB : ", top_tag[0], periode, " =", e)
+                                pass   
                      
     def store_google(self, combined_monthly_tag, session):
         today = str(datetime.today())
@@ -289,7 +290,7 @@ class Fetcher(object):
             video = {}
             contain_stats = {}
             
-            time.sleep(3)
+            time.sleep(6)
             search_tags = youtube_object.search().list(q = tag_frequency[0], part = "id, snippet", order = 'relevance', maxResults = max_results, publishedAfter = "2020-01-01T00:00:00Z").execute() 
             time.sleep(3)
             
