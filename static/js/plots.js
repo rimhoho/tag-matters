@@ -122,6 +122,7 @@ Promise.all([
             };
           });
         console.log('* combined *', times_google_youtube);
+
         // Add rows for new data
         var rows = tbody.selectAll("tr")
         .data(times_google_youtube)
@@ -169,7 +170,7 @@ Promise.all([
                 }
                 if (Object.keys(flag).length == times_colspan) {
                     // console.log('index', index)
-                    cell.attr('colspan', times_colspan).html('<div><p class="make_small make_bold mb-2">' + flag['date'] + '</p><a href="' + flag['href'] + '" class="text-secondary" target="_blank"><img src=' + flag['img_URL'] + ' width="100%" height="100%"><p class=" pt-2 text_height">' + flag['title'] + '</p></div>')
+                    cell.attr('colspan', times_colspan).html('<div><p class="make_small make_bold mb-2">' + flag['date'] + '</p><a href="' + flag['href'] + '" class="text-secondary" target="_blank"><img src=' + flag['img_URL'] + ' width="100%" height="100%"><p class=" pt-2 text_height">' + flag['title'] + ' →</p></div>')
                     flag = {};
                 }
             } else if (d.column == 'commentCount' || d.column == 'likeCount' || d.column == 'viewCount') {
@@ -193,7 +194,7 @@ Promise.all([
                 if(index == 0){
                     cell.html(d.value).attr('class', 'text_height table-narrow');
                 } else {
-                    cell.html(d.value).attr('class', 'text_height');
+                    cell.html(d.value).attr('class', 'text_height table-super-narrow');
                 }
             }
             
@@ -223,37 +224,133 @@ Promise.all([
         .attr("class", "graph")
         .each(function (google_data, index) {
             // index= google_data[0], dates = google_data[1], busiest_Day = google_data[2]
-            var margin = {top: 400},
-                height = 200,
+            var margin = {top: 100, bottom: 20},
+                height = 800,
                 width = 700;
-            var data = []
+            // console.log('d3', d3.version);
+            var parseDate = d3.time.format("%Y-%m-%d").parse
+            var formatDate = d3.time.format("%b-%Y")
+            var graph_data = []
                 for (i = 0; i < google_data[0].length; i++) {
-                    data[i] = {
-                        'x': i,
-                        'y': google_data[0][i]
+                    graph_data[i] = {
+                        'dates': parseDate(google_data[1][i]),
+                        'index': google_data[0][i],
+                        'busiest': google_data[2]
                     }
                 };
-            var x = d3.scale.linear()
-                .domain(d3.extent(data, function(d) { return d.x; }))
-                .range([ 0, width ]);
+            console.log('* graph data * ', graph_data);
 
-            //Add Y axis
-            var y = d3.scale.linear()
-                .domain([0, d3.max(data, function(d) { return d.y; })])
-                .range([ height, 0 ]);
+            // Set the ranges
+            var xScale = d3.time.scale().range([0, width]);
+            var yScale = d3.scale.linear().range([height, 0]);
+            xScale.domain(d3.extent(graph_data, function(d) {return d.dates; }));
+            yScale.domain([0, d3.max(graph_data, function(d) { return d.index; })]);
             
-            var line = d3.svg.line()
-                        .x(function(d) {return x(d.x)})
-                        .y(function(d) {return y(d.y)}); 
+            var color = "#5d7293"; //  Set the color
+            const maxY = d3.max(graph_data, function(d) {return d.index;});
+            
+            // Define the axes
+            var xAxis = d3.svg.axis().scale(xScale)
+            .orient("bottom").ticks(5).tickFormat(formatDate);
+            var yAxis = d3.svg.axis().scale(yScale)
+            .orient("left").ticks(10).tickSize(-width);
 
-            d3.select(this).append("svg")
-                .attr("viewBox", `0 0 660 1100`)
+            // Set the area
+            var area = d3.svg.area()
+                .x(function(d) {
+                  return xScale(d.dates);
+                })
+                .y0(function(d) {
+                    return yScale(0);
+                  })
+                .y1(function(d) {
+                  return yScale(d.index);
+                })
+                .interpolate("monotone");
+
+            var svg = d3.select(this).append("svg")
+                .attr("viewBox", `0 0 700 1000`)
                 .append("g")
-                    .attr("transform", "translate(0," + margin.top + ")")
-                .append('path')
-                    .attr('class','line')
-                    .datum(data)
-                    .attr('d', line);
+                .attr("transform", "translate(0," + margin.top + ")");
+
+            svg.append("path")
+                .attr("class", "area")
+                .attr("stroke", color)
+                .attr("stroke-width", 4)
+                .attr("fill", "url(#gradient)")
+                .attr("d", area(graph_data));
+                
+            // Add Gradient
+            svg.append("linearGradient")
+                .attr("id", "gradient")
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("x1", 0).attr("y1", yScale(0))
+                .attr("x2", 0).attr("y2", yScale(maxY))
+                .selectAll("stop")
+                .data([{
+                    offset: "0%",
+                    color: "white" //transparent
+                    },
+                    {
+                    offset: "90%",
+                    color: color + "90"
+                    },
+                    {
+                    offset: "100%",
+                    color: color
+                    }
+                ])
+                .enter().append("stop")
+                .attr("offset", function(d) {
+                    return d.offset;
+                })
+                .attr("stop-color", function(d) {
+                    return d.color;
+                });
+        
+            svg.append("g")
+                .attr("transform", "translate(0, 800)")
+                .attr("class", "x axis")
+                .call(xAxis)
+                .call(g => {
+                    g.selectAll("text")
+                    .style("text-anchor", "middle")
+                    .attr("y", 30)
+                    .attr('fill', '#A9A9A9')
+        
+                    g.selectAll("line")
+                      .attr('stroke', '#A9A9A9')
+                      .attr('stroke-width', 0.7) // make horizontal tick thinner and lighter so that line paths can stand out
+                      .attr('opacity', 0.5)
+        
+                    g.select(".domain").remove()
+        
+                   })
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .call(g => {
+                  g.selectAll("text")
+                  .style("text-anchor", "middle")
+                  .attr("x", 30)
+                  .attr('fill', '#A9A9A9')
+      
+                  g.selectAll("line")
+                    .attr('stroke', '#A9A9A9')
+                    .attr('stroke-width', 0.7) // make horizontal tick thinner and lighter so that line paths can stand out
+                    .attr('opacity', 0.3)
+      
+                  g.select(".domain").remove()
+      
+                 })
+
+                .append('text')
+                  .attr('x', 0)
+                  .attr("y", -30)
+                  .attr("fill", "black")
+                  .text("Search Interest Index")
+                  .style("font-size", '1rem');
 
             /////////////////////
             // Delete old rows //
@@ -276,6 +373,130 @@ Promise.all([
                     d3.select(this).remove();
                 }
             });
+
+            ////////////////////////
+            // Set the hovor tips //
+            ////////////////////////
+
+            // CREATE HOVER TOOLTIP WITH VERTICAL LINE //
+            var tooltip = d3.select(this).append("div")
+                .attr('id', 'tooltip')
+                .style('position', 'absolute')
+                .style("background-color", "#D3D3D3")
+                .style('padding', 6)
+                .style('display', 'none')
+
+            var mouseG = svg.append("g")
+                .attr("class", "mouse-over-effects");
+
+            mouseG.append("path") // create vertical line to follow mouse
+                .attr("class", "mouse-line")
+                .style("stroke", "#A9A9A9")
+                .style("stroke-width", '2px')
+                .style("opacity", "0");
+
+            var mousePerLine = mouseG.selectAll('.mouse-per-line')
+                .data(graph_data)
+                .enter()
+                .append("g")
+                .attr("class", "mouse-per-line");
+
+            mousePerLine.append("circle")
+                .attr("r", 4)
+                .style("stroke", "tomato")
+                .style("fill", "none")
+                .style("stroke-width", '2px')
+                .style("opacity", "0");
+
+            mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+                .attr('width', width) 
+                .attr('height', height)
+                .attr('fill', 'none')
+                .attr('pointer-events', 'all')
+                .on('mouseout', function () { // on mouse out hide line, circles and text
+                d3.select(".mouse-line")
+                    .style("opacity", "0");
+                d3.selectAll(".mouse-per-line circle")
+                    .style("opacity", "0");
+                d3.selectAll(".mouse-per-line text")
+                    .style("opacity", "0");
+                d3.selectAll("#tooltip")
+                    .style('display', 'none')
+
+                })
+                .on('mouseover', function () { // on mouse in show line, circles and text
+                d3.select(".mouse-line")
+                    .style("opacity", "1");
+                d3.selectAll(".mouse-per-line circle")
+                    .style("opacity", "1");
+                d3.selectAll("#tooltip")
+                    .style('display', 'block')
+                })
+                .on('mousemove', function () { // update tooltip content, line, circles and text when mouse moves
+                var mouse = d3.mouse(this)
+                console.log('on mouse: ', mouse);
+
+                d3.selectAll(".mouse-per-line")
+                    .attr("transform", function (d, i) {
+                    var xDate = xScale.invert(mouse[0]) // use 'invert' to get date corresponding to distance from mouse position relative to svg
+                    console.log('invert xScale on mouse: ', xDate);
+                    
+                    var bisect = d3.bisector(function (d) { return d.dates; }).left // retrieve row index of date on parsed csv
+                    var idx = bisect(d.values, xDate);
+
+                    d3.select(".mouse-line")
+                        .attr("d", function () {
+                        var data = "M" + xScale(d.values[idx].date) + "," + (height);
+                        data += " " + xScale(d.values[idx].date) + "," + 0;
+                        return data;
+                        });
+                    return "translate(" + xScale(d.values[idx].date) + "," + yScale(d.values[idx].premium) + ")";
+
+                    });
+
+                updateTooltipContent(mouse, res_nested)
+
+                })
+
+                function updateTooltipContent(mouse, res_nested) {
+
+                    sortingObj = []
+                    res_nested.map(d => {
+                    var xDate = xScale.invert(mouse[0])
+                    var bisect = d3.bisector(function (d) { return d.date; }).left
+                    var idx = bisect(d.values, xDate)
+                    sortingObj.push({key: d.values[idx].vehicle_class, premium: d.values[idx].premium, bidding_no: d.values[idx].bidding_no, year: d.values[idx].date.getFullYear(), month: monthNames[d.values[idx].date.getMonth()]})
+                    })
+
+                    sortingObj.sort(function(x, y){
+                    return d3.descending(x.premium, y.premium);
+                    })
+
+                    var sortingArr = sortingObj.map(d=> d.key)
+
+                    var res_nested1 = res_nested.slice().sort(function(a, b){
+                    return sortingArr.indexOf(a.key) - sortingArr.indexOf(b.key) // rank vehicle category based on price of premium
+                    })
+
+                    tooltip.html(sortingObj[0].month + "-" + sortingObj[0].year + " (Bidding No:" + sortingObj[0].bidding_no + ')')
+                    .style('display', 'block')
+                    .style('left', d3.event.pageX + 20)
+                    .style('top', d3.event.pageY - 20)
+                    .style('font-size', 11.5)
+                    .selectAll()
+                    .data(res_nested1).enter() // for each vehicle category, list out name and price of premium
+                    .append('div')
+                    .style('color', d => {
+                        return color(d.key)
+                    })
+                    .style('font-size', 10)
+                    .html(d => {
+                        var xDate = xScale.invert(mouse[0])
+                        var bisect = d3.bisector(function (d) { return d.date; }).left
+                        var idx = bisect(d.values, xDate)
+                        return d.key.substring(0, 3) + " " + d.key.slice(-1) + ": $" + d.values[idx].premium.toString()
+                    })
+                }
         });
     };
 
@@ -287,6 +508,7 @@ Promise.all([
     };
 
     var initialData = combined[0]['key'];
+    console.log('* initialData * ', initialData)
     makeTables(initialData);
 
 }).catch(function(err) {
