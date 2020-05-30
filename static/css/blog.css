@@ -10,8 +10,7 @@ body {
 /* .article_title {} */
 
 a p {font-size: 0.98rem; line-height: 1.2rem; padding-top: 0.4rem; font-weight: 400;}
-.line {fill: darkslategray; stroke: grey; stroke-width: 6px;}
-.table-narrow {table-layout: fixed; word-wrap: break-word; width: 14rem; line-height: 1rem;}
+.table-narrow {table-layout: fixed; word-wrap: break-word; width: 12rem; line-height: 1rem;}
 .table-super-narrow {table-layout: fixed; word-wrap: break-word; width: 4.6rem; line-height: 1rem;}
 .table td {vertical-align: middle;}
 h3 { line-height: 25px; font-weight: 700;} 
@@ -21,10 +20,8 @@ h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;}
 .p-bold { line-height: 16px; font-size: 0.98rem; font-weight: 700;}
 .bottom-line {border-bottom: 1px solid #cacaca;}
 .tick text {padding-top: 1rem; font-size: 2.2rem;}
-.axis line {
-  fill: none;
-  stroke:grey;
-}
+.axis line { fill: none; stroke:black; stroke-width: 1; shape-rendering: crispEdges;}
+.line {fill: none; stroke:#5d7293; stroke-width: 4;}
   .blog-header-logo {
     font-family: 'UnifrakturCook', cursive, Georgia, "Times New Roman", serif;
     font-size: 1.6rem;

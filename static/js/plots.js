@@ -186,16 +186,12 @@ Promise.all([
                 }
                 if (Object.keys(flag).length == youtube_colspan) {
                     // console.log('index', index)
-                    cell.attr('colspan', youtube_colspan).html('<div> <ul class="pl-1"> <li class="pb-2"><small class="pb-1">Comment: </small>' + flag['commentCount'] + '</li><li class="pb-2"><small>Like: </small>' + flag['likeCount'] + '</li><li class="pb-2"><small>View: </small>' + flag['viewCount'] + '</li>' +' <ul> </div>').attr('class', 'make_small');
+                    cell.attr('colspan', youtube_colspan).html('<ul class="pl-1"> <li class="pb-2"><small class="pb-1">Comment: </small>' + flag['commentCount'] + '</li><li class="pb-2"><small>Like: </small>' + flag['likeCount'] + '</li><li class="pb-2"><small>View: </small>' + flag['viewCount'] + '</li>' +' <ul>').attr('class', 'make_small');
                     flag = {};
                 }
             } else {
                 // console.log('index', index)
-                if(index == 0){
-                    cell.html(d.value).attr('class', 'text_height table-narrow');
-                } else {
-                    cell.html(d.value).attr('class', 'text_height table-super-narrow');
-                }
+                cell.html(d.value).attr('class', 'text_height table-super-narrow');
             }
             
             if (index > 0 && index < 8 && index != 4 && index != 5) {
@@ -268,19 +264,31 @@ Promise.all([
                 })
                 .interpolate("monotone");
 
+            var outline = d3.svg.line()
+                .x(function(d) {
+                  return xScale(d.dates);
+                })
+                .y(function(d) {
+                  return yScale(d.index);
+                });
+
             var svg = d3.select(this).append("svg")
                 .attr("viewBox", `0 0 700 1000`)
                 .append("g")
                 .attr("transform", "translate(0," + margin.top + ")");
+            
+            //LINE
+            svg.append("path") //select line path within line-group (which represents a vehicle category), then bind new data 
+            .attr("class", "line")
+            .attr("d", outline(graph_data));
+        
+            // Add Gradient
 
             svg.append("path")
                 .attr("class", "area")
-                .attr("stroke", color)
-                .attr("stroke-width", 4)
                 .attr("fill", "url(#gradient)")
                 .attr("d", area(graph_data));
-                
-            // Add Gradient
+
             svg.append("linearGradient")
                 .attr("id", "gradient")
                 .attr("gradientUnits", "userSpaceOnUse")
@@ -319,11 +327,10 @@ Promise.all([
                     .attr('fill', '#A9A9A9')
         
                     g.selectAll("line")
-                      .attr('stroke', '#A9A9A9')
+                      .attr('stroke', 'black')
                       .attr('stroke-width', 0.7) // make horizontal tick thinner and lighter so that line paths can stand out
-                      .attr('opacity', 0.5)
-        
-                    g.select(".domain").remove()
+                      .attr("y2", 16);
+                    g.select(".domain").remove();
         
                    })
 
@@ -339,18 +346,19 @@ Promise.all([
                   g.selectAll("line")
                     .attr('stroke', '#A9A9A9')
                     .attr('stroke-width', 0.7) // make horizontal tick thinner and lighter so that line paths can stand out
-                    .attr('opacity', 0.3)
+                    .attr('opacity', 0.5)
+                    .attr("x1", 50);
       
-                  g.select(".domain").remove()
+                  g.select(".domain").remove();
       
                  })
 
                 .append('text')
                   .attr('x', 0)
-                  .attr("y", -30)
-                  .attr("fill", "black")
+                  .attr("y", -66)
+                  .attr("fill", "#5d7293")
                   .text("Search Interest Index")
-                  .style("font-size", '1rem');
+                  .style("font-size", '2rem');
 
             /////////////////////
             // Delete old rows //
@@ -380,123 +388,16 @@ Promise.all([
 
             // CREATE HOVER TOOLTIP WITH VERTICAL LINE //
             var tooltip = d3.select(this).append("div")
-                .attr('id', 'tooltip')
-                .style('position', 'absolute')
-                .style("background-color", "#D3D3D3")
-                .style('padding', 6)
-                .style('display', 'none')
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "2px")
+                .style("border-radius", "5px")
+                .style("padding", "5px");
 
-            var mouseG = svg.append("g")
-                .attr("class", "mouse-over-effects");
+            
 
-            mouseG.append("path") // create vertical line to follow mouse
-                .attr("class", "mouse-line")
-                .style("stroke", "#A9A9A9")
-                .style("stroke-width", '2px')
-                .style("opacity", "0");
-
-            var mousePerLine = mouseG.selectAll('.mouse-per-line')
-                .data(graph_data)
-                .enter()
-                .append("g")
-                .attr("class", "mouse-per-line");
-
-            mousePerLine.append("circle")
-                .attr("r", 4)
-                .style("stroke", "tomato")
-                .style("fill", "none")
-                .style("stroke-width", '2px')
-                .style("opacity", "0");
-
-            mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-                .attr('width', width) 
-                .attr('height', height)
-                .attr('fill', 'none')
-                .attr('pointer-events', 'all')
-                .on('mouseout', function () { // on mouse out hide line, circles and text
-                d3.select(".mouse-line")
-                    .style("opacity", "0");
-                d3.selectAll(".mouse-per-line circle")
-                    .style("opacity", "0");
-                d3.selectAll(".mouse-per-line text")
-                    .style("opacity", "0");
-                d3.selectAll("#tooltip")
-                    .style('display', 'none')
-
-                })
-                .on('mouseover', function () { // on mouse in show line, circles and text
-                d3.select(".mouse-line")
-                    .style("opacity", "1");
-                d3.selectAll(".mouse-per-line circle")
-                    .style("opacity", "1");
-                d3.selectAll("#tooltip")
-                    .style('display', 'block')
-                })
-                .on('mousemove', function () { // update tooltip content, line, circles and text when mouse moves
-                var mouse = d3.mouse(this)
-                console.log('on mouse: ', mouse);
-
-                d3.selectAll(".mouse-per-line")
-                    .attr("transform", function (d, i) {
-                    var xDate = xScale.invert(mouse[0]) // use 'invert' to get date corresponding to distance from mouse position relative to svg
-                    console.log('invert xScale on mouse: ', xDate);
-                    
-                    var bisect = d3.bisector(function (d) { return d.dates; }).left // retrieve row index of date on parsed csv
-                    var idx = bisect(d.values, xDate);
-
-                    d3.select(".mouse-line")
-                        .attr("d", function () {
-                        var data = "M" + xScale(d.values[idx].date) + "," + (height);
-                        data += " " + xScale(d.values[idx].date) + "," + 0;
-                        return data;
-                        });
-                    return "translate(" + xScale(d.values[idx].date) + "," + yScale(d.values[idx].premium) + ")";
-
-                    });
-
-                updateTooltipContent(mouse, res_nested)
-
-                })
-
-                function updateTooltipContent(mouse, res_nested) {
-
-                    sortingObj = []
-                    res_nested.map(d => {
-                    var xDate = xScale.invert(mouse[0])
-                    var bisect = d3.bisector(function (d) { return d.date; }).left
-                    var idx = bisect(d.values, xDate)
-                    sortingObj.push({key: d.values[idx].vehicle_class, premium: d.values[idx].premium, bidding_no: d.values[idx].bidding_no, year: d.values[idx].date.getFullYear(), month: monthNames[d.values[idx].date.getMonth()]})
-                    })
-
-                    sortingObj.sort(function(x, y){
-                    return d3.descending(x.premium, y.premium);
-                    })
-
-                    var sortingArr = sortingObj.map(d=> d.key)
-
-                    var res_nested1 = res_nested.slice().sort(function(a, b){
-                    return sortingArr.indexOf(a.key) - sortingArr.indexOf(b.key) // rank vehicle category based on price of premium
-                    })
-
-                    tooltip.html(sortingObj[0].month + "-" + sortingObj[0].year + " (Bidding No:" + sortingObj[0].bidding_no + ')')
-                    .style('display', 'block')
-                    .style('left', d3.event.pageX + 20)
-                    .style('top', d3.event.pageY - 20)
-                    .style('font-size', 11.5)
-                    .selectAll()
-                    .data(res_nested1).enter() // for each vehicle category, list out name and price of premium
-                    .append('div')
-                    .style('color', d => {
-                        return color(d.key)
-                    })
-                    .style('font-size', 10)
-                    .html(d => {
-                        var xDate = xScale.invert(mouse[0])
-                        var bisect = d3.bisector(function (d) { return d.date; }).left
-                        var idx = bisect(d.values, xDate)
-                        return d.key.substring(0, 3) + " " + d.key.slice(-1) + ": $" + d.values[idx].premium.toString()
-                    })
-                }
         });
     };
 
