@@ -170,7 +170,7 @@ Promise.all([
                 }
                 if (Object.keys(flag).length == times_colspan) {
                     // console.log('index', index)
-                    cell.attr('colspan', times_colspan).html('<div><p class="make_small make_bold mb-2">' + flag['date'] + '</p><a href="' + flag['href'] + '" class="text-secondary" target="_blank"><img src=' + flag['img_URL'] + ' width="100%" height="100%"><p class=" pt-2 text_height">' + flag['title'] + ' →</p></div>')
+                    cell.attr('colspan', times_colspan).html('<div><p class="make_small make_bold mb-2">' + flag['date'] + '</p><a href="' + flag['href'] + '" class="text-secondary" target="_blank"><img src=' + flag['img_URL'] + ' width="100%" height="100%"><p class=" pt-2 text_height">' + flag['title'] + ' »</p></div>')
                     flag = {};
                 }
             } else if (d.column == 'commentCount' || d.column == 'likeCount' || d.column == 'viewCount') {
@@ -352,7 +352,6 @@ Promise.all([
                   g.select(".domain").remove();
       
                  })
-
                 .append('text')
                   .attr('x', 0)
                   .attr("y", -66)
@@ -390,14 +389,116 @@ Promise.all([
             var tooltip = d3.select(this).append("div")
                 .style("opacity", 0)
                 .attr("class", "tooltip")
-                .style("background-color", "white")
-                .style("border", "solid")
-                .style("border-width", "2px")
-                .style("border-radius", "5px")
-                .style("padding", "5px");
+                .style('position', 'absolute')
+                .style("background-color", "#D3D3D3")
+                .style('padding', 6)
+                .style('display', 'none')
 
-            
+            var mouseG = svg.append("g")
+                .attr("class", "mouse-over-effects");
 
+            mouseG.append("path") // create vertical line to follow mouse
+                .attr("class", "mouse-line")
+                .style("stroke", "#A9A9A9")
+                .style("stroke-width", "4px")
+                .style("opacity", "0");
+
+            var mousePerLine = mouseG.selectAll('.mouse-per-line')
+                .data(graph_data)
+                .enter()
+                .append("g")
+                .attr("class", "mouse-per-line");
+
+            mousePerLine.append("circle")
+                .attr("r", 4)
+                .style("class", "line")
+                .style("opacity", "0");
+
+            mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+                .attr('width', width) 
+                .attr('height', height)
+                .attr('fill', 'none')
+                .attr('pointer-events', 'all')
+                .on('mouseout', function () { // on mouse out hide line, circles and text
+                    d3.select(".mouse-line")
+                    .style("opacity", "0");
+                    d3.selectAll(".mouse-per-line circle")
+                    .style("opacity", "0");
+                    d3.selectAll(".mouse-per-line text")
+                    .style("opacity", "0");
+                    d3.selectAll(".tooltip")
+                    .style('display', 'none')
+
+                })
+                .on('mouseover', function () { // on mouse in show line, circles and text
+                        d3.select(".mouse-line")
+                        .style("opacity", "1");
+                        d3.selectAll(".mouse-per-line circle")
+                        .style("opacity", "1");
+                        d3.selectAll("#tooltip")
+                        .style('display', 'block')
+                    })
+                .on('mousemove', function () { // update tooltip content, line, circles and text when mouse moves
+
+                    d3.selectAll(".mouse-per-line")
+                    .attr("transform", function (d, i) {
+                        const m = d3.mouse(this);
+                        var xDate = xScale.invert(m[0]); // use 'invert' to get date corresponding to distance from mouse position relative to svg
+                        var bisect = d3.bisectLeft(function (d) { return d.dates; }, xDate) // retrieve row index of date on parsed 
+                        
+                        d3.select(".mouse-line")
+                        .attr("d", function () {
+                            var data = "M" + xScale(d.values[idx].date) + "," + (height);
+                            data += " " + xScale(d.values[idx].date) + "," + 0;
+                            return data;
+                        });
+                        return "translate(" + xScale(d.values[idx].date) + "," + yScale(d.values[idx].premium) + ")";
+
+                    });
+
+                    updateTooltipContent(mouse, graph_data)
+
+                })
+
+            function updateTooltipContent(mouse, graph_data) {
+
+            sortingObj = []
+            graph_data.map(d => {
+                var xDate = xScale.invert(mouse[0])
+                var bisect = d3.bisector(function (d) { return d.date; }).left
+                var idx = bisect(d.values, xDate)
+                sortingObj.push({key: d.values[idx].vehicle_class, premium: d.values[idx].premium, bidding_no: d.values[idx].bidding_no, year: d.values[idx].date.getFullYear(), month: monthNames[d.values[idx].date.getMonth()]})
+            })
+
+            sortingObj.sort(function(x, y){
+                return d3.descending(x.premium, y.premium);
+            })
+
+            var sortingArr = sortingObj.map(d=> d.key)
+
+            var graph_data1 = graph_data.slice().sort(function(a, b){
+                return sortingArr.indexOf(a.key) - sortingArr.indexOf(b.key) // rank vehicle category based on price of premium
+            })
+
+            tooltip.html(sortingObj[0].month + "-" + sortingObj[0].year + " (Bidding No:" + sortingObj[0].bidding_no + ')')
+                .style('display', 'block')
+                .style('left', d3.event.pageX + 20)
+                .style('top', d3.event.pageY - 20)
+                .style('font-size', 11.5)
+                .selectAll()
+                .data(graph_data1).enter() // for each vehicle category, list out name and price of premium
+                .append('div')
+                .style('color', d => {
+                return color(d.key)
+                })
+                .style('font-size', 10)
+                .html(d => {
+                var xDate = xScale.invert(mouse[0])
+                var bisect = d3.bisector(function (d) { return d.date; }).left
+                var idx = bisect(d.values, xDate)
+                return d.key.substring(0, 3) + " " + d.key.slice(-1) + ": $" + d.values[idx].premium.toString()
+                })
+            }
         });
     };
 

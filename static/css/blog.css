@@ -19,7 +19,7 @@ h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;}
 .h5-light { line-height: 22px; font-weight: 200;} 
 .p-bold { line-height: 16px; font-size: 0.98rem; font-weight: 700;}
 .bottom-line {border-bottom: 1px solid #cacaca;}
-.tick text {padding-top: 1rem; font-size: 2.2rem;}
+.tick text {padding-top: 1rem; font-size: 1.8rem;}
 .axis line { fill: none; stroke:black; stroke-width: 1; shape-rendering: crispEdges;}
 .line {fill: none; stroke:#5d7293; stroke-width: 4;}
   .blog-header-logo {
