@@ -1,3 +1,4 @@
+
 // Base URL logic: If hosted on Heroku, format differently
 var host = window.location.hostname;
 
@@ -11,12 +12,12 @@ Promise.all([
     fetch(base_url + '/times'),
     fetch(base_url + '/google'),
     fetch(base_url + '/youtube'),
-    // fetch(base_url + '/tagbyperiode'),
-    // fetch(base_url + '/frequency'),
+    fetch(base_url + '/tagbyperiode'),
+    fetch(base_url + '/frequency'),
     // fetch(base_url + '/month')
 ])
 .then(resp => Promise.all( resp.map(r => r.json()) ))
-.then(([times, google, youtube]) => {
+.then(([times, google, youtube, tagbyperiode, frequency]) => {
 
     var combined_pre_data = [];
     google.forEach((g_item, index) => {
@@ -508,7 +509,13 @@ Promise.all([
 
     var initialData = combined[0]['key'];
     console.log('* initialData * ', initialData)
+
+    // Call the table
     makeTables(initialData);
+
+    // Create a list Under the table
+
+    tagbyperiode, frequency
 
 }).catch(function(err) {
     if (err) return console.warn(err);

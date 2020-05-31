@@ -10,15 +10,10 @@ body {
 /* .article_title {} */
 
 .over_flow {overflow-x: auto;}
-.over_flow::-webkit-scrollbar {
-  width: 1.2rem;
-}
-.over_flow::-webkit-scrollbar-thumb {
-  background-color: #5d7293;
-}
-.over_flow::-webkit-scrollbar-track {
-  background-color: #d5dfee;
-}
+.over_flow::-webkit-scrollbar {width: .7rem;}
+.over_flow::-webkit-scrollbar-thumb {background-color: #5d7293;}
+.over_flow::-webkit-scrollbar-track {background-color: #d5dfee;}
+
 a p {font-size: 0.98rem; line-height: 1.2rem; padding-top: 0.4rem; font-weight: 400;}
 .table-narrow {table-layout: fixed; word-wrap: break-word; width: 12rem; line-height: 1rem;}
 .table-super-narrow {table-layout: fixed; word-wrap: break-word; width: 4.6rem; line-height: 1rem;}
@@ -32,6 +27,10 @@ h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;}
 .tick text {padding-top: 1rem; font-size: 1.8rem;}
 .axis line { fill: none; stroke:black; stroke-width: 1; shape-rendering: crispEdges;}
 .line {fill: none; stroke:#5d7293; stroke-width: 4;}
+
+.table-wrap {position:relative;}
+.table-wrap:after {position:absolute; width: 2rem; height:100%; right:0; top:0; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.6), #5d7293); display:block; content:"";}
+
   .blog-header-logo {
     font-family: 'UnifrakturCook', cursive, Georgia, "Times New Roman", serif;
     font-size: 1.6rem;
