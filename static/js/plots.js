@@ -1,6 +1,3 @@
-// import { csv, json } from 'd3-fetch'
-
-
 // Base URL logic: If hosted on Heroku, format differently
 var host = window.location.hostname;
 

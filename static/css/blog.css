@@ -9,6 +9,16 @@ body {
 .text_height {line-height: 1rem;}
 /* .article_title {} */
 
+.over_flow {overflow-x: auto;}
+.over_flow::-webkit-scrollbar {
+  width: 1.2rem;
+}
+.over_flow::-webkit-scrollbar-thumb {
+  background-color: #5d7293;
+}
+.over_flow::-webkit-scrollbar-track {
+  background-color: #d5dfee;
+}
 a p {font-size: 0.98rem; line-height: 1.2rem; padding-top: 0.4rem; font-weight: 400;}
 .table-narrow {table-layout: fixed; word-wrap: break-word; width: 12rem; line-height: 1rem;}
 .table-super-narrow {table-layout: fixed; word-wrap: break-word; width: 4.6rem; line-height: 1rem;}
