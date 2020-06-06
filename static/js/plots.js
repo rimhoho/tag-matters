@@ -101,7 +101,7 @@ Promise.all([
             , times_colspan = 4
             , youtube_colspan = 3
             , columnNames_1 = ["New York Times", "", ""]
-            , columnNames_2 = ["Tag", "News", "Frequency"]
+            , columnNames_2 = ["Tag", "Most Recent News", "Frequency"]
             , columns = ["tag", "title", "date", "img_URL", "url", "frequency"]
             , youtube_columns = ["commentCount", "likeCount", "viewCount"]
             , google_columns = ['trendIndex', 'trendDate', 'busiest']
@@ -132,7 +132,7 @@ Promise.all([
             .append("th")
             .each(function (d) {
                 var col = d3.select(this);
-                if (d == 'News') {
+                if (d == 'Most Recent News') {
                     col.attr('colspan', times_colspan).text(d);
                 } else {
                     col.text(d);
@@ -234,10 +234,10 @@ Promise.all([
                         };
 
                     // Set the ranges
-                    var xScale = d3.time.scale().range([0, width]);
-                    var yScale = d3.scale.linear().range([height, 0]);
-                    xScale.domain(d3.extent(google_graph, function(d) {return d.dates; }));
-                    yScale.domain([0, d3.max(google_graph, function(d) { return d.index; })]);
+                    var xScale = d3.time.scale().range([0, width])
+                        , yScale = d3.scale.linear().range([height, 0])
+                        , xDomain = xScale.domain(d3.extent(google_graph, function(d) {return d.dates; }))
+                        , yDomain = yScale.domain([0, d3.max(google_graph, function(d) { return d.index; })]);
                     
                     const maxY = d3.max(google_graph, function(d) {return d.index;});
                     
@@ -280,13 +280,10 @@ Promise.all([
                         .attr("x1", 0).attr("y1", yScale(0))
                         .attr("x2", 0).attr("y2", yScale(maxY))
                         .selectAll("stop")
-                        .data([{offset: "0%",color: color + "20"},{offset: "40%",color: color + "60"},{offset: "100%",color: color}
-                        ])
+                        .data([{offset: "0%",color: color + "20"},{offset: "40%",color: color + "60"},{offset: "100%",color: color}])
                         .enter().append("stop")
-                        .attr("offset", function(d) {return d.offset;
-                        })
-                        .attr("stop-color", function(d) {return d.color;
-                        });
+                        .attr("offset", function(d) {return d.offset;})
+                        .attr("stop-color", function(d) {return d.color;});
                 
                     // svg.append("g")
                     //     .attr("transform", "translate(0, )")
@@ -294,18 +291,17 @@ Promise.all([
                     //     .call(xAxis)
                     //     .call(g => {
                     //         g.selectAll("text")
-                    //         .style("text-anchor", "middle")
-                    //         .attr("y", 30)
-                    //         .attr('fill', '#A9A9A9')
-                
+                    //             .style("text-anchor", "middle")
+                    //             .attr("y", height)
+                    //             .attr('fill', '#A9A9A9')
                     //         g.selectAll("line")
-                    //         .attr('stroke', '#A9A9A9')
-                    //         .attr('stroke-width', 0.7) // make horizontal tick thinner and lighter so that line paths can stand out
-                    //         .attr('opacity', 0.5)
-                    //         .attr("y2", 2);
+                    //             .attr('stroke', '#A9A9A9')
+                    //             .attr('stroke-width', 0.7) // make horizontal tick thinner and lighter so that line paths can stand out
+                    //             .attr('opacity', 0.3)
+                    //             .attr("y2", 2);
                     //         g.select(".domain").remove();
                     //     })
-
+                    
                     svg.append("g")
                         .attr("class", "y axis")
                         .call(yAxis)
@@ -323,23 +319,50 @@ Promise.all([
                 
                             g.select(".domain").remove();
                         })
-
-                    var toolTip = svg.append("div").attr("class", "toolTip");
-
-                    svg.on("mouseover", function(d) {
-                        console.log("left", window.pageXOffset + matrix.e + 15);
-                        console.log("top", window.pageYOffset + matrix.f - 30);
-
-                        var matrix = this.getScreenCTM()
-                            .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
-                        toolTip.html(d)
-                            .style("left", (window.pageXOffset + matrix.e + 15) + "px")
-                            .style("top", (window.pageYOffset + matrix.f - 30) + "px");
-                    })
                     
-                    // svg.on("mouseout", function(d){
-                    //     toolTip.style("display", "none");
-                    //     });
+
+                    /***** For an SVG tooltip *****/ 
+                    
+                    var focus = svg.append("g")
+                        .attr("class", "focus")
+                        .style("display", "none");
+
+                    focus.append("circle")
+                        .attr("r", 2);
+
+                    svg.append('rect')
+                        .attr('class', 'overlay')
+                        .attr('width', width)
+                        .attr('height', height)
+                        .on('mouseover', function() { focus.style('display', null); })
+                        .on('mouseout', function() { focus.style('display', 'none'); })
+                        .on('mousemove', function(data) { 
+                            var discetDate = d3.bisect( d => {
+                                d[1].map( d => {
+                                    parseDate(d);
+                                });
+                                console.log('* d', d)
+                            })
+                            var mouse = d3.mouse(this);
+                            var mouseDate = xScale.invert(mouse[0]);
+                            var i = discetDate(dates, mouseDate).left; // returns the index to the current data item
+                            // console.log('Mousemove: ', data, dates, ' | ', mouseDate, ' | ', i)
+
+                            var d0 = dates[i - 1]
+                            var d1 = dates[i];
+                            // work out which date value is closest to the mouse
+                            var d = mouseDate - d0[0] > d1[0] - mouseDate ? d1 : d0;
+        
+                            var x = xScale(d[0]);
+                            var y = yScale(d[1]);
+                            console.log('x & y: ', x, ' | ', y)
+
+                            focus.select('#focusCircle')
+                                .attr('cx', x)
+                                .attr('cy', y);
+                            focus.select(".tooltip-date").text(d.label);
+                            focus.select(".tooltip-index").text(d.value);
+                        });
                 } else {
                     d3.select(this).remove();
                 }
@@ -397,17 +420,16 @@ Promise.all([
                         valueMargin = 30,
                         width = 400,
                         height = 800,
-                        barHeight = 30,
+                        barHeight = 24,
                         barPadding = (height-axisMargin-margin)*0.8/youtube_graph.length,
                         bar, svg, scale, xAxis, labelWidth = 48;
 
-                // max = d3.max(youtube_graph, function(d) { return d.value; });
                 var comment_max = [], like_max = [], view_max = [];
 
                 times_google_youtube.forEach( d => {
                     comment_max.push(d['youtube'][0])
-                    like_max.push(d['youtube'][1])
-                    view_max.push(d['youtube'][2])
+                    like_max.push(d['youtube'][2])
+                    view_max.push(d['youtube'][1])
                 });
                 max = d3.max(view_max);
 
@@ -432,34 +454,44 @@ Promise.all([
                         }
                     });
 
-                bar.append("text")
-                    .attr("class", "label make_small")
-                    .attr("y", barHeight / 2)
-                    .attr("dy", ".35em") //vertical align middle
-                    .text(function(d){
-                        if (d.label == "commentCount") {
-                            return 'Comment'
-                        } else if (d.label == "viewCount") {
-                            return 'View'
-                        } else {
-                            return 'Like'
-                        }
-                    })
-                    .each(function() {
-                    labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
-                    });
-                
-                // bar.append('svg:image')
-                //     .attr({
-                //         'xlink:href': 'http://www.iconpng.com/png/beautiful_flat_color/computer.png',  // can also add svg file here
-                //         x: 0,
-                //         y: barHeight / 2,
-                //         width: '100%',
-                //         height: '100%'
-                //         })
+                // bar.append("text")
+                //     .attr("class", "label make_small")
+                //     .attr("y", barHeight / 2)
+                //     .attr("dy", ".35em") //vertical align middle
+                //     .text(function(d){
+                //         if (d.label == "commentCount") {
+                //             return 'Comment'
+                //         } else if (d.label == "viewCount") {
+                //             return 'View'
+                //         } else {
+                //             return 'Like'
+                //         }
+                //     })
                 //     .each(function() {
-                //         labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
-                //         });
+                //     labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+                //     });
+                
+                bar
+                .each(function(d) {
+                    var icon_color = color;
+                    if (d.label == "commentCount") {
+                        if(d.value == d3.max(comment_max)){
+                            icon_color = '#ff634c';
+                        }
+                        component = `<svg x="-12px" y="0" viewBox="155.571 399.782 250 200"><path style="fill:${icon_color};" d="M195.571,399.782h-36.667c-1.834,0-3.333,1.5-3.333,3.333v23.333c0,1.834,1.5,3.333,3.333,3.333h17.5 l12.5,10v-10h6.667c1.834,0,3.333-1.5,3.333-3.333v-23.334C198.903,401.282,197.403,399.782,195.571,399.782z M167.166,417.95 c-1.595,0-2.889-1.293-2.889-2.889s1.293-2.889,2.889-2.889c1.596,0,2.889,1.293,2.889,2.889S168.762,417.95,167.166,417.95z  M177.237,417.95c-1.596,0-2.889-1.293-2.889-2.889s1.293-2.889,2.889-2.889c1.595,0,2.889,1.293,2.889,2.889 S178.832,417.95,177.237,417.95z M187.305,417.95c-1.596,0-2.889-1.293-2.889-2.889s1.293-2.889,2.889-2.889 c1.595,0,2.889,1.293,2.889,2.889S188.901,417.95,187.305,417.95z"/></svg>`
+                    } else if (d.label == "likeCount") {
+                        if(d.value == d3.max(like_max)){
+                            icon_color = '#ff634c';
+                        }
+                        component = `<svg x="-12px" y="0" viewBox="155.571 399.782 250 200"> <path style="fill:${icon_color};" d="M188.994,401.333c-4.337,0-8.162,2.196-10.423,5.536c-2.261-3.341-6.085-5.536-10.423-5.536 c-6.946,0-12.577,5.631-12.577,12.577c0,3.96,1.831,7.492,4.692,9.798l18.308,14.523l18.308-14.523 c2.861-2.305,4.692-5.837,4.692-9.798C201.571,406.964,195.94,401.333,188.994,401.333z"/></svg>`
+                    } else {
+                        if(d.value == d3.max(view_max)){
+                            icon_color = '#ff634c';
+                        }
+                        component = `<svg x="-12px" y="0" viewBox="155.571 399.782 250 200"><path style="fill:${icon_color};" d="M196.569,404.664c-3.6-0.985-17.998-0.985-17.998-0.985s-14.399,0-17.998,0.948 c-1.933,0.53-3.524,2.122-4.055,4.092c-0.948,3.6-0.948,11.064-0.948,11.064s0,7.503,0.948,11.064 c0.531,1.97,2.084,3.524,4.055,4.055c3.637,0.985,17.998,0.985,17.998,0.985s14.399,0,17.998-0.948 c1.97-0.53,3.524-2.084,4.055-4.054c0.947-3.6,0.947-11.065,0.947-11.065s0.038-7.502-0.947-11.102 C200.093,406.748,198.539,405.194,196.569,404.664z M173.986,426.678v-13.792l11.973,6.896L173.986,426.678z"/> </svg>`
+                    }
+                    d3.select(this).html(component);
+                    });
 
                 scale = d3.scale.linear()
                         .domain([0, max])
@@ -475,10 +507,10 @@ Promise.all([
                     .attr("height", barHeight)
                     .attr("width", function(d, i){
                         if (i != 2 ) {
-                            return Math.max(3, scale(d.value)*0.3);
+                            return Math.max(2, scale(d.value)*10);
                         } else {
                             // console.log('view: ', d.value, 'or ',scale(d.value), 'or ', scale(d.value)*0.2)
-                            return 150;
+                            return Math.max(150, scale(d.value)*0.3);
                         }
                     })
                     .style("fill", d => {
