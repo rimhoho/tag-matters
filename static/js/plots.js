@@ -191,7 +191,6 @@ Promise.all([
                     cell.remove(); // except 0 4 5 
                 }
             });
-
         //////////////////
         // Create Graph //
         //////////////////
@@ -223,7 +222,7 @@ Promise.all([
                         width = 80;
                     // console.log('d3', d3.version);
                     var parseDate = d3.time.format("%Y-%m-%d").parse
-                    var formatDate = d3.time.format("%b-%Y")
+                    var formatDate = d3.time.format("%b %m, %Y")
                     var google_graph = []
                         for (i = 0; i < google_data[0].length; i++) {
                             google_graph[i] = {
@@ -241,9 +240,9 @@ Promise.all([
                     
                     // Define the axes
                     var xAxis = d3.svg.axis().scale(xScale)
-                    .orient("bottom").ticks(5).tickFormat(formatDate);
+                    .orient("bottom").ticks(3).tickFormat(formatDate);
                     var yAxis = d3.svg.axis().scale(yScale)
-                    .orient("left").ticks(5).tickSize(-width);
+                    .orient("left").ticks(4).tickSize(-width);
 
                     // Set the area
                     var area = d3.svg.area()
@@ -262,7 +261,7 @@ Promise.all([
                         .attr("transform", "translate(0," + margin.top + ")");
 
                     // LINE
-                    var line = svg.append("path") //select line path within line-group (which represents a vehicle category), then bind new data 
+                    svg.append("path") //select line path within line-group (which represents a vehicle category), then bind new data 
                         .attr("class", "line")
                         .attr("d", outline(google_graph));
                 
@@ -283,22 +282,22 @@ Promise.all([
                         .attr("offset", function(d) {return d.offset;})
                         .attr("stop-color", function(d) {return d.color;});
                 
-                    // svg.append("g")
-                    //     .attr("transform", "translate(0, )")
-                    //     .attr("class", "x axis")
-                    //     .call(xAxis)
-                    //     .call(g => {
-                    //         g.selectAll("text")
-                    //             .style("text-anchor", "middle")
-                    //             .attr("y", height)
-                    //             .attr('fill', '#A9A9A9')
-                    //         g.selectAll("line")
-                    //             .attr('stroke', '#A9A9A9')
-                    //             .attr('stroke-width', 0.7) // make horizontal tick thinner and lighter so that line paths can stand out
-                    //             .attr('opacity', 0.3)
-                    //             .attr("y2", 2);
-                    //         g.select(".domain").remove();
-                    //     })
+                    svg.append("g")
+                        .attr("transform", `translate(0, 0)`)
+                        .attr("class", "x axis")
+                        .call(xAxis)
+                        .call(g => {
+                            g.selectAll("text")
+                                .style("text-anchor", "middle")
+                                .attr("y", 34)
+                                .attr('fill', '#A9A9A9')
+                            g.selectAll("line")
+                                .attr('stroke', '#A9A9A9')
+                                .attr('stroke-width', 0.3) // make horizontal tick thinner and lighter so that line paths can stand out
+                                .attr('opacity', 0.3)
+                                .attr("y2", 2);
+                            g.select(".domain").remove();
+                        })
                     
                     svg.append("g")
                         .attr("class", "y axis")
@@ -360,7 +359,7 @@ Promise.all([
                                 .style("opacity", "1");
 
                             mouseT
-                            .text(`Date: ${data[1][idx]}, Index: ${data[0][idx]}`)
+                            .text(`${formatDate(parseDate(data[1][idx]))}: ${data[0][idx]}`)
                             .style("opacity", "1");
                          })
                         .on('mouseout', function() { // on mouse out hide line, circles and text
@@ -427,7 +426,7 @@ Promise.all([
                         height = 800,
                         barHeight = 24,
                         barPadding = (height-axisMargin-margin)*0.8/youtube_graph.length,
-                        bar, svg, scale, xAxis, labelWidth = 48;
+                        bar, svg, scale, mouseT, labelWidth = 48;
 
                 var comment_max = [], like_max = [], view_max = [];
 
@@ -441,7 +440,7 @@ Promise.all([
                 svg = d3.select(this)
                         .append("svg")
                         .attr("viewBox", `0 0 200 120`);
-                        
+
                 bar = svg.selectAll("g")
                         .data(youtube_graph)
                         .enter()
@@ -458,6 +457,12 @@ Promise.all([
                             return "translate(" + margin + "," + (i * (barHeight + barPadding))+ ")";
                         }
                     });
+                
+                mouseT = bar.append("text")
+                    .attr("transform", "translate(7,-3)")
+                    .attr("class", "youtube-text")
+                    .style("fill", "#5d7293")
+                    .style("opacity", "0");
 
                 bar.append("text")
                     .attr("class", "label make_small")
@@ -495,8 +500,21 @@ Promise.all([
                         }
                         component = `<svg x="-12px" y="0" viewBox="155.571 399.782 250 200"><path style="fill:${icon_color};" d="M196.569,404.664c-3.6-0.985-17.998-0.985-17.998-0.985s-14.399,0-17.998,0.948 c-1.933,0.53-3.524,2.122-4.055,4.092c-0.948,3.6-0.948,11.064-0.948,11.064s0,7.503,0.948,11.064 c0.531,1.97,2.084,3.524,4.055,4.055c3.637,0.985,17.998,0.985,17.998,0.985s14.399,0,17.998-0.948 c1.97-0.53,3.524-2.084,4.055-4.054c0.947-3.6,0.947-11.065,0.947-11.065s0.038-7.502-0.947-11.102 C200.093,406.748,198.539,405.194,196.569,404.664z M173.986,426.678v-13.792l11.973,6.896L173.986,426.678z"/> </svg>`
                     }
-                    d3.select(this).html(component);
-                });
+                    d3.select(this).html(component)
+                    .on('mouseover', function(d) { // mouse moving over canvas
+                        // console.log('data: ', d.label);
+                        if (d.label == "commentCount") {
+                            text_label = 'Comment'
+                        } else if (d.label == "likeCount") {
+                            text_label = 'Like'
+                        } else {
+                            text_label = 'View'
+                        }
+                        mouseT
+                        .text(text_label)
+                        .style("opacity", "1");
+                        });
+                    });
 
                 scale = d3.scale.linear()
                         .domain([0, max])
@@ -551,6 +569,7 @@ Promise.all([
                 delete_oldRows(index, filteredTime);
             })
     };
+
     var delete_oldRows = function(index, filteredTime){    
         if (index > 0) {
             d3.select(this).remove();

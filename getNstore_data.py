@@ -72,6 +72,10 @@ def cleaning_tag(tag):
         tag = 'Brett Kavanaugh'
     if tag in ['Putin', 'Vladimir V']:
         tag = 'Putin'
+    if tag in ['George', 'Floyd', 'George Floyd', 'George Floyd Protests (2020)']:
+        tag ='George Floyd Protests (2020)'
+    if tag in ['Police Brutality', 'Misconduct and Shootings']:
+        tag = 'Police Brutality'
     if tag in ['Coronavirus Aid', 'Relief', 'and Economic Security Act (2020)']:
         tag = 'Coronavirus Aid, Relief, and Economic Security Act (2020)'
     if tag in ['School Shootings and Armed Attacks']:
@@ -120,9 +124,10 @@ def get_NYTimes_metadata():
         else:
             ends = 13
             if '0' in today[5:7]:
-                start = int(today[6:7])
+                start = int(today[6:7]) - 1
             else:
-                start = int(today[5:7])
+                start = int(today[5:7]) - 1
+
         for mm in reversed(range(start, ends)):
             print('* * ', yy, mm)
             parameters = {'api-key': Times_key}           
@@ -208,12 +213,12 @@ class Fetcher(object):
             for top_tag in frequent_tags_archive[periode]:
                 # Get specific NYTimes article information per each tags
                 # print('* * : ', monthly_archive[periode])
-                for each in monthly_archive[periode]:
+                for each in reversed(monthly_archive[periode]):
                     if top_tag[0] in multi_articles and periode in multi_articles[top_tag[0]]:
                         pass                             
                     else:
                         # print(top_tag[0] in each['tags'])
-                        if len(each['tags']) != 0 and top_tag[0] in each['tags']:
+                        if len(each['tags']) != 0 and top_tag[0] in each['tags'] and each['title'] not in multi_articles and '-01' not in each['pub_date']:
                             try:
                                 print('date : ', each['pub_date']) 
                                 insert_TimesTag = TimesTable(
@@ -226,6 +231,7 @@ class Fetcher(object):
                                     img_URL=each['thm_img'])
 
                                 multi_articles[top_tag[0]] = periode
+                                multi_articles[each['title']] = 1
 
                                 session.add(insert_TimesTag)
                                 session.flush()
