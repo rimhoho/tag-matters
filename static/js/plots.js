@@ -234,10 +234,8 @@ Promise.all([
                         };
 
                     // Set the ranges
-                    var xScale = d3.time.scale().range([0, width])
-                        , yScale = d3.scale.linear().range([height, 0])
-                        , xDomain = xScale.domain(d3.extent(google_graph, function(d) {return d.dates; }))
-                        , yDomain = yScale.domain([0, d3.max(google_graph, function(d) { return d.index; })]);
+                    var xScale = d3.time.scale().range([0, width]).domain(d3.extent(google_graph, function(d) {return d.dates; }))
+                    ,   yScale = d3.scale.linear().range([height, 0]).domain([0, d3.max(google_graph, function(d) { return d.index; })]);
                     
                     const maxY = d3.max(google_graph, function(d) {return d.index;});
                     
@@ -264,7 +262,7 @@ Promise.all([
                         .attr("transform", "translate(0," + margin.top + ")");
 
                     // LINE
-                    svg.append("path") //select line path within line-group (which represents a vehicle category), then bind new data 
+                    var line = svg.append("path") //select line path within line-group (which represents a vehicle category), then bind new data 
                         .attr("class", "line")
                         .attr("d", outline(google_graph));
                 
@@ -322,46 +320,53 @@ Promise.all([
                     
 
                     /***** For an SVG tooltip *****/ 
-                    
-                    var focus = svg.append("g")
-                        .attr("class", "focus")
-                        .style("display", "none");
+                    var mouseG = svg.append("g")
+                        .attr("class", "mouse-over-effects");
 
-                    focus.append("circle")
-                        .attr("r", 2);
+                    var mouseT = mouseG.append("text")
+                        .attr("transform", "translate(7,-3)")
+                        .attr("class", "mouse-text")
+                        .style("fill", "#5d7293")
+                        .style("opacity", "0");
 
-                    svg.append('rect')
-                        .attr('class', 'overlay')
-                        .attr('width', width)
+                    mouseG.append("path") // this is the black vertical line to follow mouse
+                        .attr("transform", "translate(0,0)")
+                        .attr("class", "mouse-line")
+                        .style("stroke", "black")
+                        .style("stroke-width", 0.4)
+                        .style("opacity", "0");
+
+                    mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+                        .attr('width', width) // can't catch mouse events on a g element
                         .attr('height', height)
-                        .on('mouseover', function() { focus.style('display', null); })
-                        .on('mouseout', function() { focus.style('display', 'none'); })
-                        .on('mousemove', function(data) { 
-                            var discetDate = d3.bisect( d => {
-                                d[1].map( d => {
-                                    parseDate(d);
-                                });
-                                console.log('* d', d)
-                            })
+                        .attr('fill', 'none')
+                        .attr('pointer-events', 'all')
+                        .on('mouseover', function() { // on mouse in show line, circles and text
+                            d3.select(".mouse-line")
+                                .style("opacity", "1");
+                        })
+                        .on('mousemove', function(data) { // mouse moving over canvas
                             var mouse = d3.mouse(this);
-                            var mouseDate = xScale.invert(mouse[0]);
-                            var i = discetDate(dates, mouseDate).left; // returns the index to the current data item
-                            // console.log('Mousemove: ', data, dates, ' | ', mouseDate, ' | ', i)
+                            var xDate = xScale.invert(mouse[0]),
+                                parsedDate = data[1].map( d => parseDate(d)),
+                                idx = d3.bisect(parsedDate, xDate); // returns the index to the current data item
 
-                            var d0 = dates[i - 1]
-                            var d1 = dates[i];
-                            // work out which date value is closest to the mouse
-                            var d = mouseDate - d0[0] > d1[0] - mouseDate ? d1 : d0;
-        
-                            var x = xScale(d[0]);
-                            var y = yScale(d[1]);
-                            console.log('x & y: ', x, ' | ', y)
+                            d3.selectAll(".mouse-line")
+                                .attr("d", function() {
+                                    var d = "M" + mouse[0] + "," + height;
+                                    d += " " + mouse[0] + "," + 0;
+                                    return d;
+                                })
+                                .style("opacity", "1");
 
-                            focus.select('#focusCircle')
-                                .attr('cx', x)
-                                .attr('cy', y);
-                            focus.select(".tooltip-date").text(d.label);
-                            focus.select(".tooltip-index").text(d.value);
+                            mouseT
+                            .text(`Date: ${data[1][idx]}, Index: ${data[0][idx]}`)
+                            .style("opacity", "1");
+                         })
+                        .on('mouseout', function() { // on mouse out hide line, circles and text
+                            d3.select(".mouse-line")
+                                .style("opacity", "0");
+                            d3.selectAll(".mouse-text").style("opacity", "0");
                         });
                 } else {
                     d3.select(this).remove();
@@ -454,23 +459,23 @@ Promise.all([
                         }
                     });
 
-                // bar.append("text")
-                //     .attr("class", "label make_small")
-                //     .attr("y", barHeight / 2)
-                //     .attr("dy", ".35em") //vertical align middle
-                //     .text(function(d){
-                //         if (d.label == "commentCount") {
-                //             return 'Comment'
-                //         } else if (d.label == "viewCount") {
-                //             return 'View'
-                //         } else {
-                //             return 'Like'
-                //         }
-                //     })
-                //     .each(function() {
-                //     labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
-                //     });
-                
+                bar.append("text")
+                    .attr("class", "label make_small")
+                    .attr("y", barHeight / 2)
+                    .attr("dy", ".35em") //vertical align middle
+                    .text(function(d){
+                        if (d.label == "commentCount") {
+                            return 'Comment'
+                        } else if (d.label == "viewCount") {
+                            return 'View'
+                        } else {
+                            return 'Like'
+                        }
+                    })
+                    .each(function() {
+                    labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+                    });
+                    
                 bar
                 .each(function(d) {
                     var icon_color = color;
@@ -491,7 +496,7 @@ Promise.all([
                         component = `<svg x="-12px" y="0" viewBox="155.571 399.782 250 200"><path style="fill:${icon_color};" d="M196.569,404.664c-3.6-0.985-17.998-0.985-17.998-0.985s-14.399,0-17.998,0.948 c-1.933,0.53-3.524,2.122-4.055,4.092c-0.948,3.6-0.948,11.064-0.948,11.064s0,7.503,0.948,11.064 c0.531,1.97,2.084,3.524,4.055,4.055c3.637,0.985,17.998,0.985,17.998,0.985s14.399,0,17.998-0.948 c1.97-0.53,3.524-2.084,4.055-4.054c0.947-3.6,0.947-11.065,0.947-11.065s0.038-7.502-0.947-11.102 C200.093,406.748,198.539,405.194,196.569,404.664z M173.986,426.678v-13.792l11.973,6.896L173.986,426.678z"/> </svg>`
                     }
                     d3.select(this).html(component);
-                    });
+                });
 
                 scale = d3.scale.linear()
                         .domain([0, max])
@@ -583,129 +588,3 @@ Promise.all([
 }).catch(function(err) {
     if (err) return console.warn(err);
 });
-
-
-
-
-            ////////////////////////
-            // Set the hovor tips //
-            ////////////////////////
-
-            // CREATE HOVER TOOLTIP WITH VERTICAL LINE //
-            // var tooltip = d3.select(this).append("div")
-            //     .style("opacity", 0)
-            //     .attr("class", "tooltip")
-            //     .style('position', 'absolute')
-            //     .style("background-color", "#D3D3D3")
-            //     .style('padding', 6)
-            //     .style('display', 'none')
-
-            // var mouseG = svg.append("g")
-            //     .attr("class", "mouse-over-effects");
-
-            // mouseG.append("path") // create vertical line to follow mouse
-            //     .attr("class", "mouse-line")
-            //     .style("stroke", "#A9A9A9")
-            //     .style("stroke-width", "4px")
-            //     .style("opacity", "0");
-
-            // var mousePerLine = mouseG.selectAll('.mouse-per-line')
-            //     .data(times_google_youtube)
-            //     .enter()
-            //     .append("g")
-            //     .attr("class", "mouse-per-line");
-
-            // mousePerLine.append("circle")
-            //     .attr("r", 4)
-            //     .style("class", "line")
-            //     .style("opacity", "0");
-
-            // mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-            //     .attr('width', width) 
-            //     .attr('height', height)
-            //     .attr('fill', 'none')
-            //     .attr('pointer-events', 'all')
-            //     .on('mouseout', function () { // on mouse out hide line, circles and text
-            //         d3.select(".mouse-line")
-            //         .style("opacity", "0");
-            //         d3.selectAll(".mouse-per-line circle")
-            //         .style("opacity", "0");
-            //         d3.selectAll(".mouse-per-line text")
-            //         .style("opacity", "0");
-            //         d3.selectAll(".tooltip")
-            //         .style('display', 'none')
-
-            //     })
-            //     .on('mouseover', function () { // on mouse in show line, circles and text
-            //             d3.select(".mouse-line")
-            //             .style("opacity", "1");
-            //             d3.selectAll(".mouse-per-line circle")
-            //             .style("opacity", "1");
-            //             d3.selectAll("#tooltip")
-            //             .style('display', 'block')
-            //         })
-            //     .on('mouseover', function () { // update tooltip content, line, circles and text when mouse moves
-            //         var mouse = d3.mouse(this);
-
-            //         d3.selectAll(".mouse-per-line")
-            //         .attr("transform", function (d) {
-            //             var xDate = xScale.invert(mouse[0]); // use 'invert' to get date corresponding to distance from mouse position
-            //             var yIndex = yScale.invert(mouse[1]);
-            //             console.log('* xDate: ', xDate);
-            //             console.log('* yIndex: ', yIndex);
-
-            //             var bisect = d3.bisector(d => d.trendDate) // retrieve row index of date on parsed csv
-            //             const idx = bisect.left(d.trendDate, xDate);
-
-            //             d3.select(".mouse-line")
-            //             .attr("d", function () {
-            //                 var data = "M" + xScale(idx) + "," + (height);
-            //                 data += " " + xScale(idx) + "," + 0;
-            //                 return data;
-            //             });
-            //             return "translate(" + xScale(idx) + "," + yScale(yIndex) + ")";
-            //         });
-
-            //         // updateTooltipContent(mouse, times_google_youtube)
-
-            //     })
-
-            // function updateTooltipContent(mouse, times_google_youtube) {
-
-            // sortingObj = []
-            // times_google_youtube.map(d => {
-            //     var xDate = xScale.invert(mouse[0])
-            //     var bisect = d3.bisector(function (d) { return d.date; }).left
-            //     var idx = bisect(d.values, xDate)
-            //     sortingObj.push({key: d.values[idx].vehicle_class, premium: d.values[idx].premium, bidding_no: d.values[idx].bidding_no, year: d.values[idx].date.getFullYear(), month: monthNames[d.values[idx].date.getMonth()]})
-            // })
-
-            // sortingObj.sort(function(x, y){
-            //     return d3.descending(x.premium, y.premium);
-            // })
-
-            // var sortingArr = sortingObj.map(d=> d.key)
-
-            // var times_google_youtube1 = times_google_youtube.slice().sort(function(a, b){
-            //     return sortingArr.indexOf(a.key) - sortingArr.indexOf(b.key) // rank vehicle category based on price of premium
-            // })
-
-            // tooltip.html(sortingObj[0].month + "-" + sortingObj[0].year + " (Bidding No:" + sortingObj[0].bidding_no + ')')
-            //     .style('display', 'block')
-            //     .style('left', d3.event.pageX + 20)
-            //     .style('top', d3.event.pageY - 20)
-            //     .style('font-size', 11.5)
-            //     .selectAll()
-            //     .data(times_google_youtube1).enter() // for each vehicle category, list out name and price of premium
-            //     .append('div')
-            //     .style('color', d => {
-            //     return color(d.key)
-            //     })
-            //     .style('font-size', 10)
-            //     .html(d => {
-            //     var xDate = xScale.invert(mouse[0])
-            //     var bisect = d3.bisector(function (d) { return d.date; }).left
-            //     var idx = bisect(d.values, xDate)
-            //     return d.key.substring(0, 3) + " " + d.key.slice(-1) + ": $" + d.values[idx].premium.toString()
-            //     })
-            // }
