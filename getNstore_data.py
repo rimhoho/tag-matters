@@ -7,9 +7,10 @@ import time
 import praw
 import nltk
 import configparser
+import re
 
 from apiclient import discovery
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
 from pytrends.request import TrendReq
@@ -49,64 +50,40 @@ Youtube_developer_key = config['Youtube']['DEVELOPER_KEY']
 # Create 4 functions to get data for fetching data : Initial New York Times metadata #
 ######################################################################################
 
-def cleaning_tag(tag):
-    if tag in ['Trump', 'Donald J']:
-        tag = 'Donald Trump'
-    if tag in ['Joseph R Jr', 'Biden']:
-        tag = 'Joe Biden'
-    if tag in ['Barr, William P', 'Barr', 'William P']:
-        tag = 'Barr William P'
-    if tag in ['Mueller, Robert S III', 'Mueller', 'Robert S III']:
-        tag = 'Mueller Robert S III'
-    if tag in ['Sanders, Bernard', 'Sanders', 'Bernard', 'Bernie Sanders']:
-        tag = 'Bernie Sanders'
-    if tag in ['Pete Buttigieg', 'Buttigieg, Pete (1982- )', 'Buttigieg', 'Pete Buttigieg', 'Pete (1982- )']:
-        tag = 'Pete Buttigieg'
-    if tag in ['Bloomberg, Michael R', 'Michael R', 'Bloomberg']:
-        tag = 'Michael Bloomberg'
-    if tag in ['Suleimani, Qassim', 'Suleimani', 'Qassim']:
-        tag = 'Soleimani Qassem'
-    if tag in ['Warren, Elizabeth', 'Warren', 'Elizabeth']:
-        tag = 'Elizabeth Warren'
-    if tag in ['Brett M', 'Supreme Court (US)', 'Kavanaugh']:
-        tag = 'Brett Kavanaugh'
-    if tag in ['Putin', 'Vladimir V']:
-        tag = 'Putin'
-    if tag in ['George', 'Floyd', 'George Floyd', 'George Floyd Protests (2020)']:
-        tag ='George Floyd Protests (2020)'
-    if tag in ['Police Brutality', 'Misconduct and Shootings']:
-        tag = 'Police Brutality'
-    if tag in ['Coronavirus Aid', 'Relief', 'and Economic Security Act (2020)']:
-        tag = 'Coronavirus Aid, Relief, and Economic Security Act (2020)'
+def cleaning_tag(tag):  
     if tag in ['School Shootings and Armed Attacks']:
         tag = 'School Shootings'
     if tag in ['Midland-Odessa, Tex, Shooting (2019)', 'Dayton, Ohio, Shooting (2019)', 'El Paso, Tex, Shooting (2019)', 'El Paso', 'Dayton', 'Shooting (2019)', 'Tex']:
         tag = 'Shootings'
-    if 'Russian Interference in 2016' in tag:
-        tag = 'Russian interference in the 2016 United States elections'
     if tag in ['Homosexuality and Bisexuality']:
         tag = 'Homosexuality'
+    if tag in ['Biden, Joseph R Jr']:
+        tag = 'Joe Biden'
+    if tag in ['Floyd George (d 2020)', 'George Floyd Protests (2020)']:
+        tag = 'George Floyd Protests (2020)'
+    if 'Security Act (2020)' in tag:
+        tag = 'Coronavirus Aid Relief and Economic Security Act'
+    if 'Suleimani' in tag:
+        tag = 'Qasem Soleimani'
+    if 'Homicides' in tag:
+        tag ='Homicides'
+    if 'Buttigieg' in tag:
+        tag = 'Pete Buttigieg'
+    if 'Police Brutality' in tag:
+        tag = 'Police Brutality'
     if 'Trump-Ukraine' in tag:
         tag = 'Trump Ukraine Whistle blower'
-    if tag in ['Biden, Joseph R Jr', 'Biden']:
-        tag = 'Joe Biden'
-    if tag in ['Sanders, Bernard', 'Sanders', 'Bernard', 'Bernie Sanders']:
-        tag = 'Bernie Sanders'
-    if tag in ['Pete Buttigieg', 'Buttigieg, Pete (1982- )', 'Buttigieg', 'Pete Buttigieg', 'Pete (1982- )']:
-        tag = 'Pete Buttigieg'
-    if tag in ['Blacks', 'Black People']:
-        tag = 'Blacks'
     if 'Shutdowns' in tag:
         tag = 'Shutdowns'
     if 'Quarantine' in tag:
         tag = 'Quarantines'
     if 'Deaths' in tag:
         tag = 'Deaths'
-    if 'Child' in tag:
-        tag = 'Parenting'
+    if 'Russian Interference in 2016' in tag:
+        tag = 'Russian interference in the 2016 United States elections'
     if 'Syria' in tag:
-        tag = 'Syria'
-    if tag in ['Donald Trump', 'Weddings and Engagements', 'Impeachment', 'Senate', 'Discrimination', 'Art', 'Debates (Political)', 'Demonstrations' , 'Protests and Riots', 'Women and Girls','States (US)', 'United States', 'New York State', 'New York City', 'NYC', 'NY)', 'Primaries and Caucuses', 'United States Politics and Government', 'Politics and Government', 'Books and Literature', 'Television', 'Movies', 'Real Estate and Housing (Residential)', 'United States', 'United States International Relations', 'Primaries and Caucuses', 'United States Economy', 'Elections']:
+        tag = 'Syria'    
+    if tag in ['Deaths','Social Media', 'Cooking and Cookbooks', 'Computers and the Internet', 'California', 'Iowa', 'Children and Childhood', 'Babies and Infants', 'News and News Media', 'Theater', 'Trump, Donald J', 'Weddings and Engagements', 'Impeachment', 'Senate', 'Discrimination', 'Art', 'Debates (Political)', 'Women and Girls','States (US)', 'United States', 'New York State', 'New York City', 'New York Times', 'NYC', 'NY', 'Primaries and Caucuses', 'United States Politics and Government', 'Politics and Government', 'Democratic Party', 'Republican Party', 'United States Defense and Military Forces', 'Presidential Election of 2020', 'Books and Literature', 'Television', 'Movies', 'Real Estate and Housing (Residential)', 'United States', 'United States International Relations', 'International Trade and World Market',  'House of Representatives', 'Primaries and Caucuses', 'United States Economy', 'Elections']:
         tag = ''
     return tag
 
@@ -124,9 +101,9 @@ def get_NYTimes_metadata():
         else:
             ends = 13
             if '0' in today[5:7]:
-                start = int(today[6:7]) - 1
+                start = int(today[6:7]) + 1
             else:
-                start = int(today[5:7]) - 1
+                start = int(today[5:7]) + 1
 
         for mm in reversed(range(start, ends)):
             print('* * ', yy, mm)
@@ -140,36 +117,29 @@ def get_NYTimes_metadata():
                 articles['title'] = a['headline']['main']
                 articles['pub_date'] = a['pub_date'][:10]
                 articles['url'] = a['web_url']
+                
                 if len(a['multimedia']) !=0 and a['multimedia'][0]['url']:
                     articles['thm_img'] = 'https://static01.nyt.com/' + a['multimedia'][0]['url']
                 else:
                     articles['thm_img'] = 'no_image_found'
-
-                articles['tags'] = [''.join(tag['value']) for tag in a['keywords']]
-                cleaning_List=map(cleaning_tag,  articles['tags'])
-                articles['tags'] = [changed_tag for changed_tag in cleaning_List]
-
+                
+                cleaning_article = map(cleaning_tag,  [''.join(tag['value']) for tag in a['keywords']])
+                articles['tags'] = [changed_tag if ', ' not in changed_tag else changed_tag.replace(", ", " ") for changed_tag in cleaning_article]
+                
                 monthly_article.append(articles)
-
+                
             if len(str(mm)) == 1:
                 mm = '0' + str(mm)
             monthly_archive[str(yy)+'-'+str(mm)] = monthly_article
-
-            tag_arr = []
-            for m in monthly_article:
-                for t in m['tags']:
-                    for string in t.split(', '):
-                        tag_arr.append(', '.join(string.split(', ')))
-            cleaning_List=map(cleaning_tag,  tag_arr)
-            tag_arr = [changed_tag for changed_tag in cleaning_List]
-
+            
             count_tag = {}
-            for tag in tag_arr:
-                if tag is not '':
-                    if tag in count_tag:
-                        count_tag[tag] += 1
-                    else:
-                        count_tag[tag] = 1   
+            for m in monthly_article:
+                for tag in m['tags']:
+                    if tag is not '':
+                        if tag in count_tag:
+                            count_tag[tag] += 1
+                        else:
+                            count_tag[tag] = 1   
 
             # This variable is what we want to get in NYTimes
             tags_with_frequency = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)[:10]
@@ -177,28 +147,26 @@ def get_NYTimes_metadata():
 
     return monthly_archive, frequent_tags_archive
 
-def call_combined_monthly_tag_by_periode(frequent_tags_archive):
-    combined_monthly_tag_by_periode = {}
-    for time_period in frequent_tags_archive:
+def call_monthly_top_tags(frequent_tags_archive, number):
+    monthly_top_tags = {}
+    for time_period in frequent_tags_archive.keys():
         tag_only = []
-        for each in frequent_tags_archive[time_period]:    
+        for each in frequent_tags_archive[time_period][:number]: 
             tag_only.append(each[0])
-            combined_monthly_tag_by_periode[time_period] = tag_only
-    return combined_monthly_tag_by_periode
+            monthly_top_tags[time_period] = tag_only
+    return monthly_top_tags
 
-def call_overall_Unique_tag_with_frequency(frequent_tags_archive):
-    overall_Unique_tag_with_frequency={}
-    for periode in frequent_tags_archive:
-        for tag_with_F in frequent_tags_archive[periode]:
-            if tag_with_F[0] in overall_Unique_tag_with_frequency:
-                overall_Unique_tag_with_frequency[tag_with_F[0]] = tag_with_F[1] + overall_Unique_tag_with_frequency[tag_with_F[0]]
+def call_unique_whole_tag_list(monthly_top_tags):
+    count_tag = {}
+    for periode in monthly_top_tags:
+        for tag in monthly_top_tags[periode]:
+            if tag is not '' and tag in count_tag:
+                count_tag[tag] += 1
             else:
-                overall_Unique_tag_with_frequency[tag_with_F[0]] = tag_with_F[1]
-
-    overall_Unique_tag_with_frequency = sorted(overall_Unique_tag_with_frequency.items(),key=operator.itemgetter(1),reverse=True)
-    return overall_Unique_tag_with_frequency
-
-
+                count_tag[tag] = 1  
+    unique_whole_tag_list = sorted(count_tag.items(),key=operator.itemgetter(1),reverse=True)
+    unique_whole_tag_list = [tags_f for tags_f in unique_whole_tag_list]
+    return unique_whole_tag_list 
 
 #####################################################
 # Create a Class for Fetching 3 different endpoints #
@@ -207,20 +175,20 @@ def call_overall_Unique_tag_with_frequency(frequent_tags_archive):
 class Fetcher(object):
 
     def store_times(self, monthly_archive, frequent_tags_archive, session):
+        print('* Srart to Store Times');
+
         multi_articles = {}
+        been_used = []
         for periode in frequent_tags_archive:
-            print('periode : ', periode)     
             for top_tag in frequent_tags_archive[periode]:
-                # Get specific NYTimes article information per each tags
-                # print('* * : ', monthly_archive[periode])
+                print(periode);
                 for each in reversed(monthly_archive[periode]):
                     if top_tag[0] in multi_articles and periode in multi_articles[top_tag[0]]:
                         pass                             
                     else:
-                        # print(top_tag[0] in each['tags'])
-                        if len(each['tags']) != 0 and top_tag[0] in each['tags'] and each['title'] not in multi_articles and '-01' not in each['pub_date']:
+                        if len(each['tags']) != 0 and top_tag[0] in each['tags'] and each['title'] not in been_used:
                             try:
-                                print('date : ', each['pub_date']) 
+                                print(top_tag[0]);
                                 insert_TimesTag = TimesTable(
                                     tag=top_tag[0],
                                     periodeM=periode,
@@ -231,30 +199,33 @@ class Fetcher(object):
                                     img_URL=each['thm_img'])
 
                                 multi_articles[top_tag[0]] = periode
-                                multi_articles[each['title']] = 1
-
+                                been_used.append(each['title'])
+                                    
                                 session.add(insert_TimesTag)
                                 session.flush()
                             except Exception as e:
-                                print(" = Unable insert_TimesTag to DB : ", top_tag[0], periode, " =", e)
+                                print(" = Unable insert_TimesTag to DB : ", periode, top_tag[0], " =", e)
                                 pass   
                      
-    def store_google(self, combined_monthly_tag, session):
-        today = str(datetime.today())
+    def store_google(self, unique_whole_tag_list, session):
+        print('* Srart to Call/Store Google');
+
+        today = datetime.today()
+        one_year_before = str(today.replace(day=1) - timedelta(days=355))[:10] + ' '
         # Connect with Pytrend(Google Search Trend), to get Search Interest Index
         pytrends = TrendReq(hl='en-US', tz=360)
 
-        for periode in combined_monthly_tag:
+        for periode in unique_whole_tag_list:
             add_post_arr = []
 
-            for top_tag in combined_monthly_tag[periode]:
+            for top_tag in unique_whole_tag_list[periode]:
                 tag_arr = []
                 tag_arr.append(top_tag)
                 interest_over_time = {}
                 
                 try:
                     time.sleep(3)
-                    pytrends.build_payload(tag_arr, cat=0, timeframe = '2019-05-01 '+ today[:10], geo='', gprop='')
+                    pytrends.build_payload(tag_arr, cat=0, timeframe = one_year_before + str(datetime.today())[:10], geo='', gprop='')
                     time.sleep(3)
                     df = pytrends.interest_over_time().reset_index()
                 except Exception as e:
@@ -277,40 +248,48 @@ class Fetcher(object):
                     session.add(insert_Google)
                     session.flush()
                 except Exception as e:
-                    print(" = Unable insert_Google to DB : ", top_tag, e, " =")
+                    print(" = Unable insert_Google to DB : ", periode, top_tag, e, " =")
                     pass
 
-    def call_Youtube(self, unique_tag_only_with_frequency):
+    def call_Youtube(self, unique_whole_tag_list):
+        print('* Srart to Call Youtube');
+
         # creating Youtube Resource Object 
         youtube_object = discovery.build(Youtube_service_name, Youtube_API_version, developerKey = Youtube_developer_key)
-        
-        max_results = 10
+        today = datetime.today()
+        pre_month = str(today.replace(day=1) - timedelta(days=22))[:10]
+        max_results = 4
         youtube_metadata = []
         
-        for tag_frequency in unique_tag_only_with_frequency:
+        for top_tag in unique_whole_tag_list:
             viewCount = 0
             commentCount = 0
             likeCount = 0
             turned_off_comments = 0
-            
             video = {}
             contain_stats = {}
-            
-            time.sleep(6)
-            search_tags = youtube_object.search().list(q = tag_frequency[0], part = "id, snippet", order = 'relevance', maxResults = max_results, publishedAfter = "2020-01-01T00:00:00Z").execute() 
-            time.sleep(3)
+
+            time.sleep(10)
+            search_tags = youtube_object.search().list(q = top_tag[0], part = "id, snippet", order = 'relevance', maxResults = max_results, publishedAfter = pre_month + "T00:00:00Z").execute() 
             
             for item in search_tags.get("items", []):
                 try:
-                    time.sleep(3)
+                    url = 'www.youtube.com/watch?v=' + item['id']['videoId']
+                    title = item['snippet']['title']
+                    if 'medium' in item['snippet']['thumbnails']:
+                        img_url = item['snippet']['thumbnails']['medium']
+                    else:
+                        img_url = item['snippet']['thumbnails']['default']
+
+                    time.sleep(10)
                     stats = youtube_object.videos().list(part='statistics, snippet', id=item["id"]["videoId"]).execute()
-                    time.sleep(3)
+                    time.sleep(10)
                     viewCount = int(stats.get("items", [])[0]['statistics']['viewCount'])
                     likeCount =  int(stats.get("items", [])[0]['statistics']['likeCount'])
                     commentCount = int(stats.get("items", [])[0]['statistics']['commentCount'])
 
                 except Exception as e:
-                    print(" = Unable search Youtube : ", tag_frequency[0], " =", e)
+                    print(" = Unable search Youtube : ", top_tag[0], " =", e)
                     if e == 'commentCount':
                         new_likeCount = 0 #'Comments are turned off'
                         contain_stats['turned_off_comments'] = 0
@@ -334,22 +313,30 @@ class Fetcher(object):
                 if 'turned_off_comments' in contain_stats:
                     contain_stats['turned_off_comments'] = contain_stats['turned_off_comments'] + 1
                 
-                if tag_frequency[0] in video.keys():
+                if top_tag[0] in video.keys():
                     pass
                 else:
-                    video[tag_frequency[0]] = contain_stats       
+                    video['tag'] = top_tag[0]
+                    video['url'] = url
+                    video['title'] = title
+                    video['img_url'] = img_url
+                    video['stats'] = contain_stats       
             youtube_metadata.append(video)   
         return youtube_metadata
 
     def store_youtube(self, youtube_metadata, session):
+        print('* Srart to Store Youtube');
+
         for each_youtube in youtube_metadata:
-            unique_tag = list(each_youtube.keys())[0]
             try:
                 insert_Youtube = YoutubeTable(
-                    tag=unique_tag,
-                    viewCount=each_youtube[unique_tag]['viewCount'],
-                    commentCount=each_youtube[unique_tag]['commentCount'],
-                    likeCount=each_youtube[unique_tag]['likeCount']
+                    tag=each_youtube['tag'],
+                    url=each_youtube['url'],
+                    title=each_youtube['title'],
+                    img_url=each_youtube['img_url'],
+                    viewCount=each_youtube['stats']['viewCount'],
+                    commentCount=each_youtube['stats']['commentCount'],
+                    likeCount=each_youtube['stats']['likeCount']
                 )
                 session.add(insert_Youtube)
                 session.flush()
@@ -357,28 +344,22 @@ class Fetcher(object):
                 print(" = Unable insert_Youtube to DB : ", each_youtube['tag'], " =", e)
                 pass
 
-    def store_rest_data(self, monthly_archive, combined_monthly_tag_by_periode, overall_Unique_tag_with_frequency, session):
+    def store_rest_data(self, monthly_top_tags, session):
         try:
-            for periode in monthly_archive:
-                insert_monthly_archive = MonthlyTagTable(
-                    periodeM = periode,
-                    article_archives = monthly_archive[periode]
-                    )
-                session.add(insert_monthly_archive)
 
-            for periode in combined_monthly_tag_by_periode.keys():
-                insert_combined_monthly_tag_by_periode = TagByPeriodeTable(
+            for periode in monthly_top_tags.keys():
+                insert_monthly_top_tags = TagByPeriodeTable(
                     periodeM = periode,
-                    tagArr_per_month = combined_monthly_tag_by_periode[periode]
+                    tagArr_per_month = monthly_top_tags[periode]
                     )
-                session.add(insert_combined_monthly_tag_by_periode)
+                session.add(insert_monthly_top_tags)
 
-            for tag_frequency in overall_Unique_tag_with_frequency:
-                insert_overall_Unique_tag_with_frequency = UniqueTagNFrequencyTable(
+            for tag_frequency in tags_appeared_every_month:
+                insert_tags_appeared_every_month = TagAppearedEveryMonthTable(
                     tag = tag_frequency[0],
                     frequency = tag_frequency[1]
                     )
-                session.add(insert_overall_Unique_tag_with_frequency)
+                session.add(insert_tags_appeared_every_month)
 
         except Exception as e:
                 print(" = Unable insert_rest_data to DB = ", e)
@@ -394,17 +375,19 @@ def run_all_fetch():
     
     monthly_archive = get_NYTimes_metadata()[0]
     frequent_tags_archive = get_NYTimes_metadata()[1]
-    combined_monthly_tag_by_periode = call_combined_monthly_tag_by_periode(frequent_tags_archive)
-    overall_Unique_tag_with_frequency = call_overall_Unique_tag_with_frequency(frequent_tags_archive)
-
+    monthly_top_tags = call_monthly_top_tags(frequent_tags_archive, 10)
+    unique_whole_tag_list = call_unique_whole_tag_list(monthly_top_tags)
     try:
         f1 = Fetcher()
         f1.store_times(monthly_archive, frequent_tags_archive, session)
-        f1.store_google(combined_monthly_tag_by_periode, session)
+        f1.store_google(monthly_top_tags, session)
 
-        youtube_metadata = f1.call_Youtube(overall_Unique_tag_with_frequency)
+        youtube_metadata = f1.call_Youtube(unique_whole_tag_list)
+        print('*'*20)
+        print(youtube_metadata)
+        print('*'*20)
         f1.store_youtube(youtube_metadata, session)
-        f1.store_rest_data(monthly_archive, combined_monthly_tag_by_periode, overall_Unique_tag_with_frequency, session)    
+        f1.store_rest_data(monthly_top_tags, session)    
         session.commit()
     except Exception as e:
         print('= Cannot store into DB, why? =', e)

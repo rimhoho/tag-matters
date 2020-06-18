@@ -1,39 +1,49 @@
 /* stylelint-disable selector-list-comma-newline-after */
 body {font-family:' Helvetica Neue','Helvetica','Arial',sans-serif; color: #444444; background-color: #FAFAFA;}
 .blog-header-logo { font-family: 'UnifrakturCook', cursive, Georgia, "Times New Roman", serif; font-size: 1.6rem;}
-.make_bold {font-weight: 400;}
-.make_small {font-size: 0.8rem; line-height: 0.9rem;}
-.text_height {line-height: 1rem;}
-/* .article_title {} */
+.make-bold {font-weight: 400;}
+.make-bolder {font-weight: 700; color: #444444;}
+.make-small {font-size: 0.8rem; line-height: 0.9rem;}
+.make-xsmall {font-size: 0.68rem; line-height: 0.8rem;}
+.line-height {line-height: 1rem;}
+.right-align {text-align: right;}
+.max-image {width: 233px; height: 168px; object-fit: cover;}
+.min-image {width: 180px; height: 120px; object-fit: cover;}
+.main-color {color:#5d7293; fill:#5d7293;}
+.tomato {color: tomato; fill: tomato;}
+.white {color: white; fill: white;}
+.light-grey {color: #c5ceda;}
 
-.heading {font-size: 1rem; color: #444444; font-weight: 700; text-align: center; border-top: 2px solid #FAFAFA !important; border-bottom: 1px solid #444444 !important;}
-.no-line {border-bottom: 2px solid #FAFAFA !important; border-top: 2px solid #FAFAFA !important;}
-
+.heading {font-size: 0.8rem; line-height: 0.78rem; }
+.thead-line {border-top: 2px solid white !important; border-bottom: 1px solid #e4e4ea !important;}
 tr th {font-weight: 400; font-size: 0.9rem;}
 th, td { text-align: left; padding: 0 1em 0.5ex 0;}
 th.center, td.center { text-align: center; }
 th.num, td.num { text-align: right; }
-.table-narrow {table-layout: fixed; word-wrap: break-word; width: 12rem; line-height: 1rem;}
-.table-super-narrow {table-layout: fixed; word-wrap: break-word; width: 4.6rem; line-height: 1rem;}
+
+.table-narrow {table-layout: fixed; word-wrap: break-word; width: 12rem;}
+.tag-col {table-layout: fixed; word-wrap: break-word; width: 86px;}
+.table-super-narrow {table-layout: fixed; word-wrap: break-word; width: 4.6rem;}
+.table-wide {table-layout: fixed; word-wrap: break-word; width: 9rem;}
 .table td {vertical-align: middle;}
+.table {display: block; height: 36rem; overflow-y: scroll;}
+.table::-webkit-scrollbar {width: .4rem;}
+.table::-webkit-scrollbar-thumb {background-color: rgba(124, 144, 175, 0.3);}
+.table::-webkit-scrollbar-track {background-color: #e7edf5a6;}
+.tbody {overflow-y: auto; display: block; max-height: 32em; }
+.rows-hover {color: #212529; background-color: rgba(0,0,0,.05);}
+
 #monthly_selection:hover {box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: box-shadow 0.3s ease-in-out;}
 .api-details:hover {box-shadow: 4px 4px 20px rgba(0,0,0,0.5); transition: box-shadow 0.3s ease-in-out;}
-.tomato {color: tomato;}
 .mouse-text {font-weight: 400; font-size: 0.2rem; z-index: 99; padding: 6; background-color: #5d7293; color: #FAFAFA;}
-/* .bottom-line {border-bottom: 1px solid #cacaca;}
-.tableFixHead thead tr {display:block;} */
 
-.content {padding: 16px;}
-.sticky {position: fixed;top: 0;width: 100%;}
-.sticky + .content {padding-top: 102px;}
-
-a p {font-size: 0.98rem; line-height: 1.2rem; padding-top: 0.4rem; font-weight: 400;}
-.line-height {line-height: 1rem; }
+.news-title {font-size: 0.9rem; line-height: 1rem; padding-top: 0.4rem; font-weight: 400;}
 h3 { line-height: 25px; font-weight: 700;} 
 h5, .h5 { line-height: 25px; font-weight: 700;} 
 h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;}
 .h5-light { line-height: 22px; font-weight: 200;} 
 .p-bold { line-height: 16px; font-size: 0.98rem; font-weight: 700;}
+.value {font-size: .43rem; line-height: .5rem;}
 
 /* .tooltip {position:absolute; background-color:  rgba(255,255,255,0.3); border: solid 2px #444444; border-radius: 5px; padding: 5px; z-index: 99;} */
 
@@ -55,7 +65,7 @@ h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;}
   }
   @media (max-width: 767px) {
   .over_flow {overflow-x: auto;}
-  .over_flow::-webkit-scrollbar {width: .7rem;}
-  .over_flow::-webkit-scrollbar-thumb {background-color: #5d7293;}
-  .over_flow::-webkit-scrollbar-track {background-color: #d5dfee;}
+  .over_flow::-webkit-scrollbar {width: .4rem;}
+  .over_flow::-webkit-scrollbar-thumb {background-color: rgba(124, 144, 175, 0.3);}
+  .over_flow::-webkit-scrollbar-track {background-color: #e7edf58a;}
 }

@@ -23,8 +23,8 @@
     <title>Tag Matter</title>
   </head>
   <body data-gr-c-s-loaded="true" cz-shortcut-listen="true">
-    <div class="container">
 
+    <div class="container">
       <header class="blog-header bottom-line pt-3 pb-3">
         <div class="row flex-nowrap justify-content-between align-items-center">
           <div class="col-4"></div>
@@ -41,18 +41,75 @@
       </header>
       <!-- <div class="p-1 mt-1 bg-dark"></div> -->
 
-      <div class="container bg-light">
+      <div class="container px-0">
         <div>
           <h5 class="mt-5 h5-light"><span class="h5">New York Times</span> publishes around 250 articles per day with only a fraction of those articles making it to the homepage.
           <span class="h5">Judiciously, NYTimes uses tags👏</span><span class="h5-light"> to help boost relevance on the site search and send a signal to external search engines, as well as inform content recommendations for readers.</span></h5>
           <div class="py-2">
-            <h5>But what exactly tag's working from our perspective?</h5>
+            <h5>But, does the tag capture current concerns in world? <span class="pl-2 light-grey">YES.</span></h5>
           </div>
         </div>
+        
+        <div class="d-flex flex-column align-items-center px-md-4 pt-1 mt-4 bg-white border pt-4">
+          <div class="d-flex align-items-center">
+            <h5 class="m-3 text-center">Top 10 Tag in NYTimes with Google Search and Youtube </h5>
+            <select class="form-control-sm shadow-sm bg-light" id="monthly_selection"></select>  
+          </div>
+          {% for error in errors %}
+            <h6 class="text-center text-muted">{{ error }}</h6>
+          {% endfor %}
+            <div class="d-flex flex-row col-md-12 px-0 offset-md-0 over_flow tableFixHead mt-3">
+              <div class="table-wrap col-9">
+                <table class="times_table table table-hover col-md-12"></table>
+                <div class="ml-2 make-small py-4 border-top border-secondary">
+                  <p class= "mb-2"><span class="tomato">Orange color </span>highlights the most popular date in Google Searches, and the most active comments, likes, views on Youtube videos.</p>
+                  <p>Time Range: June, 2019 - June, 2020 (In the last 12 months)<span class="p-2">|</span>Resources: <a href="https://developer.nytimes.com/" target="_blank" class="text-"> New York Times</a>, <a href="https://pypi.org/project/pytrends/" target="_blank">Google Search</a>, and <a href="https://praw.readthedocs.io/en/latest/index.html" target="_blank">Youtube</a></p>
+                </div>
+              </div> 
+              <div class="col-3 overflow-hidden flex-md-row p-3 position-relative" id="more_infos"></div>   
+          </div>
+        </div>
+
+        <div class="d-flex flex-column px-md-4 pt-4 mt-5 bg-dark border">
+          <h5 class="text-center pt-2 text-white">Findings</h5>
+          <div class="row mt-2">
+            <div class="col-md-12 pb-2">
+              <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
+                  <div class="col p-4 d-flex flex-column position-static bg-white">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="d-inline-block mb-1 h5-light">☝️ A peak of the Google Search Trends graph explains that people search the term the most at that time during the entire period. Most of New York Times tags on each months seem that the peak point of Google Search Trends graph indicates at right side of the X axis, relatively recent days. 
+                          <span class="tomato">So, yes, tags are capturing the most current interest/concern of the world.</span></h5>
+                      </div>
+                      <ul class="pl-3">
+                        <li>Black People | Police Brutality on 2020-06: These tags are quite general terms, but they got the highest searches on Google Searches on 5 May 2020.</li>
+                        <li>Mass Shootings | Homicides on 2019-08: These tags can be also seen other period but the peak point of Google Search Trends displays right side on 8 August 2019.</li>
+                      </ul>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2 mb-3">
+            <div class="col-md-12 pb-2">
+              <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
+                  <div class="col p-4 d-flex flex-column position-static bg-white">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="d-inline-block mb-1 h5-light">☝️ 563 of tags has been appeared every single months. Interestingly, <span class="tomato">specified period tags*</span> are shown that there have always exposed to public not only those specific periods.</h5>
+                      </div>
+                      <ul class="pl-3">
+                        <li>General terms: 'Global Warming', 'Prices (Fares, Fees and Rates)', 'Computer Security', 'Depression (Mental)'</li>
+                        <li>Countries' name: 'China', 'Iran', 'North Korea', 'Russia'</li>
+                        <li><span class="tomato">Specified period tags</span>: 'Hong Kong Protests (2019)', 'Civil Rights Movement (1954-68)', 'Tax Cuts and Jobs Act (2017)'</li>
+                      </ul>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="d-flex flex-column px-md-4 pt-4 mt-4 bg-white border">
           <div class="container pb-3 mt-2">
             <h5 class="mb-3 text-center">Tags Tracking Analytics</h5>
-            <p class="py-2">To see how it relates with <strong>News Media</strong> and <strong>End User</strong>, the research has applyed Google Search Trends API that has search interest indices over time and also looked up the most relavant Youtube video associated with the NYTimes tags.</p>
+            <h5 class="py-2 h5-light">To understand how monthly tags in NYTimes play the role and how people react about the topic by looking at other media platforms, the research has applyed Google Search Trends API that has search interest indices over time and also looked up the most relavant Youtube videos.</h5>
             <div class="row mt-4">
               <div class="col-md-4">
                 <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
@@ -64,9 +121,9 @@
                                 <small class="card-text">Main</small>
                             </div>
                         </div>
-                        <span class="p-bold text-muted">Timeframe:</span><p>2019-05 ~ 2020-05</p>
+                        <span class="p-bold text-muted">Timeframe:</span><p>Jun, 2019 ~ Jun, 2020</p>
                         <span class="p-bold text-muted">Question:</span> <p  class="pt-1 line-height">What is the most Frequently used tags on each month?</p>
-                        <a href="https://developer.nytimes.com/" class="btn btn-sm my-2 my-sm-0 mr-3 btn-dark api-details" target="_blank"><strong>API Details</strong></a>
+                        <a href="https://developer.nytimes.com/" target="_blank" class="btn btn-sm my-2 my-sm-0 mr-3 btn-dark api-details" ><strong>API Details</strong></a>
                     </div>
                 </div>
               </div>
@@ -80,7 +137,7 @@
                                 <small class="card-text">Major</small> -->
                             </div>
                         </div>
-                        <span class="p-bold text-muted">Timeframe:</span><p>2019-05 ~ 2020-05</p>
+                        <span class="p-bold text-muted">Timeframe:</span><p>Jun, 2019 ~ Jun, 2020</p>
                         <span class="p-bold text-muted">Question: </span><p class="pt-1 pb-3 line-height">How many times a tag has been googled?</p>
                           <!-- <strong>Trend Index: </strong><small>The Trend Index</small> -->
                         <a href="https://pypi.org/project/pytrends/" class="btn btn-sm my-2 my-sm-0 btn-dark api-details" target="_blank"><strong>API Details</strong></a>
@@ -97,7 +154,7 @@
                                 <small class="card-text">Major</small> -->
                             </div>
                         </div>
-                        <span class="p-bold text-muted">Timeframe: </span><p>2020-05 (Most recent month)</p>
+                        <span class="p-bold text-muted">Timeframe: </span><p>May ~ Jun, 2020</p>
                         <span class="p-bold text-muted">Question: </span><p class="pt-1 pb-3 line-height">How many times a tag has been discussed?</p>
                           <!-- <strong>Trend Index: </strong><small>The Trend Index</small> -->
                         <a href="https://praw.readthedocs.io/en/latest/index.html" class="btn btn-sm my-2 my-sm-0 btn-dark api-details" target="_blank"><strong>API Details</strong></a>
@@ -126,162 +183,10 @@
             </div>
           </div>
         </div>
-        
-        <div class="d-flex flex-column align-items-center px-md-4 pt-1 mt-4">
-          <div class="d-flex align-items-center align-items-center">
-            <h3 class="text-center py-4">#Tell the stories on</h3>
-            <select class="ml-3 bg-light form-control-sm" id="monthly_selection"></select>  
-          </div>
-          <div class="d-flex align-items-end flex-column " style="width: 100%;">
-            <small class="tomato bd-highlight">✴ The color highlights the most active NYTimes tags in each months on Youtube.</small>
-          </div>
-          {% for error in errors %}
-            <h6 class="text-center text-muted">{{ error }}</h6>
-          {% endfor %}
-          <div class="d-flex flex-row col-md-12 px-0 offset-md-0 over_flow tableFixHead">
-            <!-- <div class="table-wrap"> -->
-              <table class="times_table table table-hover col-md-12"></table>
-            <!-- </div> -->
-            <!-- x<table class="google_table table table-hover col-md-4"> </table>
-            <div class="recent_news col-3 ml-3 rounded overflow-hidden flex-md-row p-3 shadow-sm position-relative">
-              <p class="card-text"><small class="text-muted">March 14, 2020</small></p>
-              <a class="text-dark" href="https://www.nytimes.com/2020/03/14/technology/coronavirus-purell-wipes-amazon-sellers.html" target="_blank">
-                <div class="my-2">
-                  <img class="img-fluid" src="https://static01.nyt.com/images/2020/03/13/business/00gouge1/00gouge1-mediumThreeByTwo440-v2.jpg" alt="title">
-                </div>
-                <p class="">He Has 17,700 Bottles of Hand Sanitizer and Nowhere to Sell Them</p>
-              </a>
-              <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Coronavirus (2019-nCoV)</a>
-              <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Prices (Fares, Fees and Rates)</a>
-              <a class="btn btn-sm btn-outline-secondary rounded mb-2" href="#">Cleansers</a>
-            </div> -->
-          </div>     
-        </div>
-      </div>
-      <div class="d-flex flex-column px-md-4 pt-4 mt-4 bg-dark border">
-        <div class="container pb-3 mt-2">
-          <h5 class="mb-3 text-center pb-2 text-white">Overall Times Trends</h5>
-          <div class="row mt-4">
-            <div class="col-md-6 pb-2">
-              <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
-                  <div class="col p-4 d-flex flex-column position-static bg-white">
-                      <div class="d-flex justify-content-between align-items-center mb-3">
-                          <h6 class="d-inline-block mb-1 text-center">Tags with Overall Top Frequency</h6>
-                      </div>
-                      <ol>
-                        <li><strong>Coronavirus (2019-nCoV) </strong><span class="text-success"> 9031</span></li>
-                        <li><strong>Presidential Election of 2020 </strong><span class="text-success"> 6000</span> </li>
-                        <li><strong>Joe Biden </strong><span class="text-success"> 4579</span> </li>
-                        <li><strong>Parenting </strong><span> 3867</span> </li>
-                        <li><strong>Deaths </strong><span> 3163</span> </li>
-                        <li><strong>Sanders Bernie </strong><span> 2395</span></li>
-                        <li><strong>United  States International Relations</strong><span></span> 2327</li>
-                        <li><strong>Quarantines </strong><span> 2189</span> </li>
-                        <li><strong>Trump-Ukraine Whistle-blowe Complaint and Impeachment Inquiry </strong><span> 2111</span> </li>
-                        <li><strong>Epidemics </strong><span> 1441</span></li>
-                      </ol>
-                  </div>
-              </div>
-            </div>
-            <div class="col-md-6 pb-2">
-              <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-400 position-relative">
-                  <div class="col p-4 d-flex flex-column position-static bg-white">
-                      <div class="d-flex justify-content-between align-items-center mb-3">
-                          <h6 class="d-inline-block mb-1 text-center">Tags that appear on every single month</h6>
-                      </div>
-                      <ol>
-                        <li>Donald Trump</li>
-                        <li>New York State </li> 
-                        <li>United States Politics and Government</li>
-                        <li>Books and Literatur</li>
-                        <li>Television</li>
-                        <li>Movies</li>
-                        <li>Real Estate and Housing (Residential)</li>
-                        <li>United States</li>
-                        <li>Weddings and Engagements</li>
-                        <li>United States Economy</li>
-                      </ol>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      </div> 
     </div>
-    <div class="d-flex flex-column px-md-4 pt-4 mt-4 bg-dark border">
-      <div class="container pb-3 mt-2">
-        <h5 class="mb-3 text-center pb-2 text-white">Overall Google Search Trends</h5>
-        <div class="row mt-4">
-          <div class="col-md-6 pb-2">
-            <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
-                <div class="col p-4 d-flex flex-column position-static bg-white">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="d-inline-block mb-1 text-center">A Tag that rises most rapidly</h6>
-                    </div>
-                    <ul>
-                      <li>Coronavirus (2019-nCoV)</li>
-                    </ul>
-                </div>
-            </div>
-          </div>
-          <div class="col-md-6 pb-2">
-            <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-400 position-relative">
-                <div class="col p-4 d-flex flex-column position-static bg-white">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="d-inline-block mb-1 text-center">A Tag that curves most moderately</h6>
-                    </div>
-                    <ul>
-                      <li>United States International Relations</li>
-                    </ul>
-                </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-6 pb-2">
-            <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
-                <div class="col p-4 d-flex flex-column position-static bg-white">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="d-inline-block mb-1 text-center">A Tag that peaks a certain amount of time regularly </h6>
-                    </div>
-                    <ul>
-                      <li>United States Defense and Military Forces</li>
-                    </ul>
-                </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> 
-    <div class="d-flex flex-column px-md-4 pt-4 mt-4 bg-dark border">
-      <div class="container pb-3 mt-2">
-        <h5 class="mb-3 text-center pb-2 text-white">Overall Youtube Trends</h5>
-          <div class="col-md-12 pb-2">
-            <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
-                <div class="col p-4 d-flex flex-column position-static bg-white">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                      <h6 class="d-inline-block mb-1 text-center">Unigue Tags tracking on Youtube</h6>
-                    </div>
-                    <ol>
-                      <li><strong>Deaths </strong> <span class="text-success"> # of 124750</span></li>
-                      <li><strong>Bernie Sanders </strong> <span class="text-success"> # of 124251</span></li>
-                      <li> <strong> Epidemics </strong>  <span class="text-success"> # of 122760</span></li>
-                      <li> <strong> Joe Biden </strong> # of 136265</li>
-                      <li> <strong> Parenting </strong> # of 122265</li>
-                      <li> <strong> Epidemics </strong> # of 120786</li>
-                      <li> <strong> Trump-Ukraine Whistle-blowe Complaint and Impeachment Inquiry </strong> # of 117370</li>
-                      <li> <strong> Coronavirus (2019-nCoV) </strong> # of 40755</li>
-                      <li> <strong> United States International Relations </strong> # of 703</li>
-                      <li> <strong> Presidential Election of 2020 </strong> # of 105</li>
-                    </ol>
-                </div>
-            </div>
-          </div>
 
-      </div>
-    </div> 
-
-
-    <footer class="py-5 px-5">© 2020</footer>
+    <footer class="py-5 px-5">© 2020, Hyerim Hwang</footer>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

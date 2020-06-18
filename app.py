@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session, load_only
 from sqlalchemy import create_engine, func, distinct
 from flask_sqlalchemy import SQLAlchemy
 
-from model import TimesTable, GoogleTable, YoutubeTable, MonthlyTagTable, TagByPeriodeTable, UniqueTagNFrequencyTable
+from model import TimesTable, GoogleTable, YoutubeTable, TagByPeriodeTable, TagAppearedEveryMonthTable
 
 ###############
 # Flask Setup #
@@ -102,7 +102,6 @@ def Google():
 # Get Youtube data 
 @app.route("/youtube")
 def Youtube():
-
     # Create session and query all data
     youtube_combined = db.session.query(YoutubeTable).all()
     db.session.close()
@@ -110,6 +109,9 @@ def Youtube():
     youtube_archive = []
     for youtube in youtube_combined:
         each_youtube = {'tag':youtube.tag,
+                        # 'url':youtube.url,
+                        # 'title':youtube.title,
+                        # 'img_url':youtube.img_url,
                         'viewCount': youtube.viewCount,
                         'commentCount':youtube.commentCount,
                         'likeCount': youtube.likeCount}
@@ -117,46 +119,31 @@ def Youtube():
     return jsonify(youtube_archive)
 
 # Get rest of data 
-@app.route("/tagbyperiode")
+@app.route("/tagByperiode")
 def rest():
-    rest_data_combined = db.session.query(TagByPeriodeTable).all()
+    top_tags_combined = db.session.query(TagByPeriodeTable).all()
     db.session.close()
 
-    rest_data_archive = []
-    for rest_data in rest_data_combined:
-        each_rest_data = {'periode': rest_data.periodeM,
-                          'tags_only': rest_data.tagArr_per_month,
-                        #   'article_archives': rest_data.article_archives
+    monthly_top_tags = []
+    for top_tags in top_tags_combined:
+        each_top_tags = {'periode': top_tags.periodeM,
+                         'top_tag': top_tags.tagArr_per_month
                           }
-        rest_data_archive.append(each_rest_data)
-    return jsonify(rest_data_archive)
+        monthly_top_tags.append(each_top_tags)
+    return jsonify(monthly_top_tags)
 
-@app.route("/frequency")
+@app.route("/tagWfrequency")
 def frequency():
-    unique_tag_frequency_combined = db.session.query(UniqueTagNFrequencyTable).all()
-    
+    popular_tags_combined = db.session.query(TagAppearedEveryMonthTable).all()
     db.session.close()
 
-    unique_tag_frequency_archive = []
-    for unique_tag_frequency in unique_tag_frequency_combined:
-        each_unique_tag_frequency = {'tag_only': unique_tag_frequency.tag,
-                          'frequency': unique_tag_frequency.frequency}
-        unique_tag_frequency_archive.append(each_unique_tag_frequency)
-    return jsonify(unique_tag_frequency_archive)
+    tags_appeared_every_month = []
+    for popular_tags in popular_tags_combined:
+        each_popular_tags = {'tag': popular_tags.tag,
+                             'tags_appeared_every_month': popular_tags.frequency}
+        tags_appeared_every_month.append(each_popular_tags)
+    return jsonify(tags_appeared_every_month)
 
-@app.route("/month")
-def month():
-    month_combined = db.session.query(MonthlyTagTable).all()
-    db.session.close()
-
-    month_archive = []
-    for month in month_combined:
-        each_month = {'periode': month.periodeM,
-                          'article_archives': month.article_archives}
-        month_archive.append(each_month)
-    return jsonify(month_archive)
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
