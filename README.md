@@ -1,14 +1,12 @@
-# Tag Matters
-An example of creating a data pipline that can stream potentially GBs of data from an external API into a PostgreSQL database.
-- Project Website: https://tag-matters.herokuapp.com/
+# Monthly Frequency of NYTimes Tag with Search Trends
+An example of creating a data pipline that can stream potentially GBs of data from an external REST API into a PostgreSQL database.
 
 ### Goal
-- To understand how the large data gathered and stored into Postgres from Flask
-- To understand how tags in New York Times play the role and how people react about the topic by looking at other media platforms
-
+To understand how the large data gathered and stored into Postgres from Flask
 ### Data
 - New York Times API: https://developer.nytimes.com/apis
 - Pytrends API - Unofficial Google Search Trends API: https://pypi.org/project/pytrends/#interest-over-time
+- Reddit API: https://praw.readthedocs.io/en/latest/index.html
 - Youtube API: https://developers.google.com/youtube/v3/docs/search/list?hl=en_US
 
 ### References
