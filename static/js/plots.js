@@ -556,7 +556,7 @@ Promise.all([
                 .attr("height", barHeight)
                 .attr("width", function(d){
                     if (scale(d.value) > 20 && scale(d.value) < 40) {
-                        return scale(d.value) + 10;
+                        return scale(d.value) + 14;
                     } else {
                         return scale(d.value);
                     }
@@ -569,7 +569,7 @@ Promise.all([
                 });
 
             bar.append("text")
-                .attr("y", 7)
+                .attr("y", 8)
                 .attr("x", function(d){
                     if (scale(d.value) > 20) {
                         return 15;

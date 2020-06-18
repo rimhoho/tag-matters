@@ -4,7 +4,7 @@ body {font-family:' Helvetica Neue','Helvetica','Arial',sans-serif; color: #4444
 .make-bold {font-weight: 400;}
 .make-bolder {font-weight: 700; color: #444444;}
 .make-small {font-size: 0.8rem; line-height: 0.9rem;}
-.make-xsmall {font-size: 0.68rem; line-height: 0.8rem;}
+.make-xsmall {font-size: 0.76rem; line-height: 0.8rem;}
 .line-height {line-height: 1rem;}
 .right-align {text-align: right;}
 .max-image {width: 233px; height: 168px; object-fit: cover;}
@@ -43,7 +43,7 @@ h5, .h5 { line-height: 25px; font-weight: 700;}
 h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;}
 .h5-light { line-height: 22px; font-weight: 200;} 
 .p-bold { line-height: 16px; font-size: 0.98rem; font-weight: 700;}
-.value {font-size: .43rem; line-height: .5rem;}
+.value {font-size: .52rem; line-height: .5rem;}
 
 /* .tooltip {position:absolute; background-color:  rgba(255,255,255,0.3); border: solid 2px #444444; border-radius: 5px; padding: 5px; z-index: 99;} */
 
