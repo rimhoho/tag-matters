@@ -4,7 +4,7 @@ An example of creating a data pipline that can stream potentially GBs of data fr
 
 ### Goal
 - To understand how the large data gathered and stored into Postgres from Flask
-- To understand how tags play the role by using it on NYTimes daily and how people really react about the topic by looking at other media platforms through NYTimes tags
+- To understand how tags in New York Times play the role and how people react about the topic by looking at other media platforms
 
 ### Data
 - New York Times API: https://developer.nytimes.com/apis
