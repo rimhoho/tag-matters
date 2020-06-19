@@ -10,6 +10,7 @@ body {font-family:' Helvetica Neue','Helvetica','Arial',sans-serif; color: #4444
 .max-image {width: 233px; height: 168px; object-fit: cover;}
 .min-image {width: 180px; height: 120px; object-fit: cover;}
 .main-color {color:#5d7293; fill:#5d7293;}
+.main-back-color {background-color: #5d7293;}
 .tomato {color: tomato; fill: tomato;}
 .white {color: white; fill: white;}
 .light-grey {color: #c5ceda;}
