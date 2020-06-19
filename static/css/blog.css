@@ -42,7 +42,7 @@ th.num, td.num { text-align: right; }
 h3 { line-height: 25px; font-weight: 700;} 
 h5, .h5 { line-height: 25px; font-weight: 700;} 
 h6, .h6 { line-height: 20px; font-size: 1.24rem; font-weight: 400;}
-.h5-light { line-height: 22px; font-weight: 200;} 
+.h5-light { line-height: 24px; font-weight: 200;} 
 .p-bold { line-height: 16px; font-size: 0.98rem; font-weight: 700;}
 .value {font-size: .52rem; line-height: .5rem;}
 
