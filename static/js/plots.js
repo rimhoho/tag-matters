@@ -95,7 +95,7 @@ Promise.all([
             tbody = table.append("tbody").attr("class", '_' + filteredTime),
             times_colspan = 4,
             youtube_colspan = 3,
-            columnNames = ["", "RELATED NEWS", "TAG COUNTS"],
+            columnNames = ["TOP 10", "NEWS TITLE", "TAG COUNTS"],
             columns = ["tag", "title", "date", "img_URL", "url", "frequency"],
             youtube_columns = ["viewCount", "commentCount", "likeCount", "video"],
             google_columns = ['trendIndex', 'trendDate', 'busiest'],
@@ -108,10 +108,10 @@ Promise.all([
             .append("th")
             .each(function (d) {
                 var col = d3.select(this);
-                if (d == 'RELATED NEWS') {
+                if (d == 'NEWS TITLE') {
                     col.attr('colspan', times_colspan).text(d).attr("class", "text-muted pb-4 heading thead-line");
-                } else if (d == '') {
-                    col.text(d).attr("class", "text-muted right-align pb-4 heading thead-line tag-col");
+                } else if (d == 'TOP 10') {
+                    col.text(d).attr("class", "left-align pb-4 heading thead-line tag-col");
                 } else {
                     col.text(d).attr("class", "right-align pb-4 heading thead-line table-super-narrow");
                 }
@@ -172,7 +172,7 @@ Promise.all([
         //////////////////
 
         // 1. Update Thead (add google column with graphs)
-        thead.append("th").attr("class", "main-color right-align pb-4 heading thead-line").text('GOOGLE SEARCH');
+        thead.append("th").attr("class", "main-color right-align pb-4 pl-0 heading thead-line").text('GOOGLE SEARCH');
         
         // Use a class so you don't re-select the existing <td> elements
         rows.selectAll("td.google-graph")
@@ -196,7 +196,7 @@ Promise.all([
         });
 
         // 2. Update Thead (add Youtube column with graphs)
-        thead.append("th").attr("class", "main-color right-align pb-4 heading thead-line table-wide").text("YOUTUBE");
+        thead.append("th").attr("class", "main-color text-center pb-4 heading thead-line table-wide pl-0").text("YOUTUBE");
         
         // Use a class so you don't re-select the existing <td> elements
         rows.selectAll("td.youtube-graph")

@@ -7,6 +7,8 @@ body {font-family:' Helvetica Neue','Helvetica','Arial',sans-serif; color: #4444
 .make-xsmall {font-size: 0.7rem; line-height: 0.7rem;}
 .line-height {line-height: 1rem;}
 .right-align {text-align: right;}
+.left-align {text-align: left;}
+
 ._1rem {font-size: 0.92rem;}
 .max-image {width: 233px; height: 168px; object-fit: cover;}
 .min-image {width: 180px; height: 120px; object-fit: cover;}
