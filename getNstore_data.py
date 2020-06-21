@@ -50,7 +50,7 @@ Youtube_developer_key = config['Youtube']['DEVELOPER_KEY']
 # Create 4 functions to get data for fetching data : Initial New York Times metadata #
 ######################################################################################
 
-def cleaning_tag(tag):  
+def cleaning_tag(tag):
     if tag in ['School Shootings and Armed Attacks']:
         tag = 'School Shootings'
     if tag in ['Midland-Odessa, Tex, Shooting (2019)', 'Dayton, Ohio, Shooting (2019)', 'El Paso, Tex, Shooting (2019)', 'El Paso', 'Dayton', 'Shooting (2019)', 'Tex']:
@@ -59,8 +59,10 @@ def cleaning_tag(tag):
         tag = 'Homosexuality'
     if tag in ['Biden, Joseph R Jr']:
         tag = 'Joe Biden'
-    if tag in ['Floyd George (d 2020)', 'George Floyd Protests (2020)']:
+    if tag in ['Floyd, George (d 2020)']:
         tag = 'George Floyd Protests (2020)'
+    if tag in ['Trump-Ukraine Whistle-blower Complaint and Impeachment Inquiry']:
+        tag = 'Trump Ukraine Whistle blower'
     if 'Security Act (2020)' in tag:
         tag = 'Coronavirus Aid Relief and Economic Security Act'
     if 'Suleimani' in tag:
@@ -71,8 +73,6 @@ def cleaning_tag(tag):
         tag = 'Pete Buttigieg'
     if 'Police Brutality' in tag:
         tag = 'Police Brutality'
-    if 'Trump-Ukraine' in tag:
-        tag = 'Trump Ukraine Whistle blower'
     if 'Shutdowns' in tag:
         tag = 'Shutdowns'
     if 'Quarantine' in tag:
@@ -83,7 +83,7 @@ def cleaning_tag(tag):
         tag = 'Russian interference in the 2016 United States elections'
     if 'Syria' in tag:
         tag = 'Syria'    
-    if tag in ['Deaths','Social Media', 'Cooking and Cookbooks', 'Computers and the Internet', 'California', 'Iowa', 'Children and Childhood', 'Babies and Infants', 'News and News Media', 'Theater', 'Trump, Donald J', 'Weddings and Engagements', 'Impeachment', 'Senate', 'Discrimination', 'Art', 'Debates (Political)', 'Women and Girls','States (US)', 'United States', 'New York State', 'New York City', 'New York Times', 'NYC', 'NY', 'Primaries and Caucuses', 'United States Politics and Government', 'Politics and Government', 'Democratic Party', 'Republican Party', 'United States Defense and Military Forces', 'Presidential Election of 2020', 'Books and Literature', 'Television', 'Movies', 'Real Estate and Housing (Residential)', 'United States', 'United States International Relations', 'International Trade and World Market',  'House of Representatives', 'Primaries and Caucuses', 'United States Economy', 'Elections']:
+    if tag in ['Presidential Election of 2020', 'Elections', 'United States Politics and Government', 'New York City', 'United States', 'Politics and Government', 'Trump, Donald J', 'Weddings and Engagements', 'Books and Literature', 'Television', 'Art', '']:
         tag = ''
     return tag
 
@@ -246,7 +246,6 @@ class Fetcher(object):
                             fk_times = fk_id)
 
                     session.add(insert_Google)
-                    session.flush()
                 except Exception as e:
                     print(" = Unable insert_Google to DB : ", periode, top_tag, e, " =")
                     pass
@@ -258,7 +257,7 @@ class Fetcher(object):
         youtube_object = discovery.build(Youtube_service_name, Youtube_API_version, developerKey = Youtube_developer_key)
         today = datetime.today()
         pre_month = str(today.replace(day=1) - timedelta(days=22))[:10]
-        max_results = 4
+        max_results = 1
         youtube_metadata = []
         
         for top_tag in unique_whole_tag_list:
@@ -277,9 +276,9 @@ class Fetcher(object):
                     url = 'www.youtube.com/watch?v=' + item['id']['videoId']
                     title = item['snippet']['title']
                     if 'medium' in item['snippet']['thumbnails']:
-                        img_url = item['snippet']['thumbnails']['medium']
+                        img_url = item['snippet']['thumbnails']['medium']['url']
                     else:
-                        img_url = item['snippet']['thumbnails']['default']
+                        img_url = item['snippet']['thumbnails']['default']['url']
 
                     time.sleep(10)
                     stats = youtube_object.videos().list(part='statistics, snippet', id=item["id"]["videoId"]).execute()
@@ -339,7 +338,6 @@ class Fetcher(object):
                     likeCount=each_youtube['stats']['likeCount']
                 )
                 session.add(insert_Youtube)
-                session.flush()
             except Exception as e:
                 print(" = Unable insert_Youtube to DB : ", each_youtube['tag'], " =", e)
                 pass
@@ -353,14 +351,6 @@ class Fetcher(object):
                     tagArr_per_month = monthly_top_tags[periode]
                     )
                 session.add(insert_monthly_top_tags)
-
-            for tag_frequency in tags_appeared_every_month:
-                insert_tags_appeared_every_month = TagAppearedEveryMonthTable(
-                    tag = tag_frequency[0],
-                    frequency = tag_frequency[1]
-                    )
-                session.add(insert_tags_appeared_every_month)
-
         except Exception as e:
                 print(" = Unable insert_rest_data to DB = ", e)
                 pass
@@ -383,9 +373,6 @@ def run_all_fetch():
         f1.store_google(monthly_top_tags, session)
 
         youtube_metadata = f1.call_Youtube(unique_whole_tag_list)
-        print('*'*20)
-        print(youtube_metadata)
-        print('*'*20)
         f1.store_youtube(youtube_metadata, session)
         f1.store_rest_data(monthly_top_tags, session)    
         session.commit()

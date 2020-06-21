@@ -49,9 +49,9 @@ class YoutubeTable(Base):
 
     id = Column(Integer, primary_key=True)
     tag = Column(String(255))
-    # url = Column(String(255))
-    # title = Column(String(255))
-    # img_url = Column(String(255))
+    url = Column(String(255))
+    title = Column(String(255))
+    img_url = Column(String(255))
     viewCount = Column(Integer)
     commentCount = Column(Integer)
     likeCount = Column(Integer)
@@ -64,17 +64,8 @@ class TagByPeriodeTable(Base):
     periodeM = Column(String(25))
     tagArr_per_month = Column(PickleType)
 
-class TagAppearedEveryMonthTable(Base):
-    __tablename__ = 'TagAppearedEveryMonth'
-    __table_args__ = {'extend_existing': True}
-
-    id = Column(Integer, primary_key=True)
-    tag = Column(PickleType)
-    frequency = Column(Integer)
-
 TimesTable.__table__.create(bind=engine, checkfirst=True)
 GoogleTable.__table__.create(bind=engine, checkfirst=True)
 # RedditTable.__table__.create(bind=engine, checkfirst=True)
 YoutubeTable.__table__.create(bind=engine, checkfirst=True)
 TagByPeriodeTable.__table__.create(bind=engine, checkfirst=True)
-TagAppearedEveryMonthTable.__table__.create(bind=engine, checkfirst=True)

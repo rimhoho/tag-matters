@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session, load_only
 from sqlalchemy import create_engine, func, distinct
 from flask_sqlalchemy import SQLAlchemy
 
-from model import TimesTable, GoogleTable, YoutubeTable, TagByPeriodeTable, TagAppearedEveryMonthTable
+from model import TimesTable, GoogleTable, YoutubeTable, TagByPeriodeTable
 
 ###############
 # Flask Setup #
@@ -109,9 +109,9 @@ def Youtube():
     youtube_archive = []
     for youtube in youtube_combined:
         each_youtube = {'tag':youtube.tag,
-                        # 'url':youtube.url,
-                        # 'title':youtube.title,
-                        # 'img_url':youtube.img_url,
+                        'url':youtube.url,
+                        'title':youtube.title,
+                        'img_url':youtube.img_url,
                         'viewCount': youtube.viewCount,
                         'commentCount':youtube.commentCount,
                         'likeCount': youtube.likeCount}
@@ -131,19 +131,6 @@ def rest():
                           }
         monthly_top_tags.append(each_top_tags)
     return jsonify(monthly_top_tags)
-
-@app.route("/tagWfrequency")
-def frequency():
-    popular_tags_combined = db.session.query(TagAppearedEveryMonthTable).all()
-    db.session.close()
-
-    tags_appeared_every_month = []
-    for popular_tags in popular_tags_combined:
-        each_popular_tags = {'tag': popular_tags.tag,
-                             'tags_appeared_every_month': popular_tags.frequency}
-        tags_appeared_every_month.append(each_popular_tags)
-    return jsonify(tags_appeared_every_month)
-
 
 if __name__ == "__main__":
     app.run(debug=True)

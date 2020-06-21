@@ -14,8 +14,6 @@ Promise.all([
     fetch(base_url + '/google'),
     fetch(base_url + '/youtube'),
     fetch(base_url + '/tagByperiode'),
-    fetch(base_url + '/tagWfrequency'),
-    // fetch(base_url + '/month')
 ])
 .then(resp => Promise.all( resp.map(r => r.json()) ))
 .then(([times, google, youtube, tagbyperiode, frequency]) => {
@@ -82,12 +80,12 @@ Promise.all([
             } else {
                 times_google_youtube.forEach((times)=>{
                     if (item.tag == times.tag) {
-                        times['youtube'] = [item.commentCount, item.viewCount, item.likeCount];
+                        times['youtube'] = [item.commentCount, item.viewCount, item.likeCount, {img_url: item.img_url, url: item.url, title: item.title}];
                     }
                 })
             };
           });
-        console.log(times_google_youtube);
+        console.log('combined all, times_google_youtube: ', times_google_youtube);
 
         //////////////////////
         // Initialize Table //
@@ -99,7 +97,7 @@ Promise.all([
             youtube_colspan = 3,
             columnNames = ["", "RELATED NEWS", "TAG COUNTS"],
             columns = ["tag", "title", "date", "img_URL", "url", "frequency"],
-            youtube_columns = ["viewCount", "commentCount", "likeCount"],
+            youtube_columns = ["viewCount", "commentCount", "likeCount", "video"],
             google_columns = ['trendIndex', 'trendDate', 'busiest'],
             youtube_graph = [],
             color = "#5d7293"; //  Set the color;
@@ -128,8 +126,7 @@ Promise.all([
 
         var flag = {};
         
-        rows
-            .selectAll("td.times")
+        rows.selectAll("td.times")
             .attr("class", 'times')
             .data(function (row){
                 return columns.map( function (column) {
@@ -175,12 +172,10 @@ Promise.all([
         //////////////////
 
         // 1. Update Thead (add google column with graphs)
-        thead
-            .append("th").attr("class", "main-color right-align pb-4 heading thead-line").text('GOOGLE SEARCH');
+        thead.append("th").attr("class", "main-color right-align pb-4 heading thead-line").text('GOOGLE SEARCH');
         
         // Use a class so you don't re-select the existing <td> elements
-        rows
-            .selectAll("td.google-graph")
+        rows.selectAll("td.google-graph")
             .data(function (row){
                 var arr = [];
                 return google_columns.map( function (column) {
@@ -213,6 +208,8 @@ Promise.all([
                    return { column: column, value: row['youtube'][0]};
                 } else if (column =='likeCount') {
                    return { column: column, value: row['youtube'][2]};
+                } else {
+                   return { column: column, value: row['youtube'][3]};
                 }
             });
         })
@@ -254,8 +251,7 @@ Promise.all([
         if (side_infos) {
             side_infos.selectAll('.side-tag').remove();
             side_infos.selectAll('.recent_news').remove();
-            side_infos.selectAll('.more-google').remove();
-            side_infos.selectAll('.more-youtube').remove();
+            side_infos.selectAll('.recent_videos').remove();
         };
         
         var side = side_infos.selectAll(".recent_news").data(times_google_youtube).enter()
@@ -268,64 +264,60 @@ Promise.all([
                 side_infos.selectAll("#tag"+i).remove();
             }
         });
-        side.append("div").attr("class", "mt-4 recent_news").attr("id", (d,i) => "news" + i).html((d, index) => {
-            if (index == 0) {
-                return '<img src=' + d.img_URL + ' width="100%" height="100%" class="max-image"><p class="mb-0 news-title">' + d.title + ' <a href="'+ d.url + '" target="_blank" class="text-dark"> »</a></p><p class="pt-2 make-bold make-small text-muted">' + d.date + '</p>'
+
+        side.append("div").attr("class", "mt-4 recent_news").attr("id", (d,i) => "news" + i).html((d, i) => {
+            if (i == 0) {
+                return '<img src=' + d.img_URL + ' width="100%" height="100%" class="max-image"><p class="mb-0 news-title">' + d.title + '</p><p class="pt-2 make-bold make-small text-muted">' + d.date + '<a href="'+ d.url + '" target="_blank" class="text-dark"> »</a></p>'
             } 
-            if (index > 0) {
-                side_infos.selectAll("#news"+index).remove();
+            if (i > 0) {
+                side_infos.selectAll("#news" + i).remove();
             }
         });
 
-        // side.append("div").attr("class", "more-youtube").attr("id", (d,i) => "side-youtube" + i).each(function(d, index) {
-        //     var youtube_data = [d.youtube],
-        //         more_infos = true,
-        //         cell = d3.select(this);
-        //     if (index == 0) {
-        //         create_youtube(youtube_data, index, times_google_youtube, color, cell, more_infos);
-        //     } 
-        //     if (index > 0) {
-        //         side_infos.selectAll("#side-youtube"+index).remove();
-        //     }
-        // });
+        side.append("div").attr("class", "recent_videos").attr("id", (d,i) => "videos" + i).html((d, i) => {
+            
+            if (i == 0) {
+                return '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/' + d['youtube'][3]['url'].split('=')[1] + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><p class="mb-0 news-title">' + d['youtube'][3]['title'] + '</p> <a href="https://www.youtube.com/watch?v='+ d['youtube'][3]['url'].split('=')[1] + '" target="_blank" class="text-dark"> »</a>';
+            } ;
+            
+            if (i > 0) {
+                side_infos.selectAll("#videos" + i).remove();
+            };
+        });
     };
 
     var create_side_infos = function() {
         d3.select(".rows").classed('rows-hover',true);
 
         // On click, place each infos per row
-        d3.selectAll("tr").on("click", function(d, index) {     
+        d3.selectAll("tr").on("click", function(d) {
             d3.select(".rows").classed('rows-hover',false);
-            var side_infos = d3.select("#more_infos"),
-                color = "#5d7293";
+            var side_infos = d3.select("#more_infos");
             
             if (side_infos) {
                 side_infos.selectAll('.side-tag').remove();
                 side_infos.selectAll('.recent_news').remove();
-                side_infos.selectAll('.more-google').remove();
-                side_infos.selectAll('.more-youtube').remove();
+                side_infos.selectAll('.recent_videos').remove();
             };
     
             side_infos.append("div").attr("class", "side-tag pt-2 heading").text(d.tag);
+
             side_infos.append("div").attr("class", "mt-4 recent_news").html(
-                '<img src=' + d.img_URL + ' width="100%" height="100%" class="max-image"><p class="mb-0 news-title">' + d.title + ' <a href="'+ d.url + '" target="_blank" class="text-dark"> »</a></p><p class="pt-2 make-bold make-small text-muted">' + d.date + '</p>'
+                '<img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"><p class="mb-0 news-title">' + d.title + '</p><p class="pt-2 make-bold make-small text-muted">' + d.date + '<a href="'+ d.url + '" target="_blank" class="text-dark"> »</a></p>'
             );
-    
-            // side_infos.append("div").attr("class", "more-youtube").each(function() {
-            //     var more_infos = true,
-            //         cell = d3.select(this);
-                    
-            //     create_youtube(youtube_data, index, color, cell, more_infos);
-            // });
+            
+            side_infos.append("div").attr("class", "recent_videos").html(
+                '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/' + d['youtube'][3]['url'].split('=')[1] + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><p class="mb-0 news-title">' + d['youtube'][3]['title'] + '</p> <a href="https://www.youtube.com/watch?v='+ d['youtube'][3]['url'].split('=')[1] + '" target="_blank" class="text-dark"> »</a>'
+            );
         
         });
-    }
+    };
 
     var create_google = function(google_data, index, cell, color){
         if (index == 0) {
-            var margin = {top: 1, bottom: 20, left: "ml-2"},
+            var margin = {top: 4, bottom: 20, left: "ml-2"},
                 width = 50,
-                height = 13,
+                height = 10,
                 viewHeight = 15,
                 parseDate = d3.time.format("%Y-%m-%d").parse,
                 formatDate = d3.time.format("%b %m, %Y"),
@@ -347,10 +339,8 @@ Promise.all([
             var maxY = d3.max(google_graph, function(d) {return d.index;});
 
             // Define the axes
-            var xAxis = d3.svg.axis().scale(xScale)
-            .orient("bottom").ticks(3).tickFormat(formatDate);
-            var yAxis = d3.svg.axis().scale(yScale)
-            .orient("left").ticks(4).tickSize(-width);
+            var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3).tickFormat(formatDate);
+            // var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(4).tickSize(-width);
 
             // Set the area
             var area = d3.svg.area()
@@ -363,15 +353,15 @@ Promise.all([
                 .x(function(d) {return xScale(d.dates);})
                 .y(function(d) {return yScale(d.index);});
 
+            // Most popular searches
+            cell.append("div").attr("class", "busiest make-xsmall tomato pl-2 pb-0").text(d => formatDate(parseDate(d[2])));
+
 
             var svg = cell.append("svg")
                 .attr("class", margin.left)
                 .attr("viewBox", `0 0 ${width} ${viewHeight}`)
                 .append("g")
                 .attr("transform", "translate(0," + margin.top + ")");
-
-            // Most popular searches
-            cell.append("div").attr("class", "busiest make-xsmall tomato pl-2 pt-1").text(d => formatDate(parseDate(d[2])));
 
             svg.append("circle")
                 .attr("cx", (d) => {
@@ -410,92 +400,22 @@ Promise.all([
                 .attr("offset", function(d) {return d.offset;})
                 .attr("stop-color", function(d) {return d.color;});
 
-            /***** For an SVG tooltip *****/ 
-            // var mouseG = cell.append("g").attr("class", "mouse-over-effects");
-
-            // var mouseT = mouseG.append("text")
-            //     .attr("transform", "translate(7,-3)")
-            //     .attr("class", "mouse-text")
-            //     .style("fill", "#5d7293")
-            //     .style("opacity", "0");
-
-            // mouseG.append("path") // this is the black vertical line to follow mouse
-            //     .attr("transform", "translate(0,0)")
-            //     .attr("class", "mouse-line")
-            //     .style("stroke", "black")
-            //     .style("stroke-width", 0.4)
-            //     .style("opacity", "0");
-
-            // mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-            //     .attr('width', width) // can't catch mouse events on a g element
-            //     .attr('height', height)
-            //     .attr('fill', 'none')
-            //     .attr('pointer-events', 'all')
-            //     .on('mouseover', function() { // on mouse in show line, circles and text
-            //         d3.select(".mouse-line")
-            //             .style("opacity", "1");
-            // });
-
-            // mouseG.on('mousemove', function() { // mouse moving over canvas
-            //     var mouse = d3.mouse(this);
-            //     var xDate = xScale.invert(mouse[0]),
-            //         parsedDate = d[1].map( pd => parseDate(pd)),
-            //         idx = d3.bisect(parsedDate, xDate); // returns the index to the current data item
-
-            //     d3.selectAll(".mouse-line")
-            //         .attr("d", function() {
-            //             var ml = "M" + mouse[0] + "," + height;
-            //             ml += " " + mouse[0] + "," + 0;
-            //             return ml;
-            //         })
-            //         .style("opacity", "1");
-
-            //     console.log('date: ', d[0][idx]);
-
-            //     mouseT
-            //         .text(`${formatDate(parseDate(d[1][idx]))}`) // : ${d[0][idx]
-            //         .style("opacity", "1");
-            // })
-            // .on('mouseout', function() { // on mouse out hide line, circles and text
-            //     d3.select(".mouse-line")
-            //         .style("opacity", "0");
-            //     d3.selectAll(".mouse-text").style("opacity", "0");
-            // });
-            
-            // svg.append("g")
-            //     .attr("transform", `translate(0, 0)`)
-            //     .attr("class", "x axis")
-            //     .call(xAxis)
-            //     .call(g => {
-            //         g.selectAll("text")
-            //             .style("text-anchor", "middle")
-            //             .attr("y", 34)
-            //             .attr('fill', '#A9A9A9')
-            //         g.selectAll("line")
-            //             .attr('stroke', '#A9A9A9')
-            //             .attr('stroke-width', 0.3) // make horizontal tick thinner and lighter so that line paths can stand out
-            //             .attr('opacity', 0.3)
-            //             .attr("y2", 2);
-            //         g.select(".domain").remove();
-            // });
-
-            // svg.append("g")
-            //     .attr("class", "y axis")
-            //     .call(yAxis)
-            //     .call(g => {
-            //         g.selectAll("text")
-            //         .style("text-anchor", "middle")
-            //         .attr("x", 2)
-            //         .attr('fill', '#A9A9A9')
-
-            //         g.selectAll("line")
-            //             .attr('stroke', '#A9A9A9')
-            //             .attr('stroke-width', 0.1) // make horizontal tick thinner and lighter so that line paths can stand out
-            //             .attr('opacity', 1)
-            //             .attr("x1", 2);
-
-            //         g.select(".domain").remove();
-            // });
+            svg.append("g")
+                .attr("transform", `translate(0, 0)`)
+                .attr("class", "x axis")
+                .call(xAxis)
+                .call(g => {
+                    g.selectAll("text")
+                        .style("text-anchor", "middle")
+                        .attr("y", 34)
+                        .attr('fill', '#A9A9A9')
+                    g.selectAll("line")
+                        .attr('stroke', '#A9A9A9')
+                        .attr('stroke-width', 0.3) // make horizontal tick thinner and lighter so that line paths can stand out
+                        .attr('opacity', 0.3)
+                        .attr("y2", 2);
+                    g.select(".domain").remove();
+            });
         } else {
             cell.remove();
         }
@@ -593,30 +513,6 @@ Promise.all([
                         return 'value main-color';
                     }
                 });
-
-            // mouseT = bar.append("text")
-            //     .attr("transform", "translate(7,-3)")
-            //     .attr("class", "youtube-text")
-            //     .style("fill", "#5d7293")
-            //     .style("opacity", "0");
-
-            // bar.append("text")
-            //     .attr("class", "label")
-            //     .attr("y", barHeight / 2)
-            //     .attr("dy", ".35em") //vertical align middle
-            //     .text(function(d){
-            //         if (d.label == "viewCount") {
-            //             return 'View'
-            //         } 
-            //         else if (d.label == "commentCount") {
-            //             return 'Comment'
-            //         } else {
-            //             return 'Like'
-            //         }
-            //     })
-            //     .each(function() {
-            //     labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
-            //     });
                 
             bar.append('g').attr('class', 'icon').each(function(d) {
                 var icon_color = color;
@@ -636,41 +532,8 @@ Promise.all([
                     }
                     component = `<svg x="-12px" y="0" viewBox="155.571 399.782 250 200"><path style="fill:${icon_color};" d="M196.569,404.664c-3.6-0.985-17.998-0.985-17.998-0.985s-14.399,0-17.998,0.948 c-1.933,0.53-3.524,2.122-4.055,4.092c-0.948,3.6-0.948,11.064-0.948,11.064s0,7.503,0.948,11.064 c0.531,1.97,2.084,3.524,4.055,4.055c3.637,0.985,17.998,0.985,17.998,0.985s14.399,0,17.998-0.948 c1.97-0.53,3.524-2.084,4.055-4.054c0.947-3.6,0.947-11.065,0.947-11.065s0.038-7.502-0.947-11.102 C200.093,406.748,198.539,405.194,196.569,404.664z M173.986,426.678v-13.792l11.973,6.896L173.986,426.678z"/> </svg>`
                 }
-                d3.select(this).html(component)
-                // .on('mouseover', function(d) { // mouse moving over canvas
-                //     // console.log('data: ', d.label);
-                //     if (d.label == "commentCount") {
-                //         text_label = 'Comment'
-                //     } else if (d.label == "likeCount") {
-                //         text_label = 'Like'
-                //     } else {
-                //         text_label = 'View'
-                //     }
-                //     mouseT
-                //     .text(text_label)
-                //     .style("opacity", "1");
-                //     });
+                d3.select(this).html(component);
                 });
-            
-            // bar.append("text")
-            //     .attr("class", "value")
-            //     .attr("y", barHeight / 2)
-            //     .attr("dx", -4) //-valueMargin + labelWidth
-            //     .attr("dy", ".35em") //vertical align middle
-            //     .attr("text-anchor", "end")
-            //     .text(function(d, i){
-            //         return d3.format(',')(d.value);
-            //     })
-            //     .attr("x", function(d, i){
-            //         var width = this.getBBox().width + 10;
-            //         scale_value = scale(d.value)*0.38;
-            //         // console.log('Which one is Max? ', width+valueMargin, 'vs ', scale_value)
-            //         if (i == 2) {
-            //             return Math.max(width + valueMargin, 175);
-            //         } else {
-            //             return Math.max(width + valueMargin, scale_value);
-            //         }
-            //     });
         } else {
             cell.remove();
         }
