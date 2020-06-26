@@ -20,7 +20,7 @@
     <!-- AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
-    <title>Tag Matter</title>
+    <title>Tag Matters</title>
   </head>
   <body data-gr-c-s-loaded="true" cz-shortcut-listen="true">
     <div class="py-2 mb-4 text-center main-back-color text-white _1rem">The Tag Matters dashboard is made by D3.js, and <a class="text-white" href="https://www.google.com/intl/en/chrome/" target="_blank">Chrome browser »</a> will be the best way to enjoy.</div>
@@ -62,7 +62,7 @@
               <div class="table-wrap col-9">
                 <table class="times_table table table-hover col-md-12"></table>
                 <div class="ml-2 make-small py-4 border-top border-secondary">
-                  <p class="_1rem mb-2">Time Range: June, 2019 - June, 2020<span class="p-2">|</span>Resources: <a href="https://developer.nytimes.com/" target="_blank" class="text-"> New York Times</a>, <a href="https://pypi.org/project/pytrends/" target="_blank">Google Search</a>, and <a href="https://praw.readthedocs.io/en/latest/index.html" target="_blank">Youtube</a></p>
+                  <p class="_1rem mb-2">Time Range: Jul, 2019 - Jun, 2020<span class="p-2">|</span>Resources: <a href="https://developer.nytimes.com/" target="_blank" class="text-dark"><u>New York Times</u></a>, <a href="https://pypi.org/project/pytrends/" target="_blank" class="text-dark"><u>Google Search</u></a>, and <a href="https://praw.readthedocs.io/en/latest/index.html" target="_blank" class="text-dark"><u>Youtube</u></a></p>
                   <p class= "mb-3 _1rem"><span class="tomato">Orange color </span>highlights the most active searches on Google, and the most active interactions on Youtube videos.</p>
                 </div>
               </div> 
@@ -70,28 +70,32 @@
           </div>
         </div>
         <div class="d-flex flex-column px-md-4 pt-4 mt-5 bg-dark border">
-          <h5 class="text-center pt-2 pb-2 text-white">Tags Tracking Findings</h5>
+          <h5 class="text-center pt-2 pb-2 text-white">Tags Tracking</h5>
           <div class="row mt-2">
-            <div class="col-md-6 pb-2">
+            <div class="col-md-12 pb-2">
               <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
                   <div class="col p-4 d-flex flex-column position-static bg-white">
-                      <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="d-inline-block mb-1 h5-light">📍 While 45% of the top tags reachs the peak on the Google Search graph at each month, the veiw or like counts on Youtube video does not go up proportionately along with the tag counts. <span class="h5">Therefore, tags are certainly capturing the current concerns of the world, but further study will be needed on Youtube analytics.</span></h5>
+                      <div class="justify-content-between align-items-center mb-3">
+                        <h5 class="d-inline-block mb-1 h5-light">📍 In the recent five months, 71% of the top tags reachs the peak on the Google Search graph, the number goes down to 41% when the time range become a year.</h5>
+                        <ul class="pl-3 pt-2">
+                          <li>Black People | Police Brutality: These one of the General terms reach the highest searches on Google in <span class="tomato">5 May 2020</span> which were at Top 3 and 5 in top tag dashboard on <span class="tomato">2020-05</span>.</li>
+                          <li>Shootings: The peak on the Google Search graph indicates that the term has been searched the most on <span class="tomato">8 August 2019</span> and has been listed on <span class="tomato">2019-08</span>.</li>
+                        </ul>
+                        <h5 class="h5-light pb-2">📍Based on the veiws or likes of videos, Youtube stands up which tag gets the most attraction out of each month, but not exactly proportionately along with the top tag's ranks.</h5>
+                        <span class="h5 pt-3">Therefore, the tag does certainly capture the current concerns of the world, but following study will be needed on Youtube stats analytics.</span>
                       </div>
-                      <ul class="pl-3">
-                        <li>Black People | Police Brutality: These one of the General terms reach the highest searches on Google in <span class="tomato">5 May 2020</span> which were at Top 3 and 5 in top tag dashboard on <span class="tomato">2020-05</span>.</li>
-                        <!-- <li>Mass Shootings | Homicides: The peak on the Google Search graph indicates that the term has been searched the most on <span class="tomato">8 August 2019</span> and has been listed on <span class="tomato">2019-08</span>.</li> -->
-                      </ul>
                   </div>
               </div>
             </div>
-            <div class="col-md-6 pb-2">
+          </div>
+          <div class="row mt-1">
+            <div class="col-md-6 pb-2" rowspan="2">
               <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-3 shadow-sm h-md-350 position-relative">
                   <div class="col p-4 d-flex flex-column position-static bg-white">
                       <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="d-inline-block mb-1 h5-light">📍 563 of tags has been appeared every single month and needed to be removed from the analytics, while tracking the New York Tims Archives. <span class="h5">Interestingly, specified period tags<span class="tomato">*</span> are shown that there have always exposed not only those specific periods.</span></h5>
+                        <h5 class="d-inline-block mb-1 h5-light">📍563 of tags has been appeared every single month. <span class="h5">Interestingly, specified period tags<span class="tomato">*</span> are shown that there have always exposed not only those specific periods.</span></h5>
                       </div>
-                      <ul class="pl-3">
+                      <ul class="pl-3 mb-0">
                         <li>General terms: 'Global Warming', 'Prices (Fares, Fees and Rates)', 'Computer Security', 'Depression (Mental)'</li>
                         <!-- <li>Countries' name: 'China', 'Iran', 'North Korea', 'Russia'</li> -->
                         <li><span class="tomato">Specified period tags</span>: 'Hong Kong Protests (2019)', 'Civil Rights Movement (1954-68)', 'Tax Cuts and Jobs Act (2017)'</li>
@@ -99,18 +103,24 @@
                   </div>
               </div>
             </div>
-          </div>
-          <div class="row mt-1">
-            <div class="col-md-12 pb-3">
+            <div class="col-md-6 pb-3">
               <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-3 shadow-sm h-md-350 position-relative">
                   <div class="col p-4 d-flex flex-column position-static bg-white">
-                      <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="d-inline-block mb-1 h5-light">📍The number of top tag counts have skyrocketed in recent months by Coronavirus (2019-nCoV): 3978 and George Floyd Protests (2020): 1096. Before Feb 2020, Democratic Party: 576 was the highest counts on top 10 tags list.</h5>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="d-inline-block mb-1 h5-light">📍Some videos do not allow the comments or likes, so there is few limitation on youtube stats analytics.</h5>
+                      <div class="justify-content-between align-items-center">
+                        <h5 class="d-inline-block mb-1 h5-light">📍The tag counts have skyrocketed in the recent four months. </h5>
+                        <ul class="pl-3 mb-0">
+                          <li>Jun 2020: Coronavirus (2019-nCoV), <b class="tomato">1,155</b> | George Floyd Protests (2020), <b class="tomato">1,096</b></li>
+                          <li>Feb 2020: Coronavirus (2019-nCoV), <b>600</b> | Democratic Party, <b>576</b></li>
+                        </ul>
                       </div>
                   </div>
+              </div>
+              <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-3 shadow-sm h-md-350 position-relative">
+                <div class="col p-4 d-flex flex-column position-static bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h5 class="d-inline-block mb-1 h5-light">📍Some Youtube videos do not allow people to give their reactions, comments or likes.</h5>
+                    </div>
+                </div>
               </div>
             </div>
           </div>
