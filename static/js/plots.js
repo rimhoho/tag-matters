@@ -256,9 +256,10 @@ Promise.all([
         
         var side = side_infos.selectAll(".recent_news").data(times_google_youtube).enter()
         
-        side.append("div").attr("class", "side-tag pt-2 heading").attr("id", (d,i) => "tag" + i).text((d, i) => {
+        side.append("div").attr("class", "side-tag pt-2 heading main-color").attr("id", (d,i) => "tag" + i).text((d, i) => {
             if (i == 0) {
-                return d.tag
+                return 'NEWS & VIDEOS: ' + d.tag
+                // return 
             } 
             if (i > 0) {
                 side_infos.selectAll("#tag"+i).remove();
@@ -300,7 +301,7 @@ Promise.all([
                 side_infos.selectAll('.recent_videos').remove();
             };
     
-            side_infos.append("div").attr("class", "side-tag pt-2 heading").text(d.tag);
+            side_infos.append("div").attr("class", "side-tag pt-2 heading main-color").text('NEWS & VIDEOS: ' + d.tag);
 
             side_infos.append("div").attr("class", "mt-4 recent_news").html(
                 '<img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"><p class="mb-0 news-title">' + d.title + '</p><p class="pt-2 make-bold make-small text-muted">' + d.date + '<a href="'+ d.url + '" target="_blank" class="text-dark"> »</a></p>'
