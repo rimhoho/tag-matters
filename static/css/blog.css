@@ -13,7 +13,8 @@ body {font-family:' Helvetica Neue','Helvetica','Arial',sans-serif; color: #4444
 .max-image {width: 233px; height: 168px; object-fit: cover;}
 .min-image {width: 180px; height: 120px; object-fit: cover;}
 .main-color {color:#5d7293; fill:#5d7293;}
-.main-back-color {background-color: #5d7293bd;}
+.main-back-color {background-color: #5d72939d;}
+.main-back-color-darker {background-color: #5d7293;}
 .tomato {color: tomato; fill: tomato;}
 .white {color: white; fill: white;}
 .light-grey {color: #c5ceda;}
@@ -26,6 +27,7 @@ th, td { text-align: left; padding: 0 1em 0.5ex 0;}
 th.center, td.center { text-align: center; }
 th.num, td.num { text-align: right; }
 
+#more_infos {height:33rem;}
 .table-narrow {table-layout: fixed; word-wrap: break-word; width: 12rem;}
 .tag-col {table-layout: fixed; word-wrap: break-word; width: 86px;}
 .table-super-narrow {table-layout: fixed; word-wrap: break-word; width: 4.6rem;}

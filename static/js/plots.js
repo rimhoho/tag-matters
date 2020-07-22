@@ -95,8 +95,8 @@ Promise.all([
             tbody = table.append("tbody").attr("class", '_' + filteredTime),
             times_colspan = 4,
             youtube_colspan = 3,
-            columnNames = ["TOP 10", "NEWS TITLE", "TAG COUNTS"],
-            columns = ["tag", "title", "date", "img_URL", "url", "frequency"],
+            columnNames = ["TOP 10 TAGS", "COUNTS", "NEW YORK TIMES"],
+            columns = ["tag", "frequency", "title", "date", "img_URL", "url"],
             youtube_columns = ["viewCount", "commentCount", "likeCount", "video"],
             google_columns = ['trendIndex', 'trendDate', 'busiest'],
             youtube_graph = [],
@@ -108,9 +108,9 @@ Promise.all([
             .append("th")
             .each(function (d) {
                 var col = d3.select(this);
-                if (d == 'NEWS TITLE') {
-                    col.attr('colspan', times_colspan).text(d).attr("class", "text-muted pb-4 heading thead-line");
-                } else if (d == 'TOP 10') {
+                if (d == 'NEW YORK TIMES') {
+                    col.attr('colspan', times_colspan).text(d).attr("class", "pb-4 heading thead-line");
+                } else if (d == 'TOP 10 TAGS') {
                     col.text(d).attr("class", "left-align pb-4 heading thead-line tag-col");
                 } else {
                     col.text(d).attr("class", "right-align pb-4 heading thead-line table-super-narrow");
@@ -138,6 +138,7 @@ Promise.all([
             .each(function (d, index) {
                 var cell = d3.select(this);
                 if (d.column == 'title' || d.column == 'url' || d.column == 'date' || d.column == 'img_URL') {
+                    console.log('NEW YORK TIMES(4)', index)
                     if (d.column == 'title'){
                         var Ttitle = d.value;
                         flag['title'] = Ttitle;
@@ -152,18 +153,20 @@ Promise.all([
                         flag['img_URL'] = Timg_URL;
                     }
                     if (Object.keys(flag).length == times_colspan) {
-                        cell.attr('colspan', times_colspan).html('<p class="mb-0 text-muted news-title">' + flag['title'] + ' <a href="' + flag['href'] + '" target="_blank" class="text-dark"> »</a></p>')
+                        console.log('which index is fulfiled', index)
+                        cell.attr('colspan', times_colspan).html('<a href="' + flag['href'] + '" target="_blank" class="text-dark"> <p class="mb-0 text-dark news-title">' + flag['title'] + ' »</a></p>')
                         flag = {};
+                    } else {
+                        cell.remove();
                     }
                 } else {
                     if (typeof(d.value) == 'number') {
-                        cell.html(d3.format(',')(d.value)).attr('class', 'right-align make-bold');
+                        console.log('COUNTS', index)
+                        cell.html(d3.format(',')(d.value)).attr('class', 'right-align make-bold news-title');
                     } else {
+                        console.log('TOP 10 TAGS ? ', index)
                         cell.html(d.value).attr('class', 'line-height');
                     }
-                }
-                if (index > 0 && index < 4) {
-                    cell.remove(); // except 0 4 5 
                 }
             });
 
@@ -172,7 +175,7 @@ Promise.all([
         //////////////////
 
         // 1. Update Thead (add google column with graphs)
-        thead.append("th").attr("class", "main-color right-align pb-4 pl-0 heading thead-line").text('GOOGLE SEARCH');
+        thead.append("th").attr("class", "tomato right-align pb-4 pl-0 heading thead-line").text('GOOGLE SEARCH');
         
         // Use a class so you don't re-select the existing <td> elements
         rows.selectAll("td.google-graph")
@@ -196,7 +199,7 @@ Promise.all([
         });
 
         // 2. Update Thead (add Youtube column with graphs)
-        thead.append("th").attr("class", "main-color text-center pb-4 heading thead-line table-wide pl-0").text("YOUTUBE");
+        thead.append("th").attr("class", "tomato text-center pb-4 heading thead-line table-wide pl-0").text("YOUTUBE");
         
         // Use a class so you don't re-select the existing <td> elements
         rows.selectAll("td.youtube-graph")
@@ -256,9 +259,9 @@ Promise.all([
         
         var side = side_infos.selectAll(".recent_news").data(times_google_youtube).enter()
         
-        side.append("div").attr("class", "side-tag pt-2 heading main-color").attr("id", (d,i) => "tag" + i).text((d, i) => {
+        side.append("div").attr("class", "side-tag pt-2 heading text-white").attr("id", (d,i) => "tag" + i).text((d, i) => {
             if (i == 0) {
-                return 'NEWS & VIDEOS: ' + d.tag
+                return 'MOST RELEVANT TIMES & YOUTUBE'// + d.tag
                 // return 
             } 
             if (i > 0) {
@@ -266,19 +269,19 @@ Promise.all([
             }
         });
 
-        side.append("div").attr("class", "mt-4 recent_news").attr("id", (d,i) => "news" + i).html((d, i) => {
+        side.append("div").attr("class", "mt-4 pb-4 recent_news text-white").attr("id", (d,i) => "news" + i).html((d, i) => {
             if (i == 0) {
-                return '<img src=' + d.img_URL + ' width="100%" height="100%" class="max-image"><p class="mb-0 news-title">' + d.title + '</p><p class="pt-2 make-bold make-small text-muted">' + d.date + '<a href="'+ d.url + '" target="_blank" class="text-dark"> »</a></p>'
+                return '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
             } 
             if (i > 0) {
                 side_infos.selectAll("#news" + i).remove();
             }
         });
 
-        side.append("div").attr("class", "recent_videos").attr("id", (d,i) => "videos" + i).html((d, i) => {
+        side.append("div").attr("class", "recent_videos text-white").attr("id", (d,i) => "videos" + i).html((d, i) => {
             
             if (i == 0) {
-                return '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/' + d['youtube'][3]['url'].split('=')[1] + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><p class="mb-0 news-title">' + d['youtube'][3]['title'] + '</p> <a href="https://www.youtube.com/watch?v='+ d['youtube'][3]['url'].split('=')[1] + '" target="_blank" class="text-dark"> »</a>';
+                return '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/' + d['youtube'][3]['url'].split('=')[1] + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><p class="mb-0 news-title">' + d['youtube'][3]['title'] + '<a href="https://www.youtube.com/watch?v='+ d['youtube'][3]['url'].split('=')[1] + '" target="_blank" class="text-white"> »</a></p>';
             } ;
             
             if (i > 0) {
@@ -301,14 +304,14 @@ Promise.all([
                 side_infos.selectAll('.recent_videos').remove();
             };
     
-            side_infos.append("div").attr("class", "side-tag pt-2 heading main-color").text('NEWS & VIDEOS: ' + d.tag);
+            side_infos.append("div").attr("class", "side-tag pt-2 heading text-white").text('MOST RELEVANT TIMES & YOUTUBE');
 
-            side_infos.append("div").attr("class", "mt-4 recent_news").html(
-                '<img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"><p class="mb-0 news-title">' + d.title + '</p><p class="pt-2 make-bold make-small text-muted">' + d.date + '<a href="'+ d.url + '" target="_blank" class="text-dark"> »</a></p>'
+            side_infos.append("div").attr("class", "mt-4 pb-4 recent_news text-white").html(
+                '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
             );
             
-            side_infos.append("div").attr("class", "recent_videos").html(
-                '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/' + d['youtube'][3]['url'].split('=')[1] + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><p class="mb-0 news-title">' + d['youtube'][3]['title'] + '</p> <a href="https://www.youtube.com/watch?v='+ d['youtube'][3]['url'].split('=')[1] + '" target="_blank" class="text-dark"> »</a>'
+            side_infos.append("div").attr("class", "recent_videos text-white").html(
+                '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/' + d['youtube'][3]['url'].split('=')[1] + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><p class="mb-0 news-title text-white">' + d['youtube'][3]['title'] + '<a href="https://www.youtube.com/watch?v='+ d['youtube'][3]['url'].split('=')[1] + '" target="_blank" class="text-white"> »</a></p>'
             );
         
         });
