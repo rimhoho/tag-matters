@@ -83,22 +83,6 @@ def Google():
         google_archive.append(each_google)
     return jsonify(google_archive)
 
-# # Get Reddit data 
-# @app.route("/reddit")
-# def Reddit():
-
-#     # Create session and query all data
-#     reddit_combined = db.session.query(RedditTable).all()
-#     db.session.close()
-
-#     reddit_archive = []
-#     for reddit in reddit_combined:
-#         each_reddit = {'tag':reddit.tag,
-#                       'commentCount':reddit.commentCount}
-#         reddit_archive.append(each_reddit)
-#     return jsonify(reddit_archive)
-
-
 # Get Youtube data 
 @app.route("/youtube")
 def Youtube():

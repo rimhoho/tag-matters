@@ -12,11 +12,10 @@ if (host.includes("heroku")) {
 Promise.all([
     fetch(base_url + '/times'),
     fetch(base_url + '/google'),
-    fetch(base_url + '/youtube'),
-    fetch(base_url + '/tagByperiode'),
+    fetch(base_url + '/youtube')
 ])
-.then(resp => Promise.all( resp.map(r => r.json()) ))
-.then(([times, google, youtube, tagbyperiode, frequency]) => {
+.then(resp => Promise.all( resp.map(r => r.clone().json()) ))
+.then(([times, google, youtube]) => {
 
     var combined_pre_data = [];
     google.forEach((g_item, index) => {
@@ -69,7 +68,6 @@ Promise.all([
         selectTime = combined.filter(function(d){
             return d['key'] == filteredTime;
         });
-        console.log(filteredTime);
         
         convert_Youtube = selectTime[0].values.concat(youtube);
         
@@ -85,7 +83,6 @@ Promise.all([
                 })
             };
           });
-        console.log('combined all, times_google_youtube: ', times_google_youtube);
 
         //////////////////////
         // Initialize Table //
@@ -138,7 +135,6 @@ Promise.all([
             .each(function (d, index) {
                 var cell = d3.select(this);
                 if (d.column == 'title' || d.column == 'url' || d.column == 'date' || d.column == 'img_URL') {
-                    console.log('NEW YORK TIMES(4)', index)
                     if (d.column == 'title'){
                         var Ttitle = d.value;
                         flag['title'] = Ttitle;
@@ -153,7 +149,6 @@ Promise.all([
                         flag['img_URL'] = Timg_URL;
                     }
                     if (Object.keys(flag).length == times_colspan) {
-                        console.log('which index is fulfiled', index)
                         cell.attr('colspan', times_colspan).html('<a href="' + flag['href'] + '" target="_blank" class="text-dark"> <p class="mb-0 text-dark news-title">' + flag['title'] + ' »</a></p>')
                         flag = {};
                     } else {
@@ -161,10 +156,8 @@ Promise.all([
                     }
                 } else {
                     if (typeof(d.value) == 'number') {
-                        console.log('COUNTS', index)
                         cell.html(d3.format(',')(d.value)).attr('class', 'right-align make-bold news-title');
                     } else {
-                        console.log('TOP 10 TAGS ? ', index)
                         cell.html(d.value).attr('class', 'line-height');
                     }
                 }
@@ -567,7 +560,7 @@ Promise.all([
     };
 
     var initialData = combined[0]['key'];
-    console.log('* initialData * ', initialData)
+    // console.log('* initialData * ', initialData)
 
     // Call the table, side-infos
     makeTables(initialData);
