@@ -14,7 +14,10 @@ Promise.all([
     fetch(base_url + '/google'),
     fetch(base_url + '/youtube')
 ])
-.then(resp => Promise.all( resp.map(r => r.clone().json()) ))
+.then(resp => {
+    console.log(resp);
+    return Promise.all( resp.map(r => r.clone().json()) )
+})
 .then(([times, google, youtube]) => {
 
     var combined_pre_data = [];
