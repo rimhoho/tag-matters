@@ -68,7 +68,6 @@ def Times():
 # Get Google Search data 
 @app.route("/google")
 def Google():
-    
     # Create session and query all data
     google_combined = db.session.query(GoogleTable.trendDate, GoogleTable.busiest, GoogleTable.trendIndex, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == GoogleTable.fk_times).group_by(GoogleTable.id).all()
     db.session.close()
@@ -81,6 +80,9 @@ def Google():
                       'busiest' : google.busiest,
                       'trendIndex' : google.trendIndex}
         google_archive.append(each_google)
+
+    print('####', google_archive[0])
+    print('****', jsonify(google_archive))
     return jsonify(google_archive)
 
 # Get Youtube data 

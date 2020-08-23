@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship
 engine = create_engine('sqlite:///monthly_times_tags.db', echo=False)
 Base = declarative_base()
 
-
 class TimesTable(Base): 
     __tablename__ = 'times'
     __table_args__ = {'extend_existing': True}
@@ -31,18 +30,6 @@ class GoogleTable(Base):
     fk_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
     googleNTag = relationship('TimesTable')
 
-
-# class RedditTable(Base): 
-#     __tablename__ = 'reddit'
-#     __table_args__ = {'extend_existing': True}
-
-#     id = Column(Integer, primary_key=True)
-#     tag = Column(String(255))
-#     commentsCount = Column(Integer)
-    
-    # fk_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
-    # redditNTag = relationship('TimesTable')
-    
 class YoutubeTable(Base): 
     __tablename__ = 'youtube'
     __table_args__ = {'extend_existing': True}
@@ -66,6 +53,5 @@ class TagByPeriodeTable(Base):
 
 TimesTable.__table__.create(bind=engine, checkfirst=True)
 GoogleTable.__table__.create(bind=engine, checkfirst=True)
-# RedditTable.__table__.create(bind=engine, checkfirst=True)
 YoutubeTable.__table__.create(bind=engine, checkfirst=True)
 TagByPeriodeTable.__table__.create(bind=engine, checkfirst=True)
