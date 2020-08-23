@@ -1,11 +1,8 @@
 import json
 import requests
-import pandas as pd
-import numpy as np
 import operator
 import time
 import praw
-import nltk
 import configparser
 import re
 
@@ -16,9 +13,7 @@ from dateutil.relativedelta import relativedelta
 from pytrends.request import TrendReq
 from praw.models import MoreComments
 from googleapiclient import discovery
-from textblob import TextBlob
-from pandas.io.json import json_normalize
-
+ 
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -63,6 +58,8 @@ def cleaning_tag(tag):
         tag = 'George Floyd Protests (2020)'
     if tag in ['Trump-Ukraine Whistle-blower Complaint and Impeachment Inquiry']:
         tag = 'Trump Ukraine Whistle blower'
+    if tag in ['Black People', 'Blacks']:
+        tag = 'Blacks'
     if 'Security Act (2020)' in tag:
         tag = 'Coronavirus Aid Relief and Economic Security Act'
     if 'Suleimani' in tag:
@@ -83,7 +80,7 @@ def cleaning_tag(tag):
         tag = 'Russian interference in the 2016 United States elections'
     if 'Syria' in tag:
         tag = 'Syria'    
-    if tag in ['Presidential Election of 2020', 'Elections', 'United States Politics and Government', 'New York City', 'United States', 'Politics and Government', 'Trump, Donald J', 'Weddings and Engagements', 'Books and Literature', 'Television', 'Art', '']:
+    if tag in ['Presidential Election of 2020', 'Elections', 'United States Politics and Government', 'New York City', 'United States', 'Politics and Government', 'Weddings and Engagements', 'Books and Literature', 'Television', 'Art', 'Deaths', 'Primaries and Caucuses', '']:
         tag = ''
     return tag
 
@@ -135,7 +132,7 @@ def get_NYTimes_metadata():
             count_tag = {}
             for m in monthly_article:
                 for tag in m['tags']:
-                    if tag is not '':
+                    if tag != '':
                         if tag in count_tag:
                             count_tag[tag] += 1
                         else:
@@ -160,7 +157,7 @@ def call_unique_whole_tag_list(monthly_top_tags):
     count_tag = {}
     for periode in monthly_top_tags:
         for tag in monthly_top_tags[periode]:
-            if tag is not '' and tag in count_tag:
+            if tag != '' and tag in count_tag:
                 count_tag[tag] += 1
             else:
                 count_tag[tag] = 1  
