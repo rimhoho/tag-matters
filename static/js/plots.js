@@ -301,7 +301,7 @@ Promise.all([
             };
     
             side_infos.append("div").attr("class", "side-tag pt-2 heading text-white").text('MOST RELEVANT TIMES & YOUTUBE');
-
+            console.log('img_URL * ', d.img_URL);
             side_infos.append("div").attr("class", "mt-4 pb-4 recent_news text-white").html(
                 '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
             );

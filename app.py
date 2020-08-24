@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session, load_only
 from sqlalchemy import create_engine, func, distinct
 from flask_sqlalchemy import SQLAlchemy
 
-from model import TimesTable, GoogleTable, YoutubeTable, TagByPeriodeTable
+from model import TimesTable, GoogleBTable, GoogleDTable, GoogleITable, YoutubeTable
 
 ###############
 # Flask Setup #
@@ -69,7 +69,7 @@ def Times():
 @app.route("/google")
 def Google():
     # Create session and query all data
-    google_combined = db.session.query(GoogleTable.trendDate, GoogleTable.busiest, GoogleTable.trendIndex, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == GoogleTable.fk_times).group_by(GoogleTable.id).all()
+    google_combined = db.session.query(GoogleDTable.trendDate, GoogleBTable.busiest, GoogleITable.trendIndex, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == GoogleTable.fk_times).group_by(GoogleTable.id).all()
     db.session.close()
 
     google_archive = []
@@ -104,19 +104,19 @@ def Youtube():
         youtube_archive.append(each_youtube)
     return jsonify(youtube_archive)
 
-# Get rest of data 
-@app.route("/tagByperiode")
-def rest():
-    top_tags_combined = db.session.query(TagByPeriodeTable).all()
-    db.session.close()
+# # Get rest of data 
+# @app.route("/tagByperiode")
+# def rest():
+#     top_tags_combined = db.session.query(TagByPeriodeTable).all()
+#     db.session.close()
 
-    monthly_top_tags = []
-    for top_tags in top_tags_combined:
-        each_top_tags = {'periode': top_tags.periodeM,
-                         'top_tag': top_tags.tagArr_per_month
-                          }
-        monthly_top_tags.append(each_top_tags)
-    return jsonify(monthly_top_tags)
+#     monthly_top_tags = []
+#     for top_tags in top_tags_combined:
+#         each_top_tags = {'periode': top_tags.periodeM,
+#                          'top_tag': top_tags.tagArr_per_month
+#                           }
+#         monthly_top_tags.append(each_top_tags)
+#     return jsonify(monthly_top_tags)
 
 if __name__ == "__main__":
     app.run(debug=True)

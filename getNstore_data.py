@@ -236,13 +236,20 @@ class Fetcher(object):
                         if frequency == 100:
                             busiest_date = df['date'].iloc[i].strftime("%Y-%m-%d")
 
-                    insert_Google = GoogleTable(
-                            trendDate = [date.strftime("%Y-%m-%d") for date in df['date']],
+                    Google_b = GoogleBTable(
                             busiest = busiest_date,
-                            trendIndex = [rate for rate in df[top_tag]],
-                            fk_times = fk_id)
-
-                    session.add(insert_Google)
+                            fk_b_times = fk_id)
+                    for date in df['date']:
+                        Google_d = GoogleDTable(
+                                trendDate = date.strftime("%Y-%m-%d"),
+                                fk_d_times = fk_id)
+                    for i, rate in enumerate(df[top_tag]):
+                        Google_i = GoogleITable(
+                                trendIndex = rate,
+                                fk_i_times = fk_id)
+                        if i == 0:
+                            print('= Really on GoogleITable =', rate)
+                    session.add_all([Google_b, Google_d, Google_i])
                 except Exception as e:
                     print(" = Unable insert_Google to DB : ", periode, top_tag, e, " =")
                     pass
@@ -339,18 +346,18 @@ class Fetcher(object):
                 print(" = Unable insert_Youtube to DB : ", each_youtube['tag'], " =", e)
                 pass
 
-    def store_rest_data(self, monthly_top_tags, session):
-        try:
+    # def store_rest_data(self, monthly_top_tags, session):
+    #     try:
 
-            for periode in monthly_top_tags.keys():
-                insert_monthly_top_tags = TagByPeriodeTable(
-                    periodeM = periode,
-                    tagArr_per_month = monthly_top_tags[periode]
-                    )
-                session.add(insert_monthly_top_tags)
-        except Exception as e:
-                print(" = Unable insert_rest_data to DB = ", e)
-                pass
+    #         for periode in monthly_top_tags.keys():
+    #             insert_monthly_top_tags = TagByPeriodeTable(
+    #                 periodeM = periode,
+    #                 tagArr_per_month = monthly_top_tags[periode]
+    #                 )
+    #             session.add(insert_monthly_top_tags)
+    #     except Exception as e:
+    #             print(" = Unable insert_rest_data to DB = ", e)
+    #             pass
 #############################################################
 # Call a function to run all fetch within the same session  # 
 #############################################################
@@ -371,7 +378,7 @@ def run_all_fetch():
 
         youtube_metadata = f1.call_Youtube(unique_whole_tag_list)
         f1.store_youtube(youtube_metadata, session)
-        f1.store_rest_data(monthly_top_tags, session)    
+        # f1.store_rest_data(monthly_top_tags, session)    
         session.commit()
     except Exception as e:
         print('= Cannot store into DB, why? =', e)

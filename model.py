@@ -19,15 +19,31 @@ class TimesTable(Base):
     url = Column(String(255))
     img_URL = Column(String(255))
 
-class GoogleTable(Base): 
+class GoogleBTable(Base): 
     __tablename__ = 'google'
     __table_args__ = {'extend_existing': True}
 
     id = Column(Integer, primary_key=True)
-    trendDate = Column(PickleType)
     busiest = Column(String(25))
-    trendIndex = Column(PickleType)
-    fk_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
+    fk_b_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
+    googleNTag = relationship('TimesTable')
+
+class GoogleDTable(Base): 
+    __tablename__ = 'google'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    trendDate = Column(Date)
+    fk_d_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
+    googleNTag = relationship('TimesTable')
+
+class GoogleITable(Base): 
+    __tablename__ = 'google'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer, primary_key=True)
+    trendIndex = Column(Integer)
+    fk_i_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
     googleNTag = relationship('TimesTable')
 
 class YoutubeTable(Base): 
@@ -43,15 +59,17 @@ class YoutubeTable(Base):
     commentCount = Column(Integer)
     likeCount = Column(Integer)
 
-class TagByPeriodeTable(Base):
-    __tablename__ = 'tagByPeriode'
-    __table_args__ = {'extend_existing': True}
+# class TagByPeriodeTable(Base):
+#     __tablename__ = 'tagByPeriode'
+#     __table_args__ = {'extend_existing': True}
 
-    id = Column(Integer, primary_key=True)
-    periodeM = Column(String(25))
-    tagArr_per_month = Column(PickleType)
+#     id = Column(Integer, primary_key=True)
+#     periodeM = Column(String(25))
+#     tagArr_per_month = Column(PickleType)
 
 TimesTable.__table__.create(bind=engine, checkfirst=True)
-GoogleTable.__table__.create(bind=engine, checkfirst=True)
+GoogleBTable.__table__.create(bind=engine, checkfirst=True)
+GoogleDTable.__table__.create(bind=engine, checkfirst=True)
+GoogleITable.__table__.create(bind=engine, checkfirst=True)
 YoutubeTable.__table__.create(bind=engine, checkfirst=True)
-TagByPeriodeTable.__table__.create(bind=engine, checkfirst=True)
+# TagByPeriodeTable.__table__.create(bind=engine, checkfirst=True)
