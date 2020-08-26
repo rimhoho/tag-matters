@@ -26,7 +26,7 @@ class GoogleBTable(Base):
     id = Column(Integer, primary_key=True)
     busiest = Column(String(25))
     fk_b_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
-    googleNTag = relationship('TimesTable')
+    googleNTag = relationship('TimesTable', foreign_keys=[fk_b_times])
 
 class GoogleDTable(Base): 
     __tablename__ = 'google'
@@ -35,7 +35,7 @@ class GoogleDTable(Base):
     id = Column(Integer, primary_key=True)
     trendDate = Column(Date)
     fk_d_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
-    googleNTag = relationship('TimesTable')
+    googleNTag = relationship('TimesTable', foreign_keys=[fk_d_times])
 
 class GoogleITable(Base): 
     __tablename__ = 'google'
@@ -44,7 +44,7 @@ class GoogleITable(Base):
     id = Column(Integer, primary_key=True)
     trendIndex = Column(Integer)
     fk_i_times = Column(Integer, ForeignKey("times.id", ondelete='CASCADE'), nullable=False)
-    googleNTag = relationship('TimesTable')
+    googleNTag = relationship('TimesTable', foreign_keys=[fk_i_times])
 
 class YoutubeTable(Base): 
     __tablename__ = 'youtube'
@@ -59,13 +59,13 @@ class YoutubeTable(Base):
     commentCount = Column(Integer)
     likeCount = Column(Integer)
 
-# class TagByPeriodeTable(Base):
-#     __tablename__ = 'tagByPeriode'
-#     __table_args__ = {'extend_existing': True}
+class TagByPeriodeTable(Base):
+    __tablename__ = 'tagByPeriode'
+    __table_args__ = {'extend_existing': True}
 
-#     id = Column(Integer, primary_key=True)
-#     periodeM = Column(String(25))
-#     tagArr_per_month = Column(PickleType)
+    id = Column(Integer, primary_key=True)
+    periodeM = Column(String(25))
+    tagArr_per_month = Column(PickleType)
 
 TimesTable.__table__.create(bind=engine, checkfirst=True)
 GoogleBTable.__table__.create(bind=engine, checkfirst=True)
