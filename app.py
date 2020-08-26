@@ -104,19 +104,19 @@ def Youtube():
         youtube_archive.append(each_youtube)
     return jsonify(youtube_archive)
 
-# # Get rest of data 
-# @app.route("/tagByperiode")
-# def rest():
-#     top_tags_combined = db.session.query(TagByPeriodeTable).all()
-#     db.session.close()
+# Get rest of data 
+@app.route("/tagByperiode")
+def rest():
+    top_tags_combined = db.session.query(TagByPeriodeTable).all()
+    db.session.close()
 
-#     monthly_top_tags = []
-#     for top_tags in top_tags_combined:
-#         each_top_tags = {'periode': top_tags.periodeM,
-#                          'top_tag': top_tags.tagArr_per_month
-#                           }
-#         monthly_top_tags.append(each_top_tags)
-#     return jsonify(monthly_top_tags)
+    monthly_top_tags = []
+    for top_tags in top_tags_combined:
+        each_top_tags = {'periode': top_tags.periodeM,
+                         'top_tag': top_tags.tagArr_per_month
+                          }
+        monthly_top_tags.append(each_top_tags)
+    return jsonify(monthly_top_tags)
 
 if __name__ == "__main__":
     app.run(debug=True)
