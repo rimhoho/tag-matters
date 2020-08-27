@@ -21607,8 +21607,8 @@ def run_all_fetch():
         f1.store_times(monthly_archive, frequent_tags_archive, session)
         f1.store_google(monthly_top_tags, session)
 
-        youtube_metadata = f1.call_Youtube(unique_whole_tag_list)
-        f1.store_youtube(youtube_metadata, session)
+        # youtube_metadata = f1.call_Youtube(unique_whole_tag_list)
+        # f1.store_youtube(youtube_metadata, session)
         f1.store_rest_data(monthly_top_tags, session)    
         session.commit()
     except Exception as e:
