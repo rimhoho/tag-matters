@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session, load_only
 from sqlalchemy import create_engine, func, distinct
 from flask_sqlalchemy import SQLAlchemy
 
-from model import TimesTable, GoogleBTable, GoogleDTable, GoogleITable, YoutubeTable
+from model import TimesTable, GoogleTable, YoutubeTable, TagByPeriodeTable
 
 ###############
 # Flask Setup #
@@ -68,8 +68,9 @@ def Times():
 # Get Google Search data 
 @app.route("/google")
 def Google():
+    
     # Create session and query all data
-    google_combined = db.session.query(GoogleDTable.trendDate, GoogleBTable.busiest, GoogleITable.trendIndex, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == GoogleTable.fk_times).group_by(GoogleTable.id).all()
+    google_combined = db.session.query(GoogleTable.trendDate, GoogleTable.busiest, GoogleTable.trendIndex, TimesTable.tag, TimesTable.periodeM).join(TimesTable, TimesTable.id == GoogleTable.fk_times).group_by(GoogleTable.id).all()
     db.session.close()
 
     google_archive = []
@@ -80,10 +81,23 @@ def Google():
                       'busiest' : google.busiest,
                       'trendIndex' : google.trendIndex}
         google_archive.append(each_google)
-
-    print('####', google_archive[0])
-    print('****', jsonify(google_archive))
     return jsonify(google_archive)
+
+# # Get Reddit data 
+# @app.route("/reddit")
+# def Reddit():
+
+#     # Create session and query all data
+#     reddit_combined = db.session.query(RedditTable).all()
+#     db.session.close()
+
+#     reddit_archive = []
+#     for reddit in reddit_combined:
+#         each_reddit = {'tag':reddit.tag,
+#                       'commentCount':reddit.commentCount}
+#         reddit_archive.append(each_reddit)
+#     return jsonify(reddit_archive)
+
 
 # Get Youtube data 
 @app.route("/youtube")
