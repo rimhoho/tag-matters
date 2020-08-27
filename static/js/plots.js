@@ -15,7 +15,7 @@ Promise.all([
     fetch(base_url + '/youtube')
 ])
 .then(resp => {
-    console.log(resp);
+    // console.log(resp);
     return Promise.all( resp.map(r => r.clone().json()) )
 })
 .then(([times, google, youtube]) => {
@@ -266,6 +266,9 @@ Promise.all([
         });
 
         side.append("div").attr("class", "mt-4 pb-4 recent_news text-white").attr("id", (d,i) => "news" + i).html((d, i) => {
+            if (d.img_URL == 'no_image_found') {
+                d.img_URL = '/static/images/no_image_found.png'
+            }
             if (i == 0) {
                 return '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
             } 
@@ -301,7 +304,9 @@ Promise.all([
             };
     
             side_infos.append("div").attr("class", "side-tag pt-2 heading text-white").text('MOST RELEVANT TIMES & YOUTUBE');
-            console.log('img_URL * ', d.img_URL);
+            if (d.img_URL == 'no_image_found') {
+                d.img_URL = '/static/images/no_image_found.png'
+            }
             side_infos.append("div").attr("class", "mt-4 pb-4 recent_news text-white").html(
                 '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
             );
