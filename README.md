@@ -1,6 +1,6 @@
 # Tag Matters Dashboard
 [Link to Deployed Project](https://tag-matters.herokuapp.com/)
-An example of creating a data pipline that can stream potentially GBs of data from an external API into a PostgreSQL database.
+- An example of creating a data pipline that can stream potentially GBs of data from an external API into a PostgreSQL database.
 
 ### Goal
 - To understand how the large data gathered and stored into Postgres from Flask
