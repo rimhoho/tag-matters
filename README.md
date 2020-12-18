@@ -1,6 +1,7 @@
 # Tag Matters Dashboard
 [Link to Deployed Project](https://tag-matters.herokuapp.com/)
 - An example of creating a data pipline that can stream potentially GBs of data from an external API into a PostgreSQL database.
+![screenshot_v1](https://github.com/rimhoho/How-Colors-Affect-Resale-Values/blob/main/public/img/popup_screenshot_v1.png)
 
 ### Goal
 - To understand how the large data gathered and stored into Postgres from Flask
