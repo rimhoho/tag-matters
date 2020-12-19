@@ -4,20 +4,14 @@ import pandas as pd
 import numpy as np
 import operator
 import time
-import praw
-import nltk
 import configparser
 import re
 
-from apiclient import discovery
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 
 from pytrends.request import TrendReq
-from praw.models import MoreComments
 from googleapiclient import discovery
-from textblob import TextBlob
-from pandas.io.json import json_normalize
 
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
@@ -51,6 +45,12 @@ Youtube_developer_key = config['Youtube']['DEVELOPER_KEY']
 ######################################################################################
 
 def cleaning_tag(tag):
+    if tag in ['internal-essential', 'internal-election-open']:
+       tag = tag.replace('internal-', '')
+    if tag in ['Black People', 'Blacks']:
+       tag = 'Blacks'
+    if tag in ['White House Coronavirus Outbreak (2020)']:
+       tag = 'White House Coronavirus Outbreak'
     if tag in ['School Shootings and Armed Attacks']:
         tag = 'School Shootings'
     if tag in ['Midland-Odessa, Tex, Shooting (2019)', 'Dayton, Ohio, Shooting (2019)', 'El Paso, Tex, Shooting (2019)', 'El Paso', 'Dayton', 'Shooting (2019)', 'Tex']:
@@ -59,10 +59,18 @@ def cleaning_tag(tag):
         tag = 'Homosexuality'
     if tag in ['Biden, Joseph R Jr']:
         tag = 'Joe Biden'
+    if tag in ['Trump, Donald J']:
+        tag = 'Donald Trump'
     if tag in ['Floyd, George (d 2020)']:
         tag = 'George Floyd Protests (2020)'
     if tag in ['Trump-Ukraine Whistle-blower Complaint and Impeachment Inquiry']:
         tag = 'Trump Ukraine Whistle blower'
+    if tag in ['election-open']:
+        tag = 'election open'
+    if tag in ['Demonstrations Protests and Riots']:
+       tag = 'Protests and Riots'
+    if 'Content Type: ' in tag:
+       tag = tag.replace('Content Type: ', '')
     if 'Security Act (2020)' in tag:
         tag = 'Coronavirus Aid Relief and Economic Security Act'
     if 'Suleimani' in tag:
@@ -83,7 +91,7 @@ def cleaning_tag(tag):
         tag = 'Russian interference in the 2016 United States elections'
     if 'Syria' in tag:
         tag = 'Syria'    
-    if tag in ['Presidential Election of 2020', 'Elections', 'United States Politics and Government', 'New York City', 'United States', 'Politics and Government', 'Trump, Donald J', 'Weddings and Engagements', 'Books and Literature', 'Television', 'Art', '']:
+    if tag in ['Presidential Election of 2020', 'Elections', 'United States Politics and Government', 'New York City', 'United States', 'Politics and Government', 'Movies', 'Weddings and Engagements', 'Books and Literature', 'Television', 'Art', '']:
         tag = ''
     return tag
 
@@ -135,7 +143,7 @@ def get_NYTimes_metadata():
             count_tag = {}
             for m in monthly_article:
                 for tag in m['tags']:
-                    if tag is not '':
+                    if tag != '':
                         if tag in count_tag:
                             count_tag[tag] += 1
                         else:
@@ -160,7 +168,7 @@ def call_unique_whole_tag_list(monthly_top_tags):
     count_tag = {}
     for periode in monthly_top_tags:
         for tag in monthly_top_tags[periode]:
-            if tag is not '' and tag in count_tag:
+            if tag != '' and tag in count_tag:
                 count_tag[tag] += 1
             else:
                 count_tag[tag] = 1  
@@ -175,20 +183,20 @@ def call_unique_whole_tag_list(monthly_top_tags):
 class Fetcher(object):
 
     def store_times(self, monthly_archive, frequent_tags_archive, session):
-        print('* Srart to Store Times');
+        print('* Srart to Store Times')
 
         multi_articles = {}
         been_used = []
         for periode in frequent_tags_archive:
             for top_tag in frequent_tags_archive[periode]:
-                print(periode);
+                print(periode)
                 for each in reversed(monthly_archive[periode]):
                     if top_tag[0] in multi_articles and periode in multi_articles[top_tag[0]]:
                         pass                             
                     else:
                         if len(each['tags']) != 0 and top_tag[0] in each['tags'] and each['title'] not in been_used:
                             try:
-                                print(top_tag[0]);
+                                print(top_tag[0])
                                 insert_TimesTag = TimesTable(
                                     tag=top_tag[0],
                                     periodeM=periode,
@@ -208,7 +216,7 @@ class Fetcher(object):
                                 pass   
                      
     def store_google(self, unique_whole_tag_list, session):
-        print('* Srart to Call/Store Google');
+        print('* Srart to Call/Store Google')
 
         today = datetime.today()
         one_year_before = str(today.replace(day=1) - timedelta(days=355))[:10] + ' '
@@ -251,7 +259,7 @@ class Fetcher(object):
                     pass
 
     def call_Youtube(self, unique_whole_tag_list):
-        print('* Srart to Call Youtube');
+        print('* Srart to Call Youtube')
 
         # creating Youtube Resource Object 
         youtube_object = discovery.build(Youtube_service_name, Youtube_API_version, developerKey = Youtube_developer_key)
@@ -324,7 +332,7 @@ class Fetcher(object):
         return youtube_metadata
 
     def store_youtube(self, youtube_metadata, session):
-        print('* Srart to Store Youtube');
+        print('* Srart to Store Youtube')
 
         for each_youtube in youtube_metadata:
             try:
