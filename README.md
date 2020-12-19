@@ -1,10 +1,10 @@
-# Tag Matters
-An example of creating a data pipline that can stream potentially GBs of data from an external API into a PostgreSQL database.
-- Project Website: https://tag-matters.herokuapp.com/
+# Tag Matters Dashboard
+[Link to Deployed Project](https://tag-matters.herokuapp.com/)
+- An example of creating a data pipline that can stream potentially GBs of data from an external API into a PostgreSQL database.
 
 ### Goal
 - To understand how the large data gathered and stored into Postgres from Flask
-- To understand how tags in New York Times play the role and how people react about the topic by looking at other media platforms
+- To see which frequently used tags are captured by New York Times and how people react about the topic by looking at other media platforms
 
 ### Data
 - New York Times API: https://developer.nytimes.com/apis
@@ -15,3 +15,4 @@ An example of creating a data pipline that can stream potentially GBs of data fr
 - SQLAlchemy with ETL : https://www.freecodecamp.org/news/sqlalchemy-makes-etl-magically-easy-ab2bd0df928/
 - Flask by Example : https://github.com/bswiss/D3_Heroku_App
 - Explore what the world is searching : https://trends.google.com/trends/?geo=US
+![screenshot_v1](https://github.com/rimhoho/How-Colors-Affect-Resale-Values/blob/main/public/img/popup_screenshot_v1.png)
