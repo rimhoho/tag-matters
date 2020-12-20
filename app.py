@@ -24,7 +24,7 @@ app = Flask(__name__)
 # Database #
 ############
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///monthly_times_tags.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///monthly_times_tag.db'
 db = SQLAlchemy(app)
 
 
