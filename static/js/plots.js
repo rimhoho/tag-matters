@@ -12,11 +12,13 @@ if (host.includes("heroku")) {
 Promise.all([
     fetch(base_url + '/times'),
     fetch(base_url + '/google'),
-    fetch(base_url + '/youtube'),
-    fetch(base_url + '/tagByperiode'),
+    fetch(base_url + '/youtube')
 ])
-.then(resp => Promise.all( resp.map(r => r.json()) ))
-.then(([times, google, youtube, tagbyperiode, frequency]) => {
+.then(resp => {
+    // console.log(resp);
+    return Promise.all( resp.map(r => r.clone().json()) )
+})
+.then(([times, google, youtube]) => {
 
     var combined_pre_data = [];
     google.forEach((g_item, index) => {
@@ -69,6 +71,10 @@ Promise.all([
         selectTime = combined.filter(function(d){
             return d['key'] == filteredTime;
         });
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
         convert_Youtube = selectTime[0].values.concat(youtube);
         
         var times_google_youtube = [];
@@ -83,7 +89,10 @@ Promise.all([
                 })
             };
           });
+<<<<<<< HEAD
         // console.log('combined all, times_google_youtube: ', times_google_youtube);
+=======
+>>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
 
         //////////////////////
         // Initialize Table //
@@ -136,7 +145,10 @@ Promise.all([
             .each(function (d, index) {
                 var cell = d3.select(this);
                 if (d.column == 'title' || d.column == 'url' || d.column == 'date' || d.column == 'img_URL') {
+<<<<<<< HEAD
                     // console.log('NEW YORK TIMES(4)', index)
+=======
+>>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
                     if (d.column == 'title'){
                         var Ttitle = d.value;
                         flag['title'] = Ttitle;
@@ -151,7 +163,10 @@ Promise.all([
                         flag['img_URL'] = Timg_URL;
                     }
                     if (Object.keys(flag).length == times_colspan) {
+<<<<<<< HEAD
                         // console.log('which index is fulfiled', index)
+=======
+>>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
                         cell.attr('colspan', times_colspan).html('<a href="' + flag['href'] + '" target="_blank" class="text-dark"> <p class="mb-0 text-dark news-title">' + flag['title'] + ' »</a></p>')
                         flag = {};
                     } else {
@@ -159,10 +174,15 @@ Promise.all([
                     }
                 } else {
                     if (typeof(d.value) == 'number') {
+<<<<<<< HEAD
                         // console.log('COUNTS', index)
                         cell.html(d3.format(',')(d.value)).attr('class', 'right-align make-bold news-title');
                     } else {
                         // console.log('TOP 10 TAGS ? ', index)
+=======
+                        cell.html(d3.format(',')(d.value)).attr('class', 'right-align make-bold news-title');
+                    } else {
+>>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
                         cell.html(d.value).attr('class', 'line-height');
                     }
                 }
@@ -268,6 +288,9 @@ Promise.all([
         });
 
         side.append("div").attr("class", "mt-4 pb-4 recent_news text-white").attr("id", (d,i) => "news" + i).html((d, i) => {
+            if (d.img_URL == 'no_image_found') {
+                d.img_URL = '/static/images/no_image_found.png'
+            }
             if (i == 0) {
                 if (d.img_URL == 'no_image_found') {
                     return '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="/static/images/no_image_found.png" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
@@ -307,7 +330,9 @@ Promise.all([
             };
     
             side_infos.append("div").attr("class", "side-tag pt-2 heading text-white").text('MOST RELEVANT TIMES & YOUTUBE');
-
+            if (d.img_URL == 'no_image_found') {
+                d.img_URL = '/static/images/no_image_found.png'
+            }
             side_infos.append("div").attr("class", "mt-4 pb-4 recent_news text-white").html(
                 '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
             );

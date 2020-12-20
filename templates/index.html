@@ -19,7 +19,11 @@
 
     <!-- AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
+    <!-- <script>
+      $(document).ready(function(){
+        $("#myModal").modal('show');
+      });
+    </script> -->
     <title>Tag Matters</title>
   </head>
   <body data-gr-c-s-loaded="true" cz-shortcut-listen="true">
@@ -35,7 +39,11 @@
             <!-- <a class="text-muted" href="#" aria-label="Search">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24" focusable="false"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"></circle><path d="M21 21l-5.2-5.2"></path></svg>
             </a> -->
+<<<<<<< HEAD
             <a class="btn btn-sm text-muted" href="https://github.com/rimhoho/Monthly-Frequency-of-NYTimes-Tag" target="_blank">Link to Github</a>
+=======
+            <a class="btn btn-sm text-muted" href="https://github.com/rimhoho/Monthly-Frequency-of-NYTimes-Tag" target="_blank">Go to github</a>
+>>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
           </div>
         </div>
       </header>
@@ -46,7 +54,8 @@
           <h5 class="mt-5 h5-light"><span class="h5">New York Times</span> publishes around 250 articles per day with only a fraction of those articles making it to the homepage.
           <span class="h5">Judiciously, NYTimes uses tags👏</span><span class="h5-light"> to help boost relevance on the site search and send a signal to external search engines, as well as inform content recommendations for readers.</span></h5>
           <div class="py-2">
-            <h5>But, does the tag capture current concerns in world? <span class="pl-2 light-grey">YES.</span></h5>
+            <h5>But, does the tag capture current concerns in world?</h5>
+            <!-- <span class="pl-2 light-grey">YES.</span> -->
           </div>
         </div>
         
@@ -62,21 +71,21 @@
               <div class="table-wrap col-9">
                 <table class="times_table table table-hover col-md-12"></table>
                 <div class="ml-2 make-small py-4 border-top border-secondary">
-                  <p class="_1rem mb-2">Time Range: Jul, 2019 - Jun, 2020<span class="p-2">|</span>Resources: <a href="https://developer.nytimes.com/" target="_blank" class="text-dark"><u>New York Times</u></a>, <a href="https://pypi.org/project/pytrends/" target="_blank" class="text-dark"><u>Google Search</u></a>, and <a href="https://praw.readthedocs.io/en/latest/index.html" target="_blank" class="text-dark"><u>Youtube</u></a></p>
+                  <p class="_1rem mb-2">Time Range: 2019-09 ~ 2020-08<span class="p-2">|</span>Resources: <a href="https://developer.nytimes.com/" target="_blank" class="text-dark"><u>New York Times</u></a>, <a href="https://pypi.org/project/pytrends/" target="_blank" class="text-dark"><u>Google Search</u></a>, and <a href="https://praw.readthedocs.io/en/latest/index.html" target="_blank" class="text-dark"><u>Youtube</u></a></p>
                   <p class= "mb-3 _1rem"><span class="tomato">Orange color </span>highlights the most active searches on Google, and the most active interactions on Youtube videos.</p>
                 </div>
               </div> 
               <div class="col-3 overflow-hidden flex-md-row p-3 position-relative main-back-color-darker" id="more_infos"></div>   
           </div>
         </div>
-        <!-- <div class="d-flex flex-column px-md-4 pt-4 mt-5 bg-dark border">
+        <!-- <div class="d-flex flex-column px-md-4 pt-4 mt-5 main-back-color border">
           <h5 class="text-center pt-2 pb-2 text-white">Tags Tracking</h5>
           <div class="row mt-2">
             <div class="col-md-12 pb-2">
               <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-2 shadow-sm h-md-350 position-relative">
                   <div class="col p-4 d-flex flex-column position-static bg-white">
                       <div class="justify-content-between align-items-center mb-3">
-                        <h5 class="d-inline-block mb-1 h5-light">📍 In the recent five months, 71% of the top tags reachs the peak on the Google Search graph, the number goes down to 41% when the time range become a year.</h5>
+                        <h5 class="d-inline-block mb-1 h5-light">71% of the top 10 tags has been reached the peak on Google Search Trends in the recent six months, the popularity goes down to 41%, when the time range expands to a year.</h5>
                         <ul class="pl-3 pt-2">
                           <li>Black People | Police Brutality: These one of the General terms reach the highest searches on Google in <span class="tomato">5 May 2020</span> which were at Top 3 and 5 in top tag dashboard on <span class="tomato">2020-05</span>.</li>
                           <li>Shootings: The peak on the Google Search graph indicates that the term has been searched the most on <span class="tomato">8 August 2019</span> and has been listed on <span class="tomato">2019-08</span>.</li>
@@ -183,14 +192,35 @@
           </div>
           <div class="px-3 pb-2">
             <div class="d-flex align-items-center justify-content-between pb-1">
-              <strong>Selected Variables from APIs</strong>
-              <small class="text-muted">Reddit API offers a limited maxresult in search.list, so it has been decided not to apply.</small>
+              <strong>Data Structure</strong>
+              <small class="text-muted">Tools: D3.JS, Bootstrap, PostgreSQL, Flask, Heroku</small>
             </div>
-            <img src="{{ url_for('static', filename='images/api_diagram.png') }}" alt="" class="pt-2 pb-4" width="100%" height="100%">
+            <img src="{{ url_for('static', filename='images/data-structure.png') }}" alt="" class="pt-2 pb-4" width="100%" height="100%">
             <div>
             </div>
           </div>
         </div>
+
+        <div class="bs-example">
+          <div id="myModal" class="modal fade" tabindex="-1">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title">DB Under Construction</h5>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                          <p>Thank you for visiting the website, unfortunately the website's DB is currently undergoing scheduled maintenance. </p>
+                          <p class="text-secondary"><small>We should be back shortly. Thank you for your patience.</small></p>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn main-back-color-darker text-white" data-dismiss="modal">Okey</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
         <footer class="py-5">© 2020, Hyerim Hwang</footer>
       </div> 
     </div>
