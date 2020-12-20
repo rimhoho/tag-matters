@@ -29,7 +29,7 @@ Promise.all([
     var combined = d3.nest()
         .key(function(d) { return d.periode; })
         .entries(combined_pre_data);
-
+    console.log(combined)
     /////////////////////
     // Update dropdown //
     /////////////////////
@@ -69,8 +69,6 @@ Promise.all([
         selectTime = combined.filter(function(d){
             return d['key'] == filteredTime;
         });
-        console.log(filteredTime);
-        
         convert_Youtube = selectTime[0].values.concat(youtube);
         
         var times_google_youtube = [];
@@ -85,7 +83,7 @@ Promise.all([
                 })
             };
           });
-        console.log('combined all, times_google_youtube: ', times_google_youtube);
+        // console.log('combined all, times_google_youtube: ', times_google_youtube);
 
         //////////////////////
         // Initialize Table //
@@ -138,7 +136,7 @@ Promise.all([
             .each(function (d, index) {
                 var cell = d3.select(this);
                 if (d.column == 'title' || d.column == 'url' || d.column == 'date' || d.column == 'img_URL') {
-                    console.log('NEW YORK TIMES(4)', index)
+                    // console.log('NEW YORK TIMES(4)', index)
                     if (d.column == 'title'){
                         var Ttitle = d.value;
                         flag['title'] = Ttitle;
@@ -153,7 +151,7 @@ Promise.all([
                         flag['img_URL'] = Timg_URL;
                     }
                     if (Object.keys(flag).length == times_colspan) {
-                        console.log('which index is fulfiled', index)
+                        // console.log('which index is fulfiled', index)
                         cell.attr('colspan', times_colspan).html('<a href="' + flag['href'] + '" target="_blank" class="text-dark"> <p class="mb-0 text-dark news-title">' + flag['title'] + ' »</a></p>')
                         flag = {};
                     } else {
@@ -161,10 +159,10 @@ Promise.all([
                     }
                 } else {
                     if (typeof(d.value) == 'number') {
-                        console.log('COUNTS', index)
+                        // console.log('COUNTS', index)
                         cell.html(d3.format(',')(d.value)).attr('class', 'right-align make-bold news-title');
                     } else {
-                        console.log('TOP 10 TAGS ? ', index)
+                        // console.log('TOP 10 TAGS ? ', index)
                         cell.html(d.value).attr('class', 'line-height');
                     }
                 }
@@ -271,7 +269,11 @@ Promise.all([
 
         side.append("div").attr("class", "mt-4 pb-4 recent_news text-white").attr("id", (d,i) => "news" + i).html((d, i) => {
             if (i == 0) {
-                return '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
+                if (d.img_URL == 'no_image_found') {
+                    return '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="/static/images/no_image_found.png" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
+                } else {
+                    return '<a href="'+ d.url + '" target="_blank" class="text-white"><img src="' + d.img_URL + '" width="100%" height="100%" class="max-image"></a><p class="mb-0 news-title">' + d.title + '<a href="'+ d.url + '" target="_blank" class="text-white"> »</a></p>'//<p class="pt-2 make-bold make-small text-white">' + d.date + '</p>'
+                }
             } 
             if (i > 0) {
                 side_infos.selectAll("#news" + i).remove();
@@ -567,7 +569,7 @@ Promise.all([
     };
 
     var initialData = combined[0]['key'];
-    console.log('* initialData * ', initialData)
+    // console.log('* initialData * ', initialData)
 
     // Call the table, side-infos
     makeTables(initialData);
