@@ -71,10 +71,6 @@ Promise.all([
         selectTime = combined.filter(function(d){
             return d['key'] == filteredTime;
         });
-<<<<<<< HEAD
-=======
-        
->>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
         convert_Youtube = selectTime[0].values.concat(youtube);
         
         var times_google_youtube = [];
@@ -89,10 +85,7 @@ Promise.all([
                 })
             };
           });
-<<<<<<< HEAD
         // console.log('combined all, times_google_youtube: ', times_google_youtube);
-=======
->>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
 
         //////////////////////
         // Initialize Table //
@@ -145,10 +138,7 @@ Promise.all([
             .each(function (d, index) {
                 var cell = d3.select(this);
                 if (d.column == 'title' || d.column == 'url' || d.column == 'date' || d.column == 'img_URL') {
-<<<<<<< HEAD
                     // console.log('NEW YORK TIMES(4)', index)
-=======
->>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
                     if (d.column == 'title'){
                         var Ttitle = d.value;
                         flag['title'] = Ttitle;
@@ -163,10 +153,7 @@ Promise.all([
                         flag['img_URL'] = Timg_URL;
                     }
                     if (Object.keys(flag).length == times_colspan) {
-<<<<<<< HEAD
                         // console.log('which index is fulfiled', index)
-=======
->>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
                         cell.attr('colspan', times_colspan).html('<a href="' + flag['href'] + '" target="_blank" class="text-dark"> <p class="mb-0 text-dark news-title">' + flag['title'] + ' »</a></p>')
                         flag = {};
                     } else {
@@ -174,15 +161,10 @@ Promise.all([
                     }
                 } else {
                     if (typeof(d.value) == 'number') {
-<<<<<<< HEAD
                         // console.log('COUNTS', index)
                         cell.html(d3.format(',')(d.value)).attr('class', 'right-align make-bold news-title');
                     } else {
                         // console.log('TOP 10 TAGS ? ', index)
-=======
-                        cell.html(d3.format(',')(d.value)).attr('class', 'right-align make-bold news-title');
-                    } else {
->>>>>>> 610920319c0e36342b7fd738cd9b6768926571d7
                         cell.html(d.value).attr('class', 'line-height');
                     }
                 }
